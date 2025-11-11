@@ -2,18 +2,15 @@
 // INSTRUÇÕES: Siga o guia CONFIGURAR-SUPABASE.md e preencha abaixo
 
 const SUPABASE_CONFIG = {
-    // Cole aqui a URL do seu projeto Supabase
-    // Exemplo: https://xxxxx.supabase.co
-    url: 'SEU_PROJECT_URL_AQUI',
+    // URL do projeto Supabase - Newdri Clinic
+    url: 'https://sxyslugsixqjybjczgpb.supabase.co',
     
-    // Cole aqui a chave anon public
-    // Exemplo: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-    anonKey: 'SUA_ANON_KEY_AQUI',
+    // Chave anon public (segura para uso público)
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4eXNsdWdzaXhxanliamN6Z3BiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2NzczNDAsImV4cCI6MjA3ODI1MzM0MH0.bC_rD6-Yd0pjCoakNrz6CZTO4eVoz7TEyJTeOeUOGC8',
     
-    // Cole aqui a chave service_role (MANTENHA SECRETO!)
+    // Chave service_role (MANTENHA SECRETO!)
     // Esta chave só deve ser usada no dashboard do Dr. Newton
-    // Exemplo: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-    serviceRoleKey: 'SUA_SERVICE_ROLE_KEY_AQUI'
+    serviceRoleKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4eXNsdWdzaXhxanliamN6Z3BiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjY3NzM0MCwiZXhwIjoyMDc4MjUzMzQwfQ.WeDDLJw_Nh11JhLwQg94SPZbfvedLixNbARIzNxxICs'
 };
 
 // Senha do dashboard do Dr. Newton (ALTERE ISTO!)
