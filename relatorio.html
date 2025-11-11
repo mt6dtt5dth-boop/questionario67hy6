@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Avaliação - Newdri Clinic</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="clinic-header">
+            <h1>🌸 Newdri Clinic</h1>
+            <p class="subtitle">Relatório de Avaliação Psicossexual</p>
+        </header>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2>Relatório Detalhado</h2>
+                <div>
+                    <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir</button>
+                    <button class="btn btn-primary" id="downloadPDF">📄 Baixar PDF</button>
+                </div>
+            </div>
+
+            <div id="relatorioContent">
+                <div class="alert alert-info">
+                    <strong>🔒 Confidencialidade:</strong> Este relatório contém informações sensíveis e deve ser mantido em sigilo absoluto.
+                </div>
+
+                <!-- DADOS DEMOGRÁFICOS -->
+                <div class="form-section">
+                    <h3>I. Dados Demográficos</h3>
+                    <div id="dadosDemograficos"></div>
+                </div>
+
+                <!-- ESCALAS -->
+                <div class="form-section">
+                    <h3>II. Escalas Psicométricas</h3>
+                    <div id="escalas"></div>
+                </div>
+
+                <!-- PERFIL PRINCIPAL -->
+                <div class="form-section">
+                    <h3>III. Perfil Psicossexual</h3>
+                    <div id="perfilPrincipal"></div>
+                </div>
+
+                <!-- DISSONÂNCIAS -->
+                <div class="form-section">
+                    <h3>IV. Análise de Dissonâncias</h3>
+                    <div id="dissonancias"></div>
+                </div>
+
+                <!-- CONTEXTO SOCIAL -->
+                <div class="form-section">
+                    <h3>V. Contexto Sociodemográfico</h3>
+                    <div id="contextoSocial"></div>
+                </div>
+
+                <!-- RECOMENDAÇÕES -->
+                <div class="form-section">
+                    <h3>VI. Recomendações Terapêuticas</h3>
+                    <div id="recomendacoes"></div>
+                </div>
+
+                <!-- ASSINATURA -->
+                <div class="form-section" style="margin-top: 50px;">
+                    <p><strong>Profissional Responsável:</strong> Dr. Newton Guimarães</p>
+                    <p><strong>Newdri Clinic</strong> - São Lourenço/MG</p>
+                    <p><strong>Data do Relatório:</strong> <span id="dataRelatorio"></span></p>
+                    <p style="margin-top: 30px; font-size: 0.9rem; color: #7f8c8d;">
+                        <em>Este relatório foi gerado por sistema computadorizado de avaliação psicométrica.
+                        Os resultados devem ser interpretados por profissional qualificado em contexto terapêutico.</em>
+                    </p>
+                </div>
+            </div>
+
+            <div class="nav-buttons" style="margin-top: 40px;">
+                <a href="index.html" class="btn btn-secondary">← Voltar ao Início</a>
+                <a href="questionario.html" class="btn btn-secondary">🔄 Novo Questionário</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/analise.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Carregar dados do localStorage
+            const dadosJSON = localStorage.getItem('questionario_dados');
+            
+            if (!dadosJSON) {
+                alert('Nenhum dado encontrado. Por favor, preencha o questionário primeiro.');
+                window.location.href = 'questionario.html';
+                return;
+            }
+
+            const dados = JSON.parse(dadosJSON);
+            
+            // Realizar análise
+            const resultados = analisarQuestionario(dados);
+            
+            // Renderizar relatório
+            renderizarRelatorio(dados, resultados);
+            
+            // Data do relatório
+            document.getElementById('dataRelatorio').textContent = new Date().toLocaleDateString('pt-BR');
+        });
+
+        function renderizarRelatorio(dados, resultados) {
+            renderizarDadosDemograficos(dados.demograficos);
+            renderizarEscalas(resultados.escalas);
+            renderizarPerfil(resultados.perfil);
+            renderizarDissonancias(resultados);
+            renderizarContexto(resultados.contexto);
+            renderizarRecomendacoes(resultados.recomendacoes);
+        }
+
+        function renderizarDadosDemograficos(demo) {
+            const container = document.getElementById('dadosDemograficos');
+            
+            const idade = demo.idade;
+            const estadoCivil = {
+                'solteira': 'Solteira',
+                'namoro': 'Namoro/Relacionamento',
+                'casada': 'Casada/União Estável',
+                'divorciada': 'Divorciada/Separada',
+                'viuva': 'Viúva'
+            }[demo.estadoCivil] || demo.estadoCivil;
+
+            const tipoLocalidade = {
+                'capital': 'Capital/Região Metropolitana',
+                'media': 'Cidade Média',
+                'pequena': 'Cidade Pequena/Interior'
+            }[demo.tipoLocalidade] || demo.tipoLocalidade;
+
+            container.innerHTML = `
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 10px; font-weight: 600;">Nome:</td>
+                        <td style="padding: 10px;">${demo.nome || 'Anônimo'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 10px; font-weight: 600;">Idade:</td>
+                        <td style="padding: 10px;">${idade} anos</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 10px; font-weight: 600;">Estado Civil:</td>
+                        <td style="padding: 10px;">${estadoCivil}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 10px; font-weight: 600;">Localidade:</td>
+                        <td style="padding: 10px;">${demo.cidade} (${tipoLocalidade})</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 10px; font-weight: 600;">Profissão:</td>
+                        <td style="padding: 10px;">${demo.profissao}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; font-weight: 600;">Escolaridade:</td>
+                        <td style="padding: 10px;">${demo.escolaridade}</td>
+                    </tr>
+                </table>
+            `;
+        }
+
+        function renderizarEscalas(escalas) {
+            const container = document.getElementById('escalas');
+            
+            const escalaHTML = (nome, valor, max = 100) => {
+                const cor = valor > 70 ? '#4caf50' : valor > 40 ? '#ff9800' : '#f44336';
+                const largura = (valor / max) * 100;
+                
+                return `
+                    <div style="margin-bottom: 25px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <strong>${nome}</strong>
+                            <span style="color: ${cor}; font-weight: 700;">${valor}${max === 100 ? '%' : ''}</span>
+                        </div>
+                        <div style="background: #f0f0f0; height: 30px; border-radius: 15px; overflow: hidden;">
+                            <div style="background: ${cor}; height: 100%; width: ${Math.abs(largura)}%; 
+                                        transition: width 0.3s ease;${valor < 0 ? ' margin-left: auto;' : ''}"></div>
+                        </div>
+                        <p style="font-size: 0.9rem; color: #7f8c8d; margin-top: 5px;">
+                            ${interpretarEscala(nome, valor)}
+                        </p>
+                    </div>
+                `;
+            };
+
+            container.innerHTML = `
+                ${escalaHTML('Abertura Sexual', escalas.aberturaSexual)}
+                ${escalaHTML('Autoconhecimento', escalas.autoconhecimento)}
+                ${escalaHTML('Dominância ↔ Submissão', escalas.dominanciaSubmissao, 50)}
+                ${escalaHTML('Masoquismo', escalas.masoquismo)}
+                ${escalaHTML('Dissonância Contexto/Desejo', escalas.dissonanciaContexto)}
+            `;
+        }
+
+        function interpretarEscala(nome, valor) {
+            if (nome === 'Abertura Sexual') {
+                if (valor > 70) return 'Alta abertura para novas experiências';
+                if (valor > 40) return 'Abertura moderada, dependente de contexto';
+                return 'Baixa abertura, preferência por familiar';
+            }
+            if (nome === 'Autoconhecimento') {
+                if (valor > 70) return 'Excelente conhecimento de si mesma';
+                if (valor > 40) return 'Conhecimento moderado, em desenvolvimento';
+                return 'Baixo autoconhecimento, fase de descoberta';
+            }
+            if (nome === 'Dominância ↔ Submissão') {
+                if (valor > 20) return 'Tendência dominante pronunciada';
+                if (valor < -20) return 'Tendência submissa pronunciada';
+                return 'Versátil/Switch, situacional';
+            }
+            if (nome === 'Masoquismo') {
+                if (valor > 60) return 'Alto interesse em sensações intensas';
+                if (valor > 30) return 'Interesse moderado, curiosidade presente';
+                return 'Baixo interesse ou não explorado';
+            }
+            if (nome === 'Dissonância Contexto/Desejo') {
+                if (valor > 70) return '⚠️ SEVERA - Intervenção urgente recomendada';
+                if (valor > 40) return '⚠️ MODERADA - Atenção necessária';
+                return 'Baixa - Desejos alinhados com expressão';
+            }
+            return '';
+        }
+
+        function renderizarPerfil(perfil) {
+            const container = document.getElementById('perfilPrincipal');
+            
+            const marcadoresHTML = perfil.marcadores && perfil.marcadores.length > 0
+                ? `<ul>${perfil.marcadores.map(m => `<li>${m}</li>`).join('')}</ul>`
+                : '<p>Nenhum marcador específico identificado.</p>';
+
+            container.innerHTML = `
+                <div style="background: linear-gradient(135deg, #6a4c93 0%, #c991cc 100%); 
+                            color: white; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+                    <h2 style="color: white; margin: 0 0 10px 0; font-size: 2rem;">
+                        ${perfil.principal}
+                    </h2>
+                    ${perfil.subtipo ? `<h3 style="color: white; opacity: 0.9; margin: 0; font-size: 1.3rem;">Subtipo: ${perfil.subtipo}</h3>` : ''}
+                    ${perfil.secundario ? `<p style="margin-top: 10px; opacity: 0.9;">Perfil Secundário: ${perfil.secundario}</p>` : ''}
+                    <p style="margin-top: 15px; opacity: 0.9;">Confiança do perfil: ${perfil.confianca}%</p>
+                </div>
+
+                <h4>Marcadores Identificados:</h4>
+                ${marcadoresHTML}
+
+                ${perfil.tipoRepressao ? `
+                    <div class="alert alert-warning" style="margin-top: 20px;">
+                        <strong>⚠️ Tipo de Repressão Detectada:</strong> ${
+                            perfil.tipoRepressao === 'trauma' ? 'Possível Trauma Sexual - ATENÇÃO CRÍTICA' :
+                            perfil.tipoRepressao === 'contextual' ? 'Repressão Contextual/Social' :
+                            perfil.tipoRepressao === 'genuino' ? 'Conservador Genuíno (escolha pessoal)' :
+                            'Indefinido'
+                        }
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function renderizarDissonancias(resultados) {
+            const container = document.getElementById('dissonancias');
+            const dissonancias = resultados.perfil.dissonancias || [];
+            
+            // Redetectar dissonâncias
+            const analisador = new AnalisadorPsicossexual(
+                JSON.parse(localStorage.getItem('questionario_dados'))
+            );
+            const dissonanciasDetectadas = analisador.detectarDissonancias();
+
+            if (dissonanciasDetectadas.length === 0) {
+                container.innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>✅ Consistência Alta</strong><br>
+                        Não foram detectadas inconsistências significativas entre as respostas.
+                        Isso indica boa congruência entre desejos, fantasias e comportamentos.
+                    </div>
+                `;
+                return;
+            }
+
+            const criticasHTML = dissonanciasDetectadas
+                .filter(d => d.criticidade === 'ALTA')
+                .map(d => `
+                    <div class="alert alert-danger" style="margin-bottom: 15px;">
+                        <h4 style="color: #f44336; margin-top: 0;">🚨 DISSONÂNCIA CRÍTICA</h4>
+                        <p><strong>Tipo:</strong> ${d.tipo}</p>
+                        <p><strong>Par de Questões:</strong> ${d.par}</p>
+                        <p><strong>Descrição:</strong> ${d.descricao}</p>
+                        <p><strong>Interpretação:</strong> ${d.interpretacao}</p>
+                    </div>
+                `).join('');
+
+            const demaisHTML = dissonanciasDetectadas
+                .filter(d => d.criticidade !== 'ALTA')
+                .map(d => `
+                    <div style="background: #fff3e0; padding: 15px; border-left: 4px solid #ff9800; 
+                                margin-bottom: 15px; border-radius: 5px;">
+                        <p><strong>Tipo:</strong> ${d.tipo} (${d.par})</p>
+                        <p><strong>Descrição:</strong> ${d.descricao}</p>
+                        <p><strong>Interpretação:</strong> ${d.interpretacao}</p>
+                    </div>
+                `).join('');
+
+            container.innerHTML = `
+                ${criticasHTML}
+                ${demaisHTML.length > 0 ? `<h4>Dissonâncias Menores:</h4>${demaisHTML}` : ''}
+                
+                <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 5px;">
+                    <strong>Total de dissonâncias detectadas:</strong> ${dissonanciasDetectadas.length}
+                    <br><strong>Nível de consistência geral:</strong> ${
+                        dissonanciasDetectadas.length === 0 ? 'Excelente (100%)' :
+                        dissonanciasDetectadas.length <= 2 ? 'Bom (80%)' :
+                        dissonanciasDetectadas.length <= 4 ? 'Moderado (60%)' :
+                        'Baixo (< 50%)'
+                    }
+                </div>
+            `;
+        }
+
+        function renderizarContexto(contexto) {
+            const container = document.getElementById('contextoSocial');
+            
+            container.innerHTML = `
+                <h4>Análise por Localidade:</h4>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <p><strong>Tipo:</strong> ${contexto.localidade.tipo}</p>
+                    <p><strong>Pressão Social:</strong> ${contexto.localidade.pressaoSocial}</p>
+                    ${contexto.localidade.ajustes.length > 0 ? `
+                        <p><strong>Ajustes Interpretativos:</strong></p>
+                        <ul>${contexto.localidade.ajustes.map(a => `<li>${a}</li>`).join('')}</ul>
+                    ` : ''}
+                </div>
+
+                <h4>Análise por Idade:</h4>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <p><strong>Faixa Etária:</strong> ${contexto.idade.faixa}</p>
+                    <p><strong>Características:</strong> ${contexto.idade.caracteristicas.join(', ')}</p>
+                    ${contexto.idade.observacoes.length > 0 ? `
+                        <div class="alert alert-warning" style="margin-top: 10px;">
+                            ${contexto.idade.observacoes.map(o => `<p>⚠️ ${o}</p>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+
+                <h4>Dinâmica Relacional:</h4>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <p><strong>Estado Civil:</strong> ${contexto.estadoCivil.status}</p>
+                    ${contexto.estadoCivil.dinamica ? `<p><strong>Dinâmica:</strong> ${contexto.estadoCivil.dinamica}</p>` : ''}
+                    ${contexto.estadoCivil.alertas.length > 0 ? `
+                        <div class="alert alert-warning" style="margin-top: 10px;">
+                            ${contexto.estadoCivil.alertas.map(a => `<p>⚠️ ${a}</p>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+
+                <h4>Influência Profissional:</h4>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <p><strong>Área:</strong> ${contexto.profissao.area}</p>
+                    ${contexto.profissao.influencia ? `<p><strong>Influência:</strong> ${contexto.profissao.influencia}</p>` : ''}
+                    ${contexto.profissao.observacoes.length > 0 ? `
+                        <p><strong>Observações:</strong></p>
+                        <ul>${contexto.profissao.observacoes.map(o => `<li>${o}</li>`).join('')}</ul>
+                    ` : ''}
+                </div>
+
+                <h4>Contexto Socioeconômico:</h4>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                    <p><strong>Faixa de Renda:</strong> ${contexto.renda.faixa}</p>
+                    <p><strong>Acesso a Recursos:</strong> ${contexto.renda.acesso}</p>
+                    ${contexto.renda.ajustes.length > 0 ? `
+                        <ul>${contexto.renda.ajustes.map(a => `<li>${a}</li>`).join('')}</ul>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function renderizarRecomendacoes(recomendacoes) {
+            const container = document.getElementById('recomendacoes');
+            
+            const alertasHTML = recomendacoes.alertas.length > 0 ? `
+                <div class="alert alert-danger">
+                    <h4 style="color: #f44336; margin-top: 0;">🚨 ALERTAS CRÍTICOS</h4>
+                    ${recomendacoes.alertas.map(alerta => `
+                        <div style="margin-bottom: 20px;">
+                            <p><strong>Nível: ${alerta.nivel}</strong></p>
+                            <p>${alerta.texto}</p>
+                            <p><strong>Ações Necessárias:</strong></p>
+                            <ul>${alerta.acoes.map(acao => `<li>${acao}</li>`).join('')}</ul>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : '';
+
+            const prioridade1HTML = recomendacoes.prioridade1.length > 0 ? `
+                <h4>🔴 Prioridade 1 - URGENTE:</h4>
+                ${recomendacoes.prioridade1.map(rec => `
+                    <div style="background: #ffebee; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <h5 style="color: #f44336; margin-top: 0;">${rec.area}</h5>
+                        <p><strong>Objetivo:</strong> ${rec.objetivo}</p>
+                        <p><strong>Prazo:</strong> ${rec.prazo}</p>
+                        <p><strong>Ações:</strong></p>
+                        <ul>${rec.acoes.map(acao => `<li>${acao}</li>`).join('')}</ul>
+                    </div>
+                `).join('')}
+            ` : '';
+
+            const prioridade2HTML = recomendacoes.prioridade2.length > 0 ? `
+                <h4>🟡 Prioridade 2 - IMPORTANTE:</h4>
+                ${recomendacoes.prioridade2.map(rec => `
+                    <div style="background: #fff3e0; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <h5 style="color: #ff9800; margin-top: 0;">${rec.area}</h5>
+                        <p><strong>Objetivo:</strong> ${rec.objetivo}</p>
+                        <p><strong>Prazo:</strong> ${rec.prazo}</p>
+                        <p><strong>Ações:</strong></p>
+                        <ul>${rec.acoes.map(acao => `<li>${acao}</li>`).join('')}</ul>
+                    </div>
+                `).join('')}
+            ` : '';
+
+            const prioridade3HTML = recomendacoes.prioridade3.length > 0 ? `
+                <h4>🟢 Prioridade 3 - DESEJÁVEL:</h4>
+                ${recomendacoes.prioridade3.map(rec => `
+                    <div style="background: #e8f5e9; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <h5 style="color: #4caf50; margin-top: 0;">${rec.area}</h5>
+                        <p><strong>Objetivo:</strong> ${rec.objetivo}</p>
+                        <p><strong>Prazo:</strong> ${rec.prazo}</p>
+                        <p><strong>Ações:</strong></p>
+                        <ul>${rec.acoes.map(acao => `<li>${acao}</li>`).join('')}</ul>
+                    </div>
+                `).join('')}
+            ` : '';
+
+            container.innerHTML = `
+                ${alertasHTML}
+                ${prioridade1HTML}
+                ${prioridade2HTML}
+                ${prioridade3HTML}
+                
+                ${!alertasHTML && !prioridade1HTML && !prioridade2HTML && !prioridade3HTML ? `
+                    <div class="alert alert-info">
+                        <p>Nenhuma recomendação urgente identificada. Perfil saudável e consistente.</p>
+                        <p>Sugere-se acompanhamento periódico para manutenção do bem-estar sexual.</p>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        // Função para download em PDF (placeholder - requer biblioteca)
+        document.getElementById('downloadPDF')?.addEventListener('click', function() {
+            alert('Funcionalidade de PDF em desenvolvimento. Use "Imprimir" e salve como PDF pelo navegador.');
+            window.print();
+        });
+    </script>
+</body>
+</html>
