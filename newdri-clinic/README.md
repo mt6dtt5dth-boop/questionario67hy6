@@ -8,6 +8,9 @@ Sistema profissional para aplicação e análise de questionários de intimidade
 
 ## 📚 Documentação Completa
 
+### 🎯 **[📚 INDEX.md](INDEX.md)** ← **ÍNDICE COMPLETO** (navegue por tudo!)
+
+### Guias Principais:
 - **[⚡ QUICK-START.md](QUICK-START.md)** ← **COMECE AQUI!** (3 passos, 15 minutos)
 - **[📖 GUIA-COMPLETO-FINAL.md](GUIA-COMPLETO-FINAL.md)** - Guia definitivo completo
 - **[🔧 CONFIGURAR-SUPABASE.md](CONFIGURAR-SUPABASE.md)** - Setup do banco de dados (5 min)
