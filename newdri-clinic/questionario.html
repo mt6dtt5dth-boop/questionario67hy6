@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionário de Avaliação - Newdri Clinic</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="clinic-header">
+            <h1>🌸 Newdri Clinic</h1>
+            <p class="subtitle">Questionário de Avaliação de Intimidade e Bem-Estar</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%;">0%</div>
+            </div>
+            <p class="progress-text" id="progressText">0 de 66 questões respondidas</p>
+        </div>
+
+        <form id="questionarioForm">
+            <!-- DADOS DEMOGRÁFICOS -->
+            <div class="form-section fade-in">
+                <h2>📋 Dados Demográficos e Contextuais</h2>
+                <p class="intro-text">Essas informações são essenciais para uma análise contextualizada.</p>
+
+                <div class="form-group">
+                    <label for="nome">Nome (opcional):</label>
+                    <input type="text" id="nome" name="nome" placeholder="Deixe em branco para manter anonimato">
+                </div>
+
+                <div class="form-group">
+                    <label for="idade">Idade: *</label>
+                    <input type="number" id="idade" name="idade" min="18" max="99" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="estadoCivil">Estado Civil: *</label>
+                    <select id="estadoCivil" name="estadoCivil" required>
+                        <option value="">Selecione...</option>
+                        <option value="solteira">Solteira</option>
+                        <option value="namoro">Namoro/Relacionamento</option>
+                        <option value="casada">Casada/União Estável</option>
+                        <option value="divorciada">Divorciada/Separada</option>
+                        <option value="viuva">Viúva</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="cidade">Cidade onde reside: *</label>
+                    <input type="text" id="cidade" name="cidade" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipoLocalidade">Tipo de localidade: *</label>
+                    <select id="tipoLocalidade" name="tipoLocalidade" required>
+                        <option value="">Selecione...</option>
+                        <option value="capital">Capital ou região metropolitana (acima de 500 mil hab.)</option>
+                        <option value="media">Cidade média (100-500 mil hab.)</option>
+                        <option value="pequena">Cidade pequena/interior (abaixo de 100 mil hab.)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="profissao">Profissão/Área de atuação: *</label>
+                    <input type="text" id="profissao" name="profissao" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="renda">Faixa de renda mensal: *</label>
+                    <select id="renda" name="renda" required>
+                        <option value="">Selecione...</option>
+                        <option value="ate2">Até 2 salários mínimos</option>
+                        <option value="2a5">2 a 5 salários mínimos</option>
+                        <option value="5a10">5 a 10 salários mínimos</option>
+                        <option value="10a20">10 a 20 salários mínimos</option>
+                        <option value="acima20">Acima de 20 salários mínimos</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="escolaridade">Escolaridade: *</label>
+                    <select id="escolaridade" name="escolaridade" required>
+                        <option value="">Selecione...</option>
+                        <option value="fundamental">Ensino fundamental</option>
+                        <option value="medio">Ensino médio</option>
+                        <option value="superior_incompleto">Superior incompleto</option>
+                        <option value="superior">Superior completo</option>
+                        <option value="pos">Pós-graduação/Mestrado/Doutorado</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- ÁREA ONDE AS QUESTÕES SERÃO RENDERIZADAS DINAMICAMENTE -->
+            <div id="questoesContainer"></div>
+
+            <div class="nav-buttons">
+                <button type="button" class="btn btn-secondary" id="saveProgress">💾 Salvar Progresso</button>
+                <button type="submit" class="btn btn-primary">📊 Finalizar e Ver Relatório</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/supabase-config.js"></script>
+    <script src="js/questoes-data.js"></script>
+    <script src="js/questionario.js"></script>
+    <script>
+        // Renderizar questões dinamicamente
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('questoesContainer');
+            
+            questoesData.secoes.forEach(secao => {
+                // Criar header da seção
+                const secaoHeader = document.createElement('div');
+                secaoHeader.className = 'section-header';
+                secaoHeader.innerHTML = `<h2>${secao.titulo}</h2>`;
+                container.appendChild(secaoHeader);
+
+                // Criar questões da seção
+                secao.questoes.forEach(questao => {
+                    const questaoDiv = document.createElement('div');
+                    questaoDiv.className = questao.validador ? 'question validator fade-in' : 'question fade-in';
+                    questaoDiv.setAttribute('data-question', questao.numero);
+
+                    // Texto da questão
+                    const textoP = document.createElement('p');
+                    textoP.className = 'question-text';
+                    textoP.innerHTML = `<span class="question-number">${questao.numero}.</span> ${questao.texto}`;
+                    questaoDiv.appendChild(textoP);
+
+                    // Opções
+                    const opcoesDiv = document.createElement('div');
+                    opcoesDiv.className = 'options';
+
+                    questao.opcoes.forEach(opcao => {
+                        const opcaoDiv = document.createElement('div');
+                        opcaoDiv.className = 'option';
+
+                        const radioId = `${questao.id}${opcao.valor}`;
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.id = radioId;
+                        radio.name = questao.id;
+                        radio.value = opcao.valor;
+                        radio.required = true;
+
+                        const label = document.createElement('label');
+                        label.htmlFor = radioId;
+                        label.textContent = `${opcao.valor}) ${opcao.texto}`;
+
+                        opcaoDiv.appendChild(radio);
+                        opcaoDiv.appendChild(label);
+                        opcoesDiv.appendChild(opcaoDiv);
+                    });
+
+                    questaoDiv.appendChild(opcoesDiv);
+                    container.appendChild(questaoDiv);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

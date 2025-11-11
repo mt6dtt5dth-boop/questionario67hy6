@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Dr. Newton - Newdri Clinic</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- TELA DE LOGIN -->
+        <div id="loginScreen" class="card" style="max-width: 500px; margin: 100px auto;">
+            <header class="clinic-header" style="margin: -40px -40px 30px -40px;">
+                <h1>🌸 Newdri Clinic</h1>
+                <p class="subtitle">Dashboard do Terapeuta</p>
+            </header>
+
+            <h2>Login</h2>
+            <p style="color: #7f8c8d; margin-bottom: 30px;">Acesso exclusivo para Dr. Newton Guimarães</p>
+
+            <div class="form-group">
+                <label for="senhaLogin">Senha:</label>
+                <input type="password" id="senhaLogin" placeholder="Digite a senha do dashboard">
+            </div>
+
+            <button class="btn btn-primary" onclick="fazerLogin()" style="width: 100%;">
+                🔐 Entrar no Dashboard
+            </button>
+
+            <div id="erroLogin" class="alert alert-danger" style="display: none; margin-top: 20px;"></div>
+
+            <p style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: #7f8c8d;">
+                <strong>Senha padrão:</strong> newdri2025<br>
+                <em>(Altere em js/supabase-config.js)</em>
+            </p>
+        </div>
+
+        <!-- DASHBOARD PRINCIPAL -->
+        <div id="dashboardScreen" style="display: none;">
+            <header class="clinic-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1>🌸 Dashboard - Newdri Clinic</h1>
+                        <p class="subtitle">Dr. Newton Guimarães</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="fazerLogout()">
+                        🚪 Sair
+                    </button>
+                </div>
+            </header>
+
+            <!-- AÇÕES RÁPIDAS -->
+            <div class="card">
+                <h2>⚡ Ações Rápidas</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="mostrarModalNovoCodigo()">
+                        ➕ Gerar Novo Código
+                    </button>
+                    <button class="btn btn-secondary" onclick="atualizarLista()">
+                        🔄 Atualizar Lista
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.location.href='index.html'">
+                        🏠 Página Inicial
+                    </button>
+                </div>
+            </div>
+
+            <!-- ESTATÍSTICAS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCodigos">0</div>
+                    <div class="stat-label">Códigos Gerados</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);">
+                    <div class="stat-number" id="codigosUsados">0</div>
+                    <div class="stat-label">Questionários Respondidos</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);">
+                    <div class="stat-number" id="codigosPendentes">0</div>
+                    <div class="stat-label">Aguardando Resposta</div>
+                </div>
+            </div>
+
+            <!-- LISTA DE CÓDIGOS -->
+            <div class="card">
+                <h2>📋 Códigos de Acesso</h2>
+                
+                <div id="loadingCodigos" style="text-align: center; padding: 40px;">
+                    <div class="loading"></div>
+                    <p style="margin-top: 20px; color: #7f8c8d;">Carregando códigos...</p>
+                </div>
+
+                <div id="listaCodigos" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- MODAL: NOVO CÓDIGO -->
+        <div id="modalNovoCodigo" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 500px;">
+                <h2>➕ Gerar Novo Código de Acesso</h2>
+                
+                <div class="form-group">
+                    <label for="nomePaciente">Nome da Paciente (opcional):</label>
+                    <input type="text" id="nomePaciente" placeholder="Ex: Maria Silva">
+                    <p style="font-size: 0.9rem; color: #7f8c8d; margin-top: 5px;">
+                        Para sua referência. A paciente não verá este nome.
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="fecharModalNovoCodigo()" style="flex: 1;">
+                        Cancelar
+                    </button>
+                    <button class="btn btn-primary" onclick="gerarNovoCodigo()" style="flex: 1;">
+                        🎯 Gerar Código
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: CÓDIGO GERADO -->
+        <div id="modalCodigoGerado" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 600px;">
+                <h2 style="color: #4caf50;">✅ Código Gerado com Sucesso!</h2>
+                
+                <div style="background: linear-gradient(135deg, #6a4c93 0%, #c991cc 100%); 
+                            color: white; padding: 40px; border-radius: 15px; text-align: center; margin: 30px 0;">
+                    <p style="font-size: 1.2rem; margin-bottom: 15px;">Código de Acesso:</p>
+                    <h1 id="codigoGeradoDisplay" style="font-size: 3.5rem; letter-spacing: 8px; margin: 0; color: white;">
+                        XXXXXXXX
+                    </h1>
+                </div>
+
+                <div class="alert alert-info">
+                    <p><strong>📱 Envie este código para a paciente:</strong></p>
+                    <p style="margin-top: 10px;">Link de acesso:<br>
+                    <strong id="linkAcessoPaciente">https://seu-site.com/acesso.html</strong></p>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 30px;">
+                    <button class="btn btn-secondary" onclick="copiarCodigo()" style="flex: 1;">
+                        📋 Copiar Código
+                    </button>
+                    <button class="btn btn-primary" onclick="fecharModalCodigoGerado()" style="flex: 1;">
+                        ✅ Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: VER RELATÓRIO -->
+        <div id="modalRelatorio" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>📊 Relatório da Paciente</h2>
+                    <button class="btn btn-secondary" onclick="fecharModalRelatorio()">✕ Fechar</button>
+                </div>
+                <div id="conteudoRelatorio"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/supabase-config.js"></script>
+    <script src="js/analise.js"></script>
+    <script>
+        // Inicializar ao carregar página
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarLogin();
+        });
+
+        function verificarLogin() {
+            if (verificarAutenticacaoDashboard()) {
+                mostrarDashboard();
+            } else {
+                mostrarLogin();
+            }
+        }
+
+        function mostrarLogin() {
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('dashboardScreen').style.display = 'none';
+        }
+
+        function mostrarDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardScreen').style.display = 'block';
+            
+            // Inicializar Supabase
+            if (!initSupabase()) {
+                alert('⚠️ Supabase não configurado!\n\nPor favor, siga as instruções em CONFIGURAR-SUPABASE.md');
+                return;
+            }
+            
+            // Carregar dados
+            carregarDashboard();
+        }
+
+        function fazerLogin() {
+            const senha = document.getElementById('senhaLogin').value;
+            const erroDiv = document.getElementById('erroLogin');
+
+            if (!senha) {
+                erroDiv.textContent = '❌ Digite a senha';
+                erroDiv.style.display = 'block';
+                return;
+            }
+
+            if (autenticarDashboard(senha)) {
+                erroDiv.style.display = 'none';
+                mostrarDashboard();
+            } else {
+                erroDiv.textContent = '❌ Senha incorreta!';
+                erroDiv.style.display = 'block';
+            }
+        }
+
+        function fazerLogout() {
+            if (confirm('Deseja sair do dashboard?')) {
+                desautenticarDashboard();
+                mostrarLogin();
+            }
+        }
+
+        // Permitir login com Enter
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') {
+                fazerLogin();
+            }
+        });
+
+        async function carregarDashboard() {
+            await atualizarLista();
+        }
+
+        async function atualizarLista() {
+            document.getElementById('loadingCodigos').style.display = 'block';
+            document.getElementById('listaCodigos').style.display = 'none';
+
+            const resultado = await listarCodigos();
+
+            if (!resultado.sucesso) {
+                alert('Erro ao carregar códigos: ' + resultado.erro);
+                return;
+            }
+
+            const codigos = resultado.codigos;
+
+            // Atualizar estatísticas
+            document.getElementById('totalCodigos').textContent = codigos.length;
+            document.getElementById('codigosUsados').textContent = codigos.filter(c => c.status === 'usado').length;
+            document.getElementById('codigosPendentes').textContent = codigos.filter(c => c.status === 'pendente').length;
+
+            // Renderizar lista
+            const listaDiv = document.getElementById('listaCodigos');
+            
+            if (codigos.length === 0) {
+                listaDiv.innerHTML = `
+                    <div class="alert alert-info">
+                        <p>📭 Nenhum código gerado ainda.</p>
+                        <p>Clique em "Gerar Novo Código" para começar!</p>
+                    </div>
+                `;
+            } else {
+                let html = '<table style="width: 100%; border-collapse: collapse;">';
+                html += `
+                    <thead>
+                        <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                            <th style="padding: 12px; text-align: left;">Código</th>
+                            <th style="padding: 12px; text-align: left;">Paciente</th>
+                            <th style="padding: 12px; text-align: left;">Status</th>
+                            <th style="padding: 12px; text-align: left;">Criado em</th>
+                            <th style="padding: 12px; text-align: left;">Expira em</th>
+                            <th style="padding: 12px; text-align: center;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+
+                codigos.forEach(codigo => {
+                    const statusBadge = codigo.status === 'usado' 
+                        ? '<span style="background: #4caf50; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;">✅ Respondido</span>'
+                        : '<span style="background: #ff9800; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;">⏳ Pendente</span>';
+
+                    const dataCriacao = new Date(codigo.criado_em).toLocaleDateString('pt-BR');
+                    const dataExpiracao = new Date(codigo.expires_at).toLocaleDateString('pt-BR');
+                    const nomePaciente = codigo.nome_paciente || '<em style="color: #999;">Sem nome</em>';
+
+                    html += `
+                        <tr style="border-bottom: 1px solid #e0e0e0;">
+                            <td style="padding: 12px;"><strong style="font-family: monospace; font-size: 1.1rem;">${codigo.codigo}</strong></td>
+                            <td style="padding: 12px;">${nomePaciente}</td>
+                            <td style="padding: 12px;">${statusBadge}</td>
+                            <td style="padding: 12px;">${dataCriacao}</td>
+                            <td style="padding: 12px;">${dataExpiracao}</td>
+                            <td style="padding: 12px; text-align: center;">
+                                ${codigo.status === 'usado' 
+                                    ? `<button class="btn btn-primary" onclick="verRelatorio('${codigo.codigo}')" style="padding: 8px 16px;">📊 Ver Relatório</button>`
+                                    : `<button class="btn btn-secondary" onclick="copiarCodigoLista('${codigo.codigo}')" style="padding: 8px 16px;">📋 Copiar</button>`
+                                }
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table>';
+                listaDiv.innerHTML = html;
+            }
+
+            document.getElementById('loadingCodigos').style.display = 'none';
+            document.getElementById('listaCodigos').style.display = 'block';
+        }
+
+        function mostrarModalNovoCodigo() {
+            document.getElementById('nomePaciente').value = '';
+            document.getElementById('modalNovoCodigo').style.display = 'flex';
+        }
+
+        function fecharModalNovoCodigo() {
+            document.getElementById('modalNovoCodigo').style.display = 'none';
+        }
+
+        async function gerarNovoCodigo() {
+            const nomePaciente = document.getElementById('nomePaciente').value.trim() || null;
+
+            const resultado = await criarNovoCodigo(nomePaciente);
+
+            if (!resultado.sucesso) {
+                alert('Erro ao gerar código: ' + resultado.erro);
+                return;
+            }
+
+            fecharModalNovoCodigo();
+            
+            // Mostrar código gerado
+            document.getElementById('codigoGeradoDisplay').textContent = resultado.codigo;
+            
+            // Atualizar link (use seu domínio real aqui)
+            const linkAcesso = window.location.origin + '/acesso.html';
+            document.getElementById('linkAcessoPaciente').textContent = linkAcesso;
+            
+            document.getElementById('modalCodigoGerado').style.display = 'flex';
+
+            // Atualizar lista
+            await atualizarLista();
+        }
+
+        function fecharModalCodigoGerado() {
+            document.getElementById('modalCodigoGerado').style.display = 'none';
+        }
+
+        function copiarCodigo() {
+            const codigo = document.getElementById('codigoGeradoDisplay').textContent;
+            navigator.clipboard.writeText(codigo).then(() => {
+                alert('✅ Código copiado: ' + codigo);
+            });
+        }
+
+        function copiarCodigoLista(codigo) {
+            navigator.clipboard.writeText(codigo).then(() => {
+                alert('✅ Código copiado: ' + codigo);
+            });
+        }
+
+        async function verRelatorio(codigo) {
+            document.getElementById('modalRelatorio').style.display = 'flex';
+            document.getElementById('conteudoRelatorio').innerHTML = '<div style="text-align: center; padding: 40px;"><div class="loading"></div><p style="margin-top: 20px;">Carregando relatório...</p></div>';
+
+            const resultado = await buscarRespostas(codigo);
+
+            if (!resultado.sucesso) {
+                document.getElementById('conteudoRelatorio').innerHTML = `<div class="alert alert-danger">Erro ao carregar relatório: ${resultado.erro}</div>`;
+                return;
+            }
+
+            const dados = {
+                demograficos: resultado.dados.dados_demograficos,
+                respostas: resultado.dados.respostas,
+                timestamp: resultado.dados.respondido_em
+            };
+
+            // Realizar análise
+            const analise = analisarQuestionario(dados);
+
+            // Renderizar relatório (simplificado)
+            let html = `
+                <div class="alert alert-success">
+                    <strong>Código:</strong> ${codigo}<br>
+                    <strong>Respondido em:</strong> ${new Date(dados.timestamp).toLocaleString('pt-BR')}
+                </div>
+
+                <h3>Dados Demográficos</h3>
+                <p><strong>Nome:</strong> ${dados.demograficos.nome || 'Anônimo'}</p>
+                <p><strong>Idade:</strong> ${dados.demograficos.idade} anos</p>
+                <p><strong>Estado Civil:</strong> ${dados.demograficos.estadoCivil}</p>
+                <p><strong>Cidade:</strong> ${dados.demograficos.cidade}</p>
+
+                <h3>Escalas</h3>
+                <p><strong>Abertura Sexual:</strong> ${analise.escalas.aberturaSexual}%</p>
+                <p><strong>Autoconhecimento:</strong> ${analise.escalas.autoconhecimento}%</p>
+                <p><strong>Dominância/Submissão:</strong> ${analise.escalas.dominanciaSubmissao}</p>
+                <p><strong>Masoquismo:</strong> ${analise.escalas.masoquismo}%</p>
+                <p><strong>Dissonância:</strong> ${analise.escalas.dissonanciaContexto}%</p>
+
+                <h3>Perfil</h3>
+                <p><strong>Principal:</strong> ${analise.perfil.principal}</p>
+                ${analise.perfil.subtipo ? `<p><strong>Subtipo:</strong> ${analise.perfil.subtipo}</p>` : ''}
+
+                <div style="margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="imprimirRelatorioCompleto('${codigo}')">
+                        🖨️ Ver Relatório Completo (Imprimir)
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('conteudoRelatorio').innerHTML = html;
+        }
+
+        function fecharModalRelatorio() {
+            document.getElementById('modalRelatorio').style.display = 'none';
+        }
+
+        function imprimirRelatorioCompleto(codigo) {
+            // Redirecionar para página de relatório completo
+            localStorage.setItem('relatorio_codigo', codigo);
+            window.open('relatorio-dashboard.html', '_blank');
+        }
+    </script>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</body>
+</html>

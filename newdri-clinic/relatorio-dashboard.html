@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Profissional - Newdri Clinic</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @media print {
+            body {
+                background: white;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+            @page {
+                size: A4;
+                margin: 2cm;
+            }
+        }
+
+        .relatorio-a4 {
+            background: white;
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 20mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header-relatorio {
+            border-bottom: 4px solid #6a4c93;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .secao-relatorio {
+            margin-bottom: 40px;
+        }
+
+        .secao-relatorio h2 {
+            color: #6a4c93;
+            border-left: 5px solid #6a4c93;
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+
+        .escala-visual {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f4fc 0%, #fff 100%);
+            border-radius: 10px;
+            border-left: 5px solid #6a4c93;
+        }
+
+        .badge-perfil {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin: 10px 5px;
+        }
+
+        .badge-dominante { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .badge-submisso { background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; }
+        .badge-switch { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+        .badge-explorador { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
+        .badge-romantico { background: linear-gradient(135deg, #e91e63, #c2185b); color: white; }
+        .badge-conservador { background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; }
+
+        .grafico-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .info-demografica {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #6a4c93;
+        }
+
+        .info-item strong {
+            color: #6a4c93;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .alert-critico {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-left: 5px solid #f44336;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .recomendacao-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 5px solid #4caf50;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .marcador-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .marcador-list li {
+            padding: 10px;
+            margin: 8px 0;
+            background: #f8f4fc;
+            border-radius: 5px;
+            border-left: 3px solid #6a4c93;
+        }
+
+        .marcador-list li::before {
+            content: "✓";
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+        <button class="btn btn-secondary" onclick="window.close()">✕ Fechar</button>
+    </div>
+
+    <div class="relatorio-a4">
+        <!-- CABEÇALHO -->
+        <div class="header-relatorio">
+            <h1 style="color: #6a4c93; margin: 0; font-size: 2rem;">🌸 Newdri Clinic</h1>
+            <p style="color: #7f8c8d; margin: 5px 0 0 0;">São Lourenço - MG</p>
+            <h2 style="margin: 20px 0 10px 0;">Relatório de Avaliação Psicossexual</h2>
+            <p style="color: #7f8c8d;"><strong>Dr. Newton Guimarães</strong> | Psicanalista</p>
+            <p style="color: #999; font-size: 0.9rem;">
+                <strong>Código:</strong> <span id="codigoRelatorio">-</span> | 
+                <strong>Data:</strong> <span id="dataRelatorio">-</span>
+            </p>
+        </div>
+
+        <div id="conteudoRelatorioCompleto">
+            <div style="text-align: center; padding: 100px 20px;">
+                <div class="loading"></div>
+                <p style="margin-top: 20px; color: #7f8c8d;">Gerando relatório detalhado...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/supabase-config.js"></script>
+    <script src="js/analise.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const codigo = localStorage.getItem('relatorio_codigo');
+            
+            if (!codigo) {
+                alert('Código não encontrado');
+                window.close();
+                return;
+            }
+
+            document.getElementById('codigoRelatorio').textContent = codigo;
+
+            // Inicializar Supabase
+            initSupabase();
+
+            // Buscar dados
+            const resultado = await buscarRespostas(codigo);
+
+            if (!resultado.sucesso) {
+                document.getElementById('conteudoRelatorioCompleto').innerHTML = 
+                    '<div class="alert alert-danger">Erro ao carregar dados: ' + resultado.erro + '</div>';
+                return;
+            }
+
+            const dados = {
+                demograficos: resultado.dados.dados_demograficos,
+                respostas: resultado.dados.respostas,
+                timestamp: resultado.dados.respondido_em
+            };
+
+            document.getElementById('dataRelatorio').textContent = 
+                new Date(dados.timestamp).toLocaleString('pt-BR');
+
+            // Realizar análise
+            const analise = analisarQuestionario(dados);
+
+            // Renderizar relatório completo
+            renderizarRelatorioCompleto(dados, analise);
+        });
+
+        function renderizarRelatorioCompleto(dados, analise) {
+            const container = document.getElementById('conteudoRelatorioCompleto');
+
+            let html = `
+                <!-- SEÇÃO 1: DADOS DEMOGRÁFICOS -->
+                <div class="secao-relatorio">
+                    <h2>I. Perfil Demográfico e Contextual</h2>
+                    <div class="info-demografica">
+                        <div class="info-item">
+                            <strong>Nome</strong>
+                            ${dados.demograficos.nome || 'Anônimo'}
+                        </div>
+                        <div class="info-item">
+                            <strong>Idade</strong>
+                            ${dados.demograficos.idade} anos
+                        </div>
+                        <div class="info-item">
+                            <strong>Estado Civil</strong>
+                            ${formatarEstadoCivil(dados.demograficos.estadoCivil)}
+                        </div>
+                        <div class="info-item">
+                            <strong>Localidade</strong>
+                            ${dados.demograficos.cidade} (${formatarLocalidade(dados.demograficos.tipoLocalidade)})
+                        </div>
+                        <div class="info-item">
+                            <strong>Profissão</strong>
+                            ${dados.demograficos.profissao}
+                        </div>
+                        <div class="info-item">
+                            <strong>Escolaridade</strong>
+                            ${formatarEscolaridade(dados.demograficos.escolaridade)}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-break"></div>
+
+                <!-- SEÇÃO 2: PERFIL PSICOSSEXUAL -->
+                <div class="secao-relatorio">
+                    <h2>II. Perfil Psicossexual Identificado</h2>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <span class="badge-perfil ${getBadgeClass(analise.perfil.principal)}">
+                            ${analise.perfil.principal.toUpperCase()}
+                        </span>
+                        ${analise.perfil.subtipo ? `
+                            <span class="badge-perfil" style="background: linear-gradient(135deg, #c991cc, #b08cc9);">
+                                ${analise.perfil.subtipo}
+                            </span>
+                        ` : ''}
+                    </div>
+
+                    ${analise.perfil.secundario ? `
+                        <p style="text-align: center; color: #7f8c8d;">
+                            <strong>Perfil Secundário:</strong> ${analise.perfil.secundario}
+                        </p>
+                    ` : ''}
+
+                    <div class="escala-visual">
+                        <p><strong>Confiança do Perfil:</strong> ${analise.perfil.confianca}%</p>
+                        <div style="background: #e0e0e0; height: 30px; border-radius: 15px; overflow: hidden; margin-top: 10px;">
+                            <div style="background: linear-gradient(135deg, #4caf50, #8bc34a); 
+                                        width: ${analise.perfil.confianca}%; height: 100%; 
+                                        display: flex; align-items: center; justify-content: center;
+                                        color: white; font-weight: 700;">
+                                ${analise.perfil.confianca}%
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: #6a4c93; margin-top: 30px;">Marcadores Identificados:</h3>
+                    <ul class="marcador-list">
+                        ${analise.perfil.marcadores && analise.perfil.marcadores.length > 0 
+                            ? analise.perfil.marcadores.map(m => `<li>${m}</li>`).join('')
+                            : '<li>Perfil em desenvolvimento ou versátil</li>'
+                        }
+                    </ul>
+                </div>
+
+                <!-- SEÇÃO 3: ESCALAS PSICOMÉTRICAS -->
+                <div class="secao-relatorio">
+                    <h2>III. Escalas Psicométricas</h2>
+                    
+                    <div class="grafico-container">
+                        <canvas id="graficoEscalas" width="400" height="300"></canvas>
+                    </div>
+
+                    <h3 style="color: #6a4c93; margin-top: 30px;">Interpretação Detalhada:</h3>
+
+                    ${renderizarEscalaDetalhada('Abertura Sexual', analise.escalas.aberturaSexual, 100)}
+                    ${renderizarEscalaDetalhada('Autoconhecimento', analise.escalas.autoconhecimento, 100)}
+                    ${renderizarEscalaDetalhada('Dominância ↔ Submissão', analise.escalas.dominanciaSubmissao, 50, true)}
+                    ${renderizarEscalaDetalhada('Masoquismo', analise.escalas.masoquismo, 100)}
+                    ${renderizarEscalaDetalhada('Dissonância Contexto/Desejo', analise.escalas.dissonanciaContexto, 100, false, true)}
+                </div>
+
+                <div class="page-break"></div>
+
+                <!-- SEÇÃO 4: ANÁLISE CONTEXTUAL -->
+                <div class="secao-relatorio">
+                    <h2>IV. Análise Contextual Sociodemográfica</h2>
+                    
+                    ${renderizarContexto(analise.contexto)}
+                </div>
+
+                <!-- SEÇÃO 5: DISSONÂNCIAS -->
+                <div class="secao-relatorio">
+                    <h2>V. Análise de Dissonâncias e Inconsistências</h2>
+                    
+                    ${renderizarDissonancias(analise)}
+                </div>
+
+                <div class="page-break"></div>
+
+                <!-- SEÇÃO 6: RECOMENDAÇÕES -->
+                <div class="secao-relatorio">
+                    <h2>VI. Recomendações Terapêuticas</h2>
+                    
+                    ${renderizarRecomendacoes(analise.recomendacoes)}
+                </div>
+
+                <!-- RODAPÉ -->
+                <div style="margin-top: 60px; padding-top: 30px; border-top: 2px solid #e0e0e0; text-align: center; color: #7f8c8d;">
+                    <p><strong>Dr. Newton Guimarães</strong></p>
+                    <p>Psicanalista - Newdri Clinic</p>
+                    <p style="font-size: 0.9rem; margin-top: 20px;">
+                        <em>Este relatório foi gerado por sistema computadorizado de avaliação psicométrica.<br>
+                        Os resultados devem ser interpretados por profissional qualificado em contexto terapêutico.</em>
+                    </p>
+                    <p style="font-size: 0.85rem; margin-top: 10px;">
+                        <strong>Confidencial - Uso Profissional Exclusivo</strong>
+                    </p>
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+            // Criar gráficos
+            criarGraficos(analise);
+        }
+
+        function criarGraficos(analise) {
+            // Gráfico de Radar - Escalas
+            const ctx = document.getElementById('graficoEscalas');
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: [
+                        'Abertura Sexual',
+                        'Autoconhecimento',
+                        'Dom/Sub',
+                        'Masoquismo',
+                        'Dissonância'
+                    ],
+                    datasets: [{
+                        label: 'Pontuação',
+                        data: [
+                            analise.escalas.aberturaSexual,
+                            analise.escalas.autoconhecimento,
+                            Math.abs(analise.escalas.dominanciaSubmissao),
+                            analise.escalas.masoquismo,
+                            100 - analise.escalas.dissonanciaContexto // Inverter para positivo
+                        ],
+                        backgroundColor: 'rgba(106, 76, 147, 0.2)',
+                        borderColor: 'rgba(106, 76, 147, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(106, 76, 147, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(106, 76, 147, 1)'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderizarEscalaDetalhada(nome, valor, max, bipolar = false, critico = false) {
+            const porcentagem = bipolar ? Math.abs(valor) / max * 100 : valor / max * 100;
+            const cor = critico 
+                ? (valor > 70 ? '#f44336' : valor > 40 ? '#ff9800' : '#4caf50')
+                : (porcentagem > 70 ? '#4caf50' : porcentagem > 40 ? '#ff9800' : '#f44336');
+
+            const interpretacao = interpretarEscala(nome, valor, bipolar);
+
+            return `
+                <div class="escala-visual">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <strong>${nome}</strong>
+                        <span style="color: ${cor}; font-weight: 700; font-size: 1.2rem;">
+                            ${bipolar ? (valor > 0 ? '+' : '') : ''}${valor}${bipolar ? '' : '%'}
+                        </span>
+                    </div>
+                    <div style="background: #e0e0e0; height: 25px; border-radius: 12px; overflow: hidden;">
+                        <div style="background: ${cor}; width: ${porcentagem}%; height: 100%; 
+                                    transition: width 0.3s ease;"></div>
+                    </div>
+                    <p style="margin-top: 10px; color: #7f8c8d; font-size: 0.95rem;">
+                        ${interpretacao}
+                    </p>
+                </div>
+            `;
+        }
+
+        function interpretarEscala(nome, valor, bipolar) {
+            if (nome === 'Abertura Sexual') {
+                if (valor > 70) return '✅ Alta abertura para novas experiências. Curiosidade e exploração ativa.';
+                if (valor > 40) return '⚠️ Abertura moderada. Depende de contexto e confiança no parceiro.';
+                return '⚠️ Baixa abertura. Preferência por familiar ou possível repressão contextual.';
+            }
+            if (nome === 'Autoconhecimento') {
+                if (valor > 70) return '✅ Excelente conhecimento de si mesma e de seus desejos.';
+                if (valor > 40) return '⚠️ Conhecimento moderado. Ainda em processo de descoberta.';
+                return '⚠️ Baixo autoconhecimento. Recomenda-se trabalho de exploração pessoal.';
+            }
+            if (nome === 'Dominância ↔ Submissão') {
+                if (valor > 20) return '🔴 Tendência dominante pronunciada. Desejo de liderança e controle.';
+                if (valor < -20) return '🟣 Tendência submissa pronunciada. Desejo de entrega e proteção.';
+                return '🔵 Perfil versátil/switch. Alternância entre papéis conforme contexto.';
+            }
+            if (nome === 'Masoquismo') {
+                if (valor > 60) return '⚠️ Alto interesse em sensações intensas e leve dor consensual.';
+                if (valor > 30) return '⚠️ Interesse moderado. Curiosidade presente mas não explorada.';
+                return '✅ Baixo interesse ou não explorado. Preferência por sensações suaves.';
+            }
+            if (nome === 'Dissonância Contexto/Desejo') {
+                if (valor > 70) return '🚨 SEVERA - Diferença crítica entre desejos e expressão. Intervenção urgente.';
+                if (valor > 40) return '⚠️ MODERADA - Repressão presente. Trabalho terapêutico recomendado.';
+                return '✅ BAIXA - Boa congruência entre desejos internos e expressão externa.';
+            }
+            return '';
+        }
+
+        function renderizarContexto(contexto) {
+            return `
+                <h3 style="color: #6a4c93;">Análise por Localidade:</h3>
+                <div class="info-item">
+                    <strong>Tipo de Localidade:</strong> ${contexto.localidade.tipo}<br>
+                    <strong>Pressão Social:</strong> ${contexto.localidade.pressaoSocial}
+                    ${contexto.localidade.ajustes.length > 0 ? `
+                        <ul style="margin-top: 10px;">
+                            ${contexto.localidade.ajustes.map(a => `<li>${a}</li>`).join('')}
+                        </ul>
+                    ` : ''}
+                </div>
+
+                <h3 style="color: #6a4c93; margin-top: 20px;">Análise por Faixa Etária:</h3>
+                <div class="info-item">
+                    <strong>Faixa:</strong> ${contexto.idade.faixa}<br>
+                    <strong>Características:</strong> ${contexto.idade.caracteristicas.join(', ')}
+                    ${contexto.idade.observacoes.length > 0 ? `
+                        <div class="alert-critico" style="margin-top: 15px;">
+                            ${contexto.idade.observacoes.map(o => `<p>⚠️ ${o}</p>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+
+                <h3 style="color: #6a4c93; margin-top: 20px;">Dinâmica Relacional:</h3>
+                <div class="info-item">
+                    <strong>Status:</strong> ${contexto.estadoCivil.status}
+                    ${contexto.estadoCivil.dinamica ? `<br><strong>Dinâmica:</strong> ${contexto.estadoCivil.dinamica}` : ''}
+                    ${contexto.estadoCivil.alertas.length > 0 ? `
+                        <div class="alert-critico" style="margin-top: 15px;">
+                            ${contexto.estadoCivil.alertas.map(a => `<p>⚠️ ${a}</p>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function renderizarDissonancias(analise) {
+            const analisador = new AnalisadorPsicossexual(
+                JSON.parse(localStorage.getItem('questionario_dados') || '{}')
+            );
+            const dissonancias = analisador.detectarDissonancias();
+
+            if (dissonancias.length === 0) {
+                return `
+                    <div style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); 
+                                padding: 30px; border-radius: 10px; border-left: 5px solid #4caf50;">
+                        <h3 style="color: #4caf50; margin-top: 0;">✅ Consistência Alta</h3>
+                        <p>Não foram detectadas inconsistências significativas entre as respostas. 
+                        Isso indica boa congruência entre desejos, fantasias e comportamentos.</p>
+                    </div>
+                `;
+            }
+
+            const criticas = dissonancias.filter(d => d.criticidade === 'ALTA');
+            const outras = dissonancias.filter(d => d.criticidade !== 'ALTA');
+
+            let html = '';
+
+            if (criticas.length > 0) {
+                html += '<h3 style="color: #f44336;">🚨 Dissonâncias Críticas:</h3>';
+                criticas.forEach(d => {
+                    html += `
+                        <div class="alert-critico">
+                            <h4 style="color: #f44336; margin-top: 0;">${d.tipo}</h4>
+                            <p><strong>Par de Questões:</strong> ${d.par}</p>
+                            <p><strong>Descrição:</strong> ${d.descricao}</p>
+                            <p><strong>Interpretação:</strong> ${d.interpretacao}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            if (outras.length > 0) {
+                html += '<h3 style="color: #ff9800; margin-top: 30px;">⚠️ Dissonâncias Menores:</h3>';
+                outras.forEach(d => {
+                    html += `
+                        <div style="background: #fff3e0; padding: 15px; border-left: 4px solid #ff9800; 
+                                    border-radius: 5px; margin-bottom: 15px;">
+                            <p><strong>${d.tipo}</strong> (${d.par})</p>
+                            <p>${d.descricao}</p>
+                            <p style="color: #7f8c8d;"><em>${d.interpretacao}</em></p>
+                        </div>
+                    `;
+                });
+            }
+
+            html += `
+                <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 8px;">
+                    <strong>Total de dissonâncias:</strong> ${dissonancias.length}<br>
+                    <strong>Nível de consistência:</strong> ${
+                        dissonancias.length === 0 ? 'Excelente (100%)' :
+                        dissonancias.length <= 2 ? 'Bom (80%)' :
+                        dissonancias.length <= 4 ? 'Moderado (60%)' :
+                        'Baixo (< 50%)'
+                    }
+                </div>
+            `;
+
+            return html;
+        }
+
+        function renderizarRecomendacoes(recomendacoes) {
+            let html = '';
+
+            // Alertas críticos
+            if (recomendacoes.alertas.length > 0) {
+                html += '<h3 style="color: #f44336;">🚨 Alertas Críticos:</h3>';
+                recomendacoes.alertas.forEach(alerta => {
+                    html += `
+                        <div class="alert-critico">
+                            <h4 style="color: #f44336; margin-top: 0;">Nível: ${alerta.nivel}</h4>
+                            <p><strong>${alerta.texto}</strong></p>
+                            <p><strong>Ações Necessárias:</strong></p>
+                            <ul>
+                                ${alerta.acoes.map(acao => `<li>${acao}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                });
+            }
+
+            // Prioridade 1
+            if (recomendacoes.prioridade1.length > 0) {
+                html += '<h3 style="color: #f44336; margin-top: 30px;">🔴 Prioridade 1 - URGENTE:</h3>';
+                recomendacoes.prioridade1.forEach(rec => {
+                    html += `
+                        <div class="recomendacao-box" style="background: linear-gradient(135deg, #ffebee, #ffcdd2); 
+                                                              border-left-color: #f44336;">
+                            <h4 style="color: #f44336; margin-top: 0;">${rec.area}</h4>
+                            <p><strong>Objetivo:</strong> ${rec.objetivo}</p>
+                            <p><strong>Prazo:</strong> ${rec.prazo}</p>
+                            <p><strong>Ações:</strong></p>
+                            <ul>
+                                ${rec.acoes.map(acao => `<li>${acao}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                });
+            }
+
+            // Prioridade 2
+            if (recomendacoes.prioridade2.length > 0) {
+                html += '<h3 style="color: #ff9800; margin-top: 30px;">🟡 Prioridade 2 - IMPORTANTE:</h3>';
+                recomendacoes.prioridade2.forEach(rec => {
+                    html += `
+                        <div class="recomendacao-box" style="background: linear-gradient(135deg, #fff3e0, #ffe0b2); 
+                                                              border-left-color: #ff9800;">
+                            <h4 style="color: #ff9800; margin-top: 0;">${rec.area}</h4>
+                            <p><strong>Objetivo:</strong> ${rec.objetivo}</p>
+                            <p><strong>Prazo:</strong> ${rec.prazo}</p>
+                            <p><strong>Ações:</strong></p>
+                            <ul>
+                                ${rec.acoes.map(acao => `<li>${acao}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                });
+            }
+
+            // Prioridade 3
+            if (recomendacoes.prioridade3.length > 0) {
+                html += '<h3 style="color: #4caf50; margin-top: 30px;">🟢 Prioridade 3 - DESEJÁVEL:</h3>';
+                recomendacoes.prioridade3.forEach(rec => {
+                    html += `
+                        <div class="recomendacao-box">
+                            <h4 style="color: #4caf50; margin-top: 0;">${rec.area}</h4>
+                            <p><strong>Objetivo:</strong> ${rec.objetivo}</p>
+                            <p><strong>Prazo:</strong> ${rec.prazo}</p>
+                            <p><strong>Ações:</strong></p>
+                            <ul>
+                                ${rec.acoes.map(acao => `<li>${acao}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                });
+            }
+
+            if (!html) {
+                html = `
+                    <div class="recomendacao-box">
+                        <p>✅ Nenhuma recomendação urgente identificada. Perfil saudável e consistente.</p>
+                        <p>Sugere-se acompanhamento periódico para manutenção do bem-estar sexual.</p>
+                    </div>
+                `;
+            }
+
+            return html;
+        }
+
+        function getBadgeClass(perfil) {
+            const map = {
+                'Dominante': 'badge-dominante',
+                'Submisso': 'badge-submisso',
+                'Switch/Versátil': 'badge-switch',
+                'Explorador': 'badge-explorador',
+                'Romântico': 'badge-romantico',
+                'Conservador': 'badge-conservador'
+            };
+            return map[perfil] || 'badge-switch';
+        }
+
+        function formatarEstadoCivil(valor) {
+            const map = {
+                'solteira': 'Solteira',
+                'namoro': 'Namoro/Relacionamento',
+                'casada': 'Casada/União Estável',
+                'divorciada': 'Divorciada/Separada',
+                'viuva': 'Viúva'
+            };
+            return map[valor] || valor;
+        }
+
+        function formatarLocalidade(valor) {
+            const map = {
+                'capital': 'Capital/Região Metropolitana',
+                'media': 'Cidade Média',
+                'pequena': 'Cidade Pequena/Interior'
+            };
+            return map[valor] || valor;
+        }
+
+        function formatarEscolaridade(valor) {
+            const map = {
+                'fundamental': 'Ensino Fundamental',
+                'medio': 'Ensino Médio',
+                'superior_incompleto': 'Superior Incompleto',
+                'superior': 'Superior Completo',
+                'pos': 'Pós-graduação/Mestrado/Doutorado'
+            };
+            return map[valor] || valor;
+        }
+    </script>
+</body>
+</html>
