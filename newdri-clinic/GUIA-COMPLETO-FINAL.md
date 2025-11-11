@@ -6,6 +6,17 @@ Dr. Newton, seu sistema está **completamente finalizado** com todas as funciona
 
 ---
 
+## 📚 Navegação Rápida da Documentação
+
+- **[⚡ QUICK-START.md](QUICK-START.md)** ← Comece aqui! (3 passos, 15 min)
+- **[📖 README.md](README.md)** - Visão geral do sistema
+- **[🔧 CONFIGURAR-SUPABASE.md](CONFIGURAR-SUPABASE.md)** - Setup do banco (5 min)
+- **[🚀 DEPLOY.md](DEPLOY.md)** - Deploy no Cloudflare (5 min)
+- **[🎨 SHOWCASE-VISUAL.md](SHOWCASE-VISUAL.md)** - Todas as cores e gradientes
+- **[✅ PROJETO-FINALIZADO.md](PROJETO-FINALIZADO.md)** - Resumo do projeto
+
+---
+
 ## 🌟 O QUE FOI DESENVOLVIDO:
 
 ### 🎨 **Sistema Premium com:**

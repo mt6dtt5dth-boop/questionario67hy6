@@ -4,6 +4,17 @@
 
 ---
 
+## 📚 Documentação Relacionada
+
+- **[📖 README.md](README.md)** - Visão geral do sistema
+- **[📘 GUIA-COMPLETO-FINAL.md](GUIA-COMPLETO-FINAL.md)** - Guia definitivo completo
+- **[🔧 CONFIGURAR-SUPABASE.md](CONFIGURAR-SUPABASE.md)** - Detalhes do Supabase
+- **[🚀 DEPLOY.md](DEPLOY.md)** - Detalhes do deploy
+- **[🎨 SHOWCASE-VISUAL.md](SHOWCASE-VISUAL.md)** - Elementos visuais
+- **[✅ PROJETO-FINALIZADO.md](PROJETO-FINALIZADO.md)** - Resumo completo
+
+---
+
 ## ✅ O QUE JÁ ESTÁ FEITO
 
 - ✅ Dashboard colorido para gerenciar códigos

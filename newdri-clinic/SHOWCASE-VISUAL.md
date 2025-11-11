@@ -4,6 +4,17 @@
 
 ---
 
+## 📚 Documentação Relacionada
+
+- **[⚡ QUICK-START.md](QUICK-START.md)** ← Voltar para início rápido
+- **[📖 README.md](README.md)** - Visão geral do sistema
+- **[📘 GUIA-COMPLETO-FINAL.md](GUIA-COMPLETO-FINAL.md)** - Guia completo
+- **[🔧 CONFIGURAR-SUPABASE.md](CONFIGURAR-SUPABASE.md)** - Setup do banco
+- **[🚀 DEPLOY.md](DEPLOY.md)** - Deploy no Cloudflare
+- **[✅ PROJETO-FINALIZADO.md](PROJETO-FINALIZADO.md)** - Resumo do projeto
+
+---
+
 ## 🌈 PALETA DE CORES COMPLETA
 
 ### Cores Principais

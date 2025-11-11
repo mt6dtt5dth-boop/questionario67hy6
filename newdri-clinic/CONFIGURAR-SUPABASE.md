@@ -1,5 +1,15 @@
 # 🔧 Configurar Supabase - 5 Minutos
 
+## 📚 Navegação da Documentação
+
+- **[⚡ QUICK-START.md](QUICK-START.md)** ← Voltar para início rápido
+- **[📖 README.md](README.md)** - Visão geral do sistema
+- **[📘 GUIA-COMPLETO-FINAL.md](GUIA-COMPLETO-FINAL.md)** - Guia completo
+- **[🚀 DEPLOY.md](DEPLOY.md)** - Próximo passo: Deploy
+- **[🎨 SHOWCASE-VISUAL.md](SHOWCASE-VISUAL.md)** - Elementos visuais
+
+---
+
 ## Passo 1: Criar Conta (2 minutos)
 
 1. **Acesse:** https://supabase.com/

@@ -8,6 +8,17 @@
 
 ---
 
+## 📚 Documentação do Projeto
+
+- **[⚡ QUICK-START.md](QUICK-START.md)** ← Comece aqui! (3 passos, 15 min)
+- **[📖 README.md](README.md)** - Visão geral do sistema
+- **[📘 GUIA-COMPLETO-FINAL.md](GUIA-COMPLETO-FINAL.md)** - Guia definitivo
+- **[🔧 CONFIGURAR-SUPABASE.md](CONFIGURAR-SUPABASE.md)** - Setup do banco
+- **[🚀 DEPLOY.md](DEPLOY.md)** - Deploy no Cloudflare
+- **[🎨 SHOWCASE-VISUAL.md](SHOWCASE-VISUAL.md)** - Elementos visuais
+
+---
+
 ## ✨ TODOS OS REQUISITOS ATENDIDOS
 
 ### ✅ Funcionalidades Implementadas

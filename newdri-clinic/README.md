@@ -6,6 +6,18 @@ Sistema profissional para aplicação e análise de questionários de intimidade
 
 ---
 
+## 📚 Documentação Completa
+
+- **[⚡ QUICK-START.md](QUICK-START.md)** ← **COMECE AQUI!** (3 passos, 15 minutos)
+- **[📖 GUIA-COMPLETO-FINAL.md](GUIA-COMPLETO-FINAL.md)** - Guia definitivo completo
+- **[🔧 CONFIGURAR-SUPABASE.md](CONFIGURAR-SUPABASE.md)** - Setup do banco de dados (5 min)
+- **[🚀 DEPLOY.md](DEPLOY.md)** - Deploy no Cloudflare Pages (5 min)
+- **[🎨 SHOWCASE-VISUAL.md](SHOWCASE-VISUAL.md)** - Todas as cores e gradientes
+- **[✅ PROJETO-FINALIZADO.md](PROJETO-FINALIZADO.md)** - Resumo do projeto
+- **[📄 ENTREGA-FINAL.txt](ENTREGA-FINAL.txt)** - Documento de entrega
+
+---
+
 ## 📋 Visão Geral
 
 Sistema web completo para avaliação psicossexual com:
