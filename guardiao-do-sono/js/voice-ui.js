@@ -4,6 +4,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const voiceOptions = document.querySelectorAll('.voice-option');
+    const testVoiceButton = document.getElementById('test-voice-button');
     const configAPIButton = document.getElementById('config-api-button');
     const apiConfigScreen = document.getElementById('api-config-screen');
     const closeAPIConfig = document.getElementById('close-api-config');
@@ -62,6 +63,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 showAPIWarning(voiceMode);
             }
         });
+    });
+
+    // Testar voz atual
+    testVoiceButton.addEventListener('click', async () => {
+        const activeOption = document.querySelector('.voice-option.active');
+        const voiceMode = activeOption ? activeOption.dataset.voice : 'webspeech';
+        
+        testVoiceButton.disabled = true;
+        testVoiceButton.textContent = '⏳ Testando...';
+        
+        try {
+            const testText = "Esta é uma demonstração da voz selecionada. Eu sou o Guardião do Sono e vou ajudá-lo a relaxar profundamente.";
+            
+            // Criar sistema temporário para teste
+            const tempVoiceSystem = new VoiceSystem();
+            await tempVoiceSystem.initialize();
+            tempVoiceSystem.setVoiceMode(voiceMode);
+            
+            console.log('🎤 Testando voz:', voiceMode);
+            await tempVoiceSystem.narrate(testText, {
+                rate: 0.65,
+                pitch: 0.88,
+                volume: 0.9
+            });
+            
+            console.log('✅ Teste de voz concluído');
+        } catch (error) {
+            console.error('❌ Erro no teste de voz:', error);
+            alert('Erro ao testar voz: ' + error.message);
+        } finally {
+            testVoiceButton.disabled = false;
+            testVoiceButton.textContent = '🎵 Testar Voz Atual';
+        }
     });
 
     // Abrir configuração de API

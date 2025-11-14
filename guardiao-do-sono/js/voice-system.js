@@ -104,22 +104,55 @@ class VoiceSystem {
      */
     async loadAvailableVoices() {
         return new Promise((resolve) => {
-            if (this.speechSynthesis) {
-                // Algumas plataformas precisam de tempo para carregar vozes
+            if (!this.speechSynthesis) {
+                console.warn('⚠️ speechSynthesis não disponível');
+                resolve();
+                return;
+            }
+
+            const loadVoices = () => {
                 let voices = this.speechSynthesis.getVoices();
                 
                 if (voices.length > 0) {
                     this.availableVoices = voices;
+                    console.log(`✅ ${voices.length} vozes carregadas`);
+                    
+                    // Listar vozes PT-BR disponíveis
+                    const ptBrVoices = voices.filter(v => v.lang.startsWith('pt'));
+                    console.log(`🇧🇷 Vozes em Português: ${ptBrVoices.length}`);
+                    ptBrVoices.forEach((v, i) => {
+                        console.log(`  ${i+1}. ${v.name} (${v.lang}) ${v.default ? '⭐' : ''}`);
+                    });
+                    
                     resolve();
                 } else {
-                    this.speechSynthesis.onvoiceschanged = () => {
-                        this.availableVoices = this.speechSynthesis.getVoices();
-                        resolve();
-                    };
+                    console.log('⏳ Aguardando carregamento de vozes...');
+                    return false;
                 }
-            } else {
-                resolve();
+                
+                return true;
+            };
+
+            // Tentar carregar imediatamente
+            if (loadVoices()) {
+                return;
             }
+
+            // Se não carregou, esperar evento
+            this.speechSynthesis.onvoiceschanged = () => {
+                if (loadVoices()) {
+                    this.speechSynthesis.onvoiceschanged = null;
+                }
+            };
+
+            // Timeout de segurança (5 segundos)
+            setTimeout(() => {
+                if (!this.availableVoices || this.availableVoices.length === 0) {
+                    console.warn('⚠️ Timeout ao carregar vozes, usando padrão');
+                    this.availableVoices = this.speechSynthesis.getVoices();
+                }
+                resolve();
+            }, 5000);
         });
     }
 
@@ -128,38 +161,67 @@ class VoiceSystem {
      */
     getBestVoice() {
         if (!this.availableVoices || this.availableVoices.length === 0) {
+            console.warn('⚠️ Nenhuma voz disponível ainda');
             return null;
         }
 
-        // Prioridade de vozes PT-BR
+        console.log(`🔍 Buscando melhor voz entre ${this.availableVoices.length} vozes disponíveis`);
+
+        // Prioridade de vozes PT-BR (mais específico primeiro)
         const priorities = [
-            'Google português do Brasil', // Google Chrome
-            'Microsoft Maria',             // Edge Windows
-            'Luciana',                     // macOS
-            'Fernanda',                    // iOS
-            'pt-BR',                       // Genérico
-            'pt_BR'                        // Variação
+            // Google Chrome (melhores)
+            { pattern: 'Google português do Brasil', priority: 1 },
+            { pattern: 'pt-BR-Wavenet', priority: 1 },
+            
+            // Microsoft Edge
+            { pattern: 'Microsoft Maria', priority: 2 },
+            { pattern: 'Microsoft Francisca', priority: 2 },
+            
+            // macOS/iOS
+            { pattern: 'Luciana', priority: 3 },
+            { pattern: 'Fernanda', priority: 3 },
+            { pattern: 'Joana', priority: 3 },
+            
+            // Android
+            { pattern: 'pt-br-x-', priority: 4 },
+            
+            // Genéricos
+            { pattern: 'pt-BR', priority: 5 },
+            { pattern: 'pt_BR', priority: 6 }
         ];
 
-        for (let priority of priorities) {
-            const voice = this.availableVoices.find(v => 
-                v.name.includes(priority) || v.lang.includes('pt-BR')
-            );
-            if (voice) {
-                console.log('✅ Voz selecionada:', voice.name);
-                return voice;
+        let bestVoice = null;
+        let bestPriority = 999;
+
+        for (let voice of this.availableVoices) {
+            // Só considerar vozes PT ou PT-BR
+            if (!voice.lang.startsWith('pt')) continue;
+
+            for (let { pattern, priority } of priorities) {
+                if (voice.name.includes(pattern) || voice.lang.includes(pattern)) {
+                    if (priority < bestPriority) {
+                        bestVoice = voice;
+                        bestPriority = priority;
+                    }
+                    break;
+                }
             }
+        }
+
+        if (bestVoice) {
+            console.log(`✅ Melhor voz encontrada: ${bestVoice.name} (${bestVoice.lang}) [Prioridade: ${bestPriority}]`);
+            return bestVoice;
         }
 
         // Fallback: qualquer voz português
         const ptVoice = this.availableVoices.find(v => v.lang.startsWith('pt'));
         if (ptVoice) {
-            console.log('⚠️ Voz fallback:', ptVoice.name);
+            console.log(`⚠️ Voz fallback PT: ${ptVoice.name} (${ptVoice.lang})`);
             return ptVoice;
         }
 
         // Último fallback: primeira voz disponível
-        console.log('⚠️ Usando voz padrão:', this.availableVoices[0].name);
+        console.warn(`⚠️ Nenhuma voz PT encontrada! Usando: ${this.availableVoices[0].name}`);
         return this.availableVoices[0];
     }
 
@@ -169,7 +231,7 @@ class VoiceSystem {
     async narrateWebSpeech(text, options = {}) {
         return new Promise((resolve, reject) => {
             if (!this.speechSynthesis) {
-                console.warn('Speech Synthesis não disponível');
+                console.warn('⚠️ Speech Synthesis não disponível');
                 resolve();
                 return;
             }
@@ -181,14 +243,27 @@ class VoiceSystem {
                 volume = options.volume || config.volume
             } = options;
 
+            console.log(`🎤 Web Speech Config: rate=${rate}, pitch=${pitch}, volume=${volume}`);
+
             const utterance = new SpeechSynthesisUtterance(text);
             
-            // Configurar voz
-            utterance.voice = this.getBestVoice();
+            // Garantir que as vozes foram carregadas
+            const voice = this.getBestVoice();
+            if (voice) {
+                utterance.voice = voice;
+                console.log(`🔊 Usando voz: ${voice.name}`);
+            } else {
+                console.warn('⚠️ Nenhuma voz selecionada, usando padrão do sistema');
+            }
+            
             utterance.lang = config.lang;
             utterance.rate = rate;
             utterance.pitch = pitch;
             utterance.volume = volume;
+
+            utterance.onstart = () => {
+                console.log('▶️ Narração iniciada');
+            };
 
             utterance.onend = () => {
                 console.log('✅ Narração concluída:', text.substring(0, 30) + '...');
@@ -197,6 +272,10 @@ class VoiceSystem {
 
             utterance.onerror = (error) => {
                 console.error('❌ Erro na narração:', error);
+                console.error('Detalhes:', {
+                    error: error.error,
+                    charIndex: error.charIndex
+                });
                 resolve(); // Resolve mesmo com erro para não travar o jogo
             };
 
@@ -205,8 +284,9 @@ class VoiceSystem {
             
             // Pequeno delay para garantir que cancelamento funcionou
             setTimeout(() => {
+                console.log('🚀 Iniciando fala...');
                 this.speechSynthesis.speak(utterance);
-            }, 100);
+            }, 150);
         });
     }
 
