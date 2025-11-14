@@ -190,6 +190,17 @@ body {
     background: #45a049;
 }
 
+.btn-tertiary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-tertiary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+}
+
 /* Professional Info */
 .professional-info {
     text-align: center;
