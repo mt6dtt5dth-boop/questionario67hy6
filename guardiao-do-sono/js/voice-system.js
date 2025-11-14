@@ -1,6 +1,12 @@
 /**
- * Sistema de Voz Humana Aprimorado
+ * Sistema de Voz Humana Aprimorado - O Guardião do Sono
  * Suporta múltiplas fontes de voz: Web Speech API, Google TTS, ElevenLabs
+ * 
+ * 🇧🇷 VOZES BRASILEIRAS ELEVENLABS:
+ * - Lotte (S9K4e72HyPCxvHe7p5rK): Feminina, suave, terapêutica ⭐ PADRÃO
+ * - Valentina (z9fAnlkpzviPz146aGWa): Feminina, jovem, energética
+ * - Giovanni (zcAOhNBS3c14rBihAFp1): Masculino, profundo, autoritário
+ * - Marcus (iP95p4xoKVk53GoZ742B): Masculino, maduro, confiante
  */
 
 class VoiceSystem {
@@ -24,10 +30,13 @@ class VoiceSystem {
                 voiceName: 'pt-BR-Standard-A' // Voz feminina brasileira
             },
             elevenlabs: {
-                voiceId: 'pNInz6obpgDQGcFmaJgB', // Adam (masculina) ou escolher outra
+                voiceId: 'S9K4e72HyPCxvHe7p5rK', // Lotte (feminina, suave, PT-BR) - RECOMENDADO PARA SONO
+                // Alternativas BR: 'z9fAnlkpzviPz146aGWa' (Valentina), 'zcAOhNBS3c14rBihAFp1' (Giovanni)
                 modelId: 'eleven_multilingual_v2',
-                stability: 0.5,
-                similarityBoost: 0.75
+                stability: 0.65, // Mais estável para voz hipnótica
+                similarityBoost: 0.8, // Mais natural
+                style: 0.3, // Tom mais suave
+                use_speaker_boost: true
             }
         };
         
@@ -376,10 +385,10 @@ class VoiceSystem {
                     text: text,
                     model_id: config.modelId,
                     voice_settings: {
-                        stability: config.stability,
-                        similarity_boost: config.similarityBoost,
-                        style: 0.5,
-                        use_speaker_boost: true
+                        stability: config.stability || 0.65,
+                        similarity_boost: config.similarityBoost || 0.8,
+                        style: config.style || 0.3,
+                        use_speaker_boost: config.use_speaker_boost !== false
                     }
                 })
             });
