@@ -4,6 +4,19 @@
 
 Você configurou a API key do ElevenLabs mas **não há nenhum som** no jogo (nem narração nem áudio binaural).
 
+## 🇧🇷 IMPORTANTE: Verifique o Idioma da Voz
+
+**⚠️ ATENÇÃO:** A partir da versão 1.1.0, a voz padrão do ElevenLabs é **Lotte (PT-BR)**.
+
+Se você configurou o jogo antes de 14/11/2025, a voz pode estar em **inglês** (Adam).
+
+**Solução rápida:**
+1. Limpe o cache do navegador (Ctrl+Shift+Delete)
+2. Recarregue a página (Ctrl+F5)
+3. A nova voz em português será usada automaticamente
+
+**Para mais detalhes sobre vozes brasileiras, veja:** [`VOZES-BRASILEIRAS.md`](VOZES-BRASILEIRAS.md)
+
 ---
 
 ## 🔍 DIAGNÓSTICO PASSO A PASSO
