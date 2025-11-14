@@ -349,13 +349,21 @@ class VoiceSystem {
     async narrateElevenLabs(text, options = {}) {
         const apiKey = this.getElevenLabsAPIKey();
         
+        console.log('🎤 ElevenLabs - Verificando API key...');
+        
         if (!apiKey) {
-            console.warn('ElevenLabs API key não configurada, usando Web Speech');
+            console.warn('⚠️ ElevenLabs API key não configurada, usando Web Speech');
             return this.narrateWebSpeech(text, options);
         }
 
+        console.log(`✅ API key encontrada: ${apiKey.substring(0, 10)}...`);
+        console.log(`📝 Texto a narrar (${text.length} caracteres):`, text.substring(0, 50) + '...');
+
         try {
             const config = this.voiceConfigs.elevenlabs;
+            
+            console.log(`🔊 Usando voz: ${config.voiceId}`);
+            console.log(`🎛️ Modelo: ${config.modelId}`);
             
             const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${config.voiceId}`, {
                 method: 'POST',
@@ -376,17 +384,23 @@ class VoiceSystem {
                 })
             });
 
+            console.log(`📡 Response status: ${response.status}`);
+
             if (response.ok) {
+                console.log('✅ Áudio recebido, reproduzindo...');
                 const audioBlob = await response.blob();
+                console.log(`📦 Blob size: ${audioBlob.size} bytes`);
                 await this.playAudioBlob(audioBlob);
-                console.log('✅ ElevenLabs concluído');
+                console.log('✅ ElevenLabs concluído com sucesso!');
             } else {
-                throw new Error(`ElevenLabs error: ${response.status}`);
+                const errorText = await response.text();
+                console.error(`❌ ElevenLabs error ${response.status}:`, errorText);
+                throw new Error(`ElevenLabs error: ${response.status} - ${errorText}`);
             }
             
         } catch (error) {
             console.error('❌ Erro no ElevenLabs:', error);
-            console.log('Fallback para Web Speech');
+            console.log('🔄 Fallback para Web Speech');
             return this.narrateWebSpeech(text, options);
         }
     }
@@ -408,20 +422,45 @@ class VoiceSystem {
      */
     async playAudioBlob(blob) {
         return new Promise((resolve, reject) => {
+            console.log('🎵 Criando URL do blob...');
             const url = URL.createObjectURL(blob);
             const audio = new Audio(url);
             
+            console.log('🔊 Configurando eventos de áudio...');
+            
+            audio.onloadedmetadata = () => {
+                console.log(`⏱️ Duração do áudio: ${audio.duration.toFixed(2)}s`);
+            };
+            
+            audio.oncanplaythrough = () => {
+                console.log('✅ Áudio pronto para reprodução');
+            };
+            
+            audio.onplay = () => {
+                console.log('▶️ Reprodução iniciada');
+            };
+            
             audio.onended = () => {
+                console.log('⏹️ Reprodução concluída');
                 URL.revokeObjectURL(url);
                 resolve();
             };
             
             audio.onerror = (error) => {
+                console.error('❌ Erro ao reproduzir áudio:', error);
+                console.error('Audio error code:', audio.error?.code);
+                console.error('Audio error message:', audio.error?.message);
                 URL.revokeObjectURL(url);
                 reject(error);
             };
             
-            audio.play().catch(reject);
+            console.log('🚀 Iniciando reprodução...');
+            audio.play()
+                .then(() => console.log('✅ Play() executado com sucesso'))
+                .catch(error => {
+                    console.error('❌ Erro no play():', error);
+                    reject(error);
+                });
         });
     }
 

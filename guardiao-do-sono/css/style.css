@@ -145,6 +145,28 @@ body {
     transform: translateY(0);
 }
 
+.test-audio-button {
+    display: inline-block;
+    padding: 0.8rem 2rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid rgba(255, 152, 0, 0.5);
+    background: rgba(255, 152, 0, 0.1);
+    color: #ffa500;
+    margin: 1rem 0;
+}
+
+.test-audio-button:hover {
+    background: rgba(255, 152, 0, 0.2);
+    border-color: rgba(255, 152, 0, 0.8);
+    transform: translateY(-2px);
+}
+
 /* Disclaimer */
 .disclaimer {
     font-size: 0.9rem;

@@ -55,10 +55,14 @@ class BinauralBeats {
      * Inicia a reprodução das batidas binaurais
      */
     start(beatFrequency = 7) {
+        console.log(`🎵 Iniciando binaural beats: ${beatFrequency} Hz`);
+        
         if (!this.audioContext) {
-            console.error('AudioContext não inicializado');
+            console.error('❌ AudioContext não inicializado');
             return;
         }
+
+        console.log(`✅ AudioContext state: ${this.audioContext.state}`);
 
         // Parar osciladores existentes
         this.stop();
@@ -80,6 +84,9 @@ class BinauralBeats {
         // Canal direito: frequência base + diferença (cria o efeito binaural)
         this.rightOscillator.frequency.value = this.baseFrequency + beatFrequency;
 
+        console.log(`🎛️ Frequências: L=${this.baseFrequency}Hz, R=${this.baseFrequency + beatFrequency}Hz`);
+        console.log(`📊 Volume master: ${this.masterGain.gain.value}`);
+
         // Configurar ganhos
         this.leftGain.gain.value = 1;
         this.rightGain.gain.value = 1;
@@ -94,6 +101,8 @@ class BinauralBeats {
         // Iniciar osciladores
         this.leftOscillator.start();
         this.rightOscillator.start();
+        
+        console.log('✅ Binaural beats iniciado com sucesso');
     }
 
     /**

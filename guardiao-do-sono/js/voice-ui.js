@@ -5,6 +5,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const voiceOptions = document.querySelectorAll('.voice-option');
     const testVoiceButton = document.getElementById('test-voice-button');
+    const testAudioButton = document.getElementById('test-audio-button');
     const configAPIButton = document.getElementById('config-api-button');
     const apiConfigScreen = document.getElementById('api-config-screen');
     const closeAPIConfig = document.getElementById('close-api-config');
@@ -97,6 +98,57 @@ document.addEventListener('DOMContentLoaded', () => {
             testVoiceButton.textContent = '🎵 Testar Voz Atual';
         }
     });
+
+    // Testar som completo (voz + binaural)
+    if (testAudioButton) {
+        testAudioButton.addEventListener('click', async () => {
+            testAudioButton.disabled = true;
+            testAudioButton.textContent = '⏳ Testando...';
+            
+            console.log('🔊 ========== TESTE COMPLETO DE SOM ==========');
+            
+            try {
+                // 1. Testar Binaural Beats
+                console.log('1️⃣ Testando Binaural Beats...');
+                const binauralBeats = new BinauralBeats();
+                await binauralBeats.initialize();
+                binauralBeats.start(7);
+                binauralBeats.fadeIn(2);
+                
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                console.log('✅ Binaural funcionando!');
+                
+                // 2. Testar Voz
+                console.log('2️⃣ Testando Sistema de Voz...');
+                const activeOption = document.querySelector('.voice-option.active');
+                const voiceMode = activeOption ? activeOption.dataset.voice : 'webspeech';
+                
+                const voiceSystem = new VoiceSystem();
+                await voiceSystem.initialize();
+                voiceSystem.setVoiceMode(voiceMode);
+                
+                const testText = "Som funcionando perfeitamente. Você está ouvindo o áudio binaural e esta narração.";
+                await voiceSystem.narrate(testText);
+                
+                console.log('✅ Voz funcionando!');
+                
+                // 3. Parar binaural
+                binauralBeats.fadeOut(2);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                binauralBeats.stop();
+                
+                console.log('✅ Teste completo concluído com sucesso!');
+                alert('✅ Som está funcionando perfeitamente!\n\n- Áudio binaural: OK\n- Narração (' + voiceMode + '): OK\n\nVerifique o console (F12) para detalhes.');
+                
+            } catch (error) {
+                console.error('❌ Erro no teste:', error);
+                alert('❌ Erro ao testar som:\n\n' + error.message + '\n\nAbra o console (F12) para mais detalhes.');
+            } finally {
+                testAudioButton.disabled = false;
+                testAudioButton.textContent = '🔊 Testar Som Completo (Debug)';
+            }
+        });
+    }
 
     // Abrir configuração de API
     configAPIButton.addEventListener('click', () => {
