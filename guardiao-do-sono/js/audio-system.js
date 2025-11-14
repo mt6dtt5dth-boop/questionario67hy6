@@ -1,6 +1,6 @@
 /**
  * Sistema de Áudio e Narração
- * Gerencia sons ambientes e narração com voz sintética
+ * Gerencia sons ambientes e narração com voz sintética ou APIs externas
  */
 
 class AudioSystem {
@@ -13,6 +13,10 @@ class AudioSystem {
         this.currentUtterance = null;
         this.ambientGain = null;
         this.masterVolume = 0.3;
+        
+        // Usar novo VoiceSystem se disponível
+        this.voiceSystem = null;
+        this.useNewVoiceSystem = typeof VoiceSystem !== 'undefined';
     }
 
     /**
@@ -24,6 +28,15 @@ class AudioSystem {
             this.ambientGain = this.audioContext.createGain();
             this.ambientGain.gain.value = this.masterVolume;
             this.ambientGain.connect(this.audioContext.destination);
+            
+            // Inicializar novo sistema de voz
+            if (this.useNewVoiceSystem) {
+                this.voiceSystem = new VoiceSystem();
+                await this.voiceSystem.initialize();
+                this.voiceSystem.loadVoicePreference();
+                console.log('✅ VoiceSystem avançado inicializado');
+            }
+            
             return true;
         } catch (error) {
             console.error('Erro ao inicializar sistema de áudio:', error);
@@ -200,9 +213,15 @@ class AudioSystem {
     }
 
     /**
-     * Narra texto com voz suave e lenta
+     * Narra texto com voz suave e lenta (usa VoiceSystem se disponível)
      */
     async narrate(text, options = {}) {
+        // Usar novo VoiceSystem se disponível
+        if (this.useNewVoiceSystem && this.voiceSystem) {
+            return await this.voiceSystem.narrate(text, options);
+        }
+        
+        // Fallback para sistema antigo
         return new Promise((resolve) => {
             if (!this.speechSynthesis) {
                 console.warn('Speech synthesis não disponível');
