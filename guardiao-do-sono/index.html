@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>O Guardião do Sono - Experiência Terapêutica 3D</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Tela de boas-vindas -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome-content">
+            <h1 class="title-glow">🌙 O Guardião do Sono</h1>
+            <p class="subtitle">Uma jornada terapêutica de 10 minutos para relaxamento profundo</p>
+            
+            <div class="instructions">
+                <h3>Prepare-se:</h3>
+                <ul>
+                    <li>🛏️ Deite-se confortavelmente</li>
+                    <li>🎧 Use fones de ouvido</li>
+                    <li>🌑 Reduza a iluminação do ambiente</li>
+                    <li>😌 Respire profundamente</li>
+                </ul>
+            </div>
+
+            <button id="start-button" class="glow-button">
+                Iniciar Jornada
+            </button>
+
+            <p class="disclaimer">
+                ⚠️ Este jogo é um complemento relaxante e não substitui tratamento médico ou terapêutico.
+            </p>
+        </div>
+    </div>
+
+    <!-- Canvas 3D -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- HUD overlay -->
+    <div id="hud-overlay">
+        <div id="phase-indicator" class="fade-text"></div>
+        <div id="narration-text" class="narration"></div>
+        <div id="breath-indicator" class="breath-circle"></div>
+    </div>
+
+    <!-- Tela de finalização -->
+    <div id="end-screen" class="screen">
+        <div class="end-content">
+            <h2 class="title-glow">✨ Agora, seu corpo sabe o caminho do descanso.</h2>
+            <p class="subtitle">Permita-se adormecer tranquilamente...</p>
+            
+            <div class="sleep-timer">
+                <p>O som continuará por mais alguns minutos para facilitar sua transição para o sono.</p>
+            </div>
+
+            <button id="restart-button" class="glow-button">
+                Reiniciar Experiência
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div id="loading-screen" class="screen">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Preparando sua jornada...</p>
+        </div>
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Scripts do jogo -->
+    <script src="js/audio-system.js"></script>
+    <script src="js/binaural-beats.js"></script>
+    <script src="js/phase-transition.js"></script>
+    <script src="js/phase-1-sunset.js"></script>
+    <script src="js/phase-2-underwater.js"></script>
+    <script src="js/phase-3-guardian.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

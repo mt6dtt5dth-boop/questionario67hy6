@@ -1,0 +1,291 @@
+{
+  "titulo": "O Guardião do Sono - Storyboard Completo",
+  "versao": "1.0",
+  "duracao_total_segundos": 540,
+  "duracao_total_formatada": "9 minutos",
+  "objetivo": "Induzir relaxamento profundo e transição suave da vigília para o sono através de visualização guiada, áudio binaural e metáforas simbólicas",
+  
+  "fases": [
+    {
+      "fase": 1,
+      "nome": "Transição - Apagar o Dia",
+      "duracao_segundos": 120,
+      "duracao_formatada": "2 minutos",
+      "frequencia_binaural": "7 Hz (Ondas Alfa)",
+      "objetivo_psicologico": "Relaxamento progressivo e desaceleração cognitiva",
+      
+      "timeline": [
+        {
+          "tempo": "0:00",
+          "evento": "Fade in do cenário",
+          "visual": "Pôr do sol com céu dourado e laranja vibrante",
+          "audio": "Início do binaural 7Hz com fade in de 3 segundos",
+          "som_ambiente": "Vento suave começando"
+        },
+        {
+          "tempo": "0:03",
+          "evento": "Narração inicial",
+          "texto": "Cada luz que se apaga no horizonte é um pensamento que se despede. Você não precisa fazer nada. Só deixar que o silêncio volte a morar em você.",
+          "visual": "Partículas de luz flutuando, sol começando a descer",
+          "camera": "Estática, focando no horizonte"
+        },
+        {
+          "tempo": "0:30",
+          "evento": "Transição de cores iniciada",
+          "visual": "Céu gradualmente mudando de dourado para azul petróleo",
+          "progresso": "25%",
+          "intensidade_luz": "Reduzindo gradualmente"
+        },
+        {
+          "tempo": "0:45",
+          "evento": "Narração secundária",
+          "texto": "Observe as cores se transformando. Cada respiração escurece o cenário. O dia já passou. Agora é hora de descansar.",
+          "visual": "Sol parcialmente abaixo do horizonte, tons roxos aparecendo"
+        },
+        {
+          "tempo": "1:00",
+          "evento": "Meio da transição",
+          "visual": "Céu em tons de roxo e azul escuro, estrelas começando a aparecer",
+          "progresso": "50%",
+          "particulas": "Reduzindo opacidade"
+        },
+        {
+          "tempo": "1:30",
+          "evento": "Preparação para fim",
+          "visual": "Azul petróleo dominante, sol completamente abaixo do horizonte",
+          "progresso": "75%",
+          "intensidade_luz": "30% da original"
+        },
+        {
+          "tempo": "2:00",
+          "evento": "Fim da Fase 1",
+          "visual": "Céu completamente escuro em azul petróleo profundo",
+          "progresso": "100%",
+          "transicao": "Fade to black por 3 segundos"
+        }
+      ],
+      
+      "elementos_visuais": {
+        "cores_predominantes": ["#FF6B35", "#F7931E", "#1a3a52", "#0d1f2d"],
+        "objetos_3d": ["Esfera celeste com shader gradiente", "Sol (esfera emissiva)", "Plano do chão", "50 partículas de luz"],
+        "iluminacao": ["Luz pontual do sol (2.0 intensity)", "Luz ambiente quente (0.5 intensity)"],
+        "efeitos": ["Gradiente de céu dinâmico", "Partículas com movimento rotacional lento"]
+      },
+      
+      "parametros_audio": {
+        "binaural_hz": 7,
+        "voz_rate": 0.7,
+        "voz_pitch": 0.9,
+        "voz_volume": 0.8,
+        "ambiente_volume": 0.05
+      }
+    },
+    
+    {
+      "fase": 2,
+      "nome": "Imersão - O Jardim Submerso",
+      "duracao_segundos": 240,
+      "duracao_formatada": "4 minutos",
+      "frequencia_binaural": "4 Hz (Ondas Teta)",
+      "objetivo_psicologico": "Meditação profunda através de metáfora de dissolução",
+      
+      "timeline": [
+        {
+          "tempo": "2:00",
+          "evento": "Início da Fase 2",
+          "visual": "Fade in para ambiente aquático azul-turquesa",
+          "audio": "Transição binaural de 7Hz para 4Hz (10 segundos)",
+          "som_ambiente": "Vento para de tocar, água começa"
+        },
+        {
+          "tempo": "2:03",
+          "evento": "Narração inicial",
+          "texto": "Essas bolhas são partes do seu dia. Toque, e veja-as subirem... libertas. A mente aprende que soltar é dormir.",
+          "visual": "30 bolhas translúcidas flutuando, plantas se movendo suavemente"
+        },
+        {
+          "tempo": "2:30",
+          "evento": "Ambiente estabelecido",
+          "visual": "Bolhas subindo lentamente, luz volumétrica atravessando a água",
+          "camera": "Flutuação suave simulando corrente marinha",
+          "particulas": "200 partículas de luz bioluminescente"
+        },
+        {
+          "tempo": "3:20",
+          "evento": "Narração secundária",
+          "texto": "Cada bolha que sobe leva consigo uma preocupação. Você está seguro aqui, no fundo tranquilo. Nada pode perturbá-lo.",
+          "visual": "Bolhas continuam ciclo infinito de subir e reaparecer"
+        },
+        {
+          "tempo": "4:00",
+          "evento": "Meio da fase",
+          "visual": "Ambiente estável, movimento hipnótico constante",
+          "progresso": "25%",
+          "transicao_cor": "Início do escurecimento gradual"
+        },
+        {
+          "tempo": "4:40",
+          "evento": "Narração terciária",
+          "texto": "Sinta a leveza da água sustentando você. Não há peso. Não há pressa. Apenas a suave corrente do descanso.",
+          "visual": "Cores começando a escurecer, azul mais profundo"
+        },
+        {
+          "tempo": "5:00",
+          "evento": "Transição de cor acelerada",
+          "visual": "Ambiente ficando progressivamente mais escuro",
+          "progresso": "50%",
+          "cor_ambiente": "Mudando para azul escuro profundo"
+        },
+        {
+          "tempo": "5:30",
+          "evento": "Preparação para próxima fase",
+          "visual": "Bolhas reduzindo brilho, ambiente quase negro-azulado",
+          "progresso": "75%"
+        },
+        {
+          "tempo": "6:00",
+          "evento": "Fim da Fase 2",
+          "visual": "Ambiente muito escuro, apenas luz sutil das bolhas",
+          "progresso": "100%",
+          "transicao": "Fade to black por 3 segundos"
+        }
+      ],
+      
+      "elementos_visuais": {
+        "cores_predominantes": ["#1a4d5c", "#2596be", "#87CEEB", "#0d1f2d"],
+        "objetos_3d": ["Esfera de água envolvente", "30 bolhas interativas", "15 plantas flutuantes", "200 partículas bioluminescentes"],
+        "iluminacao": ["Luz ambiente azulada (0.4 intensity)", "Luz direcional simulando sol através d'água", "30 luzes pontuais nas bolhas"],
+        "efeitos": ["Névoa exponencial (fog)", "Movimento sinusoidal das bolhas", "Balanço procedural das plantas", "Corrente de partículas"]
+      },
+      
+      "parametros_audio": {
+        "binaural_hz": 4,
+        "transicao_duracao": 10,
+        "voz_rate": 0.7,
+        "voz_pitch": 0.9,
+        "ambiente_volume": 0.08,
+        "efeito_bolhas": "Ativo (1-4 bolhas por segundo)"
+      }
+    },
+    
+    {
+      "fase": 3,
+      "nome": "Dissolução - O Guardião do Sono",
+      "duracao_segundos": 180,
+      "duracao_formatada": "3 minutos",
+      "frequencia_binaural": "2 Hz (Ondas Delta)",
+      "objetivo_psicologico": "Condicionamento de segurança e indução do sono profundo",
+      
+      "timeline": [
+        {
+          "tempo": "6:00",
+          "evento": "Início da Fase 3",
+          "visual": "Fade in para espaço escuro com estrelas violeta",
+          "audio": "Transição binaural de 4Hz para 2Hz (15 segundos)",
+          "som_ambiente": "Apenas binaural, silêncio quase total"
+        },
+        {
+          "tempo": "6:05",
+          "evento": "Aparição do guardião",
+          "visual": "Figura abstrata de luz violeta surge no centro",
+          "narração": "Sou o reflexo do seu próprio descanso. Enquanto você dorme, eu permaneço desperto. Tudo está bem. Tudo pode parar.",
+          "parametros_voz": {"rate": 0.6, "pitch": 0.85}
+        },
+        {
+          "tempo": "6:30",
+          "evento": "Guardião estabelecido",
+          "visual": "Figura flutuando suavemente, aura pulsante ao redor",
+          "camera": "Movimento mínimo, quase imperceptível",
+          "efeitos": "Respiração visual do guardião sincronizada"
+        },
+        {
+          "tempo": "7:00",
+          "evento": "Narração secundária",
+          "texto": "Não há nada a fazer. Não há nada a controlar. Seu corpo descansa. Sua mente se cura. Eu cuido de tudo enquanto você se entrega ao sono.",
+          "visual": "Guardião pulsando lentamente",
+          "parametros_voz": {"rate": 0.6, "pitch": 0.85}
+        },
+        {
+          "tempo": "7:30",
+          "evento": "Aprofundamento",
+          "visual": "Estrelas girando lentamente, guardião cada vez mais etéreo",
+          "progresso": "50%"
+        },
+        {
+          "tempo": "8:00",
+          "evento": "Narração final",
+          "texto": "Agora, feche seus olhos internos. Deixe a escuridão abraçá-lo. Você está seguro. Você está em paz. Durma.",
+          "visual": "Guardião começando a dissolver",
+          "parametros_voz": {"rate": 0.5, "pitch": 0.8}
+        },
+        {
+          "tempo": "8:30",
+          "evento": "Início do fade out final",
+          "visual": "Guardião ficando translúcido, luz diminuindo",
+          "audio": "Binaural começando fade out de 30 segundos",
+          "progresso": "80%"
+        },
+        {
+          "tempo": "8:45",
+          "evento": "Mensagem final",
+          "visual": "Apenas escuridão permanece",
+          "texto_hud": "Agora, seu corpo sabe o caminho do descanso.",
+          "fade_visual": "Tudo desaparecendo gradualmente"
+        },
+        {
+          "tempo": "9:00",
+          "evento": "Fim da Fase 3",
+          "visual": "Tela completamente negra",
+          "audio": "Binaural continuará por mais 2 minutos",
+          "progresso": "100%",
+          "transicao": "Fim da experiência visual"
+        }
+      ],
+      
+      "elementos_visuais": {
+        "cores_predominantes": ["#9370DB", "#E6E6FA", "#4B0082", "#000000"],
+        "objetos_3d": ["Guardião (cilindro + esfera, translúcido)", "Aura esférica pulsante", "300 estrelas em distribuição esférica"],
+        "iluminacao": ["Luz ambiente violeta mínima (0.2 intensity)", "Luz pontual do guardião (2.0 intensity pulsante)"],
+        "efeitos": ["Flutuação vertical do guardião", "Pulso de escala (respiração)", "Rotação lenta das estrelas", "Fade out gradual de todos os elementos"]
+      },
+      
+      "parametros_audio": {
+        "binaural_hz": 2,
+        "transicao_duracao": 15,
+        "voz_rate": [0.6, 0.6, 0.5],
+        "voz_pitch": [0.85, 0.85, 0.8],
+        "fade_out_inicio": 150,
+        "fade_out_duracao": 30,
+        "continuacao_pos_fim": 120
+      }
+    }
+  ],
+  
+  "pos_experiencia": {
+    "duracao_audio_extra": "2 minutos",
+    "binaural_continuacao": "2Hz Delta com fade out de 30 segundos",
+    "mensagem_final": "Agora, seu corpo sabe o caminho do descanso.",
+    "acao_usuario": "Permitir adormecer naturalmente ou reiniciar experiência"
+  },
+  
+  "tecnologias": {
+    "engine_3d": "Three.js r128",
+    "audio_binaural": "Web Audio API (AudioContext, OscillatorNode)",
+    "voz_sintetica": "Web Speech API (SpeechSynthesis)",
+    "renderizacao": "WebGL",
+    "performance": "Otimizado para 60fps em mobile com pixel ratio limitado a 2x"
+  },
+  
+  "metricas_terapeuticas": {
+    "progressao_ondas_cerebrais": "Alfa (7Hz) → Teta (4Hz) → Delta (2Hz)",
+    "tempo_total_inducao": "9 minutos",
+    "tecnicas_aplicadas": [
+      "Relaxamento progressivo de Jacobson",
+      "Visualização criativa guiada",
+      "Hipnose ericksoniana (linguagem permissiva)",
+      "Ancoragem respiratória",
+      "Metáforas de dissolução (PNL)",
+      "Condicionamento associativo de segurança"
+    ]
+  }
+}
