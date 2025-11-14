@@ -23,6 +23,12 @@ class Phase2Underwater {
         this.plants = [];
         this.lights = [];
         this.particleSystem = null;
+        
+        // Sistema de interação
+        this.raycaster = new THREE.Raycaster();
+        this.mouse = new THREE.Vector2();
+        this.touchSupported = 'ontouchstart' in window;
+        this.interactionEnabled = false;
     }
 
     /**
@@ -248,6 +254,9 @@ class Phase2Underwater {
         // Iniciar som de água
         this.audioSystem.stopAllAmbient();
         this.audioSystem.startWater();
+        
+        // Ativar interação com bolhas
+        this.enableInteraction();
 
         // Narração inicial
         setTimeout(() => {
@@ -395,10 +404,205 @@ class Phase2Underwater {
     }
 
     /**
+     * Ativa interação com bolhas
+     */
+    enableInteraction() {
+        this.interactionEnabled = true;
+        
+        // Mouse events
+        this.onMouseMove = (event) => this.handleMouseMove(event);
+        this.onMouseClick = (event) => this.handleClick(event);
+        
+        // Touch events
+        this.onTouchStart = (event) => this.handleTouch(event);
+        this.onTouchMove = (event) => this.handleTouchMove(event);
+        
+        // Adicionar listeners
+        window.addEventListener('mousemove', this.onMouseMove, false);
+        window.addEventListener('click', this.onMouseClick, false);
+        window.addEventListener('touchstart', this.onTouchStart, false);
+        window.addEventListener('touchmove', this.onTouchMove, false);
+        
+        console.log('✅ Interação com bolhas ativada');
+    }
+    
+    /**
+     * Desativa interação
+     */
+    disableInteraction() {
+        this.interactionEnabled = false;
+        
+        window.removeEventListener('mousemove', this.onMouseMove);
+        window.removeEventListener('click', this.onMouseClick);
+        window.removeEventListener('touchstart', this.onTouchStart);
+        window.removeEventListener('touchmove', this.onTouchMove);
+    }
+    
+    /**
+     * Atualiza posição do mouse
+     */
+    handleMouseMove(event) {
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    }
+    
+    /**
+     * Atualiza posição do touch
+     */
+    handleTouchMove(event) {
+        if (event.touches.length > 0) {
+            const touch = event.touches[0];
+            this.mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+            this.mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+        }
+    }
+    
+    /**
+     * Manipula clique em bolha
+     */
+    handleClick(event) {
+        this.checkBubbleInteraction();
+    }
+    
+    /**
+     * Manipula toque em bolha
+     */
+    handleTouch(event) {
+        if (event.touches.length > 0) {
+            const touch = event.touches[0];
+            this.mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+            this.mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+            this.checkBubbleInteraction();
+        }
+        event.preventDefault();
+    }
+    
+    /**
+     * Verifica se clicou em uma bolha
+     */
+    checkBubbleInteraction() {
+        if (!this.interactionEnabled || !this.isActive) return;
+        
+        // Atualizar raycaster
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        
+        // Verificar interseções com bolhas
+        const intersects = this.raycaster.intersectObjects(this.bubbles);
+        
+        if (intersects.length > 0) {
+            const bubble = intersects[0].object;
+            this.popBubble(bubble);
+            console.log('💧 Bolha tocada!');
+        }
+    }
+    
+    /**
+     * Faz a bolha "estourar" e subir rapidamente
+     */
+    popBubble(bubble) {
+        if (!bubble.userData.active) return;
+        
+        const data = bubble.userData;
+        
+        // Aumentar velocidade de subida
+        data.speed = 3.0;
+        
+        // Efeito visual: aumentar brilho
+        if (data.light) {
+            data.light.intensity = 2.0;
+            
+            // Voltar ao normal após 0.5s
+            setTimeout(() => {
+                if (data.light) {
+                    data.light.intensity = 0.5;
+                }
+            }, 500);
+        }
+        
+        // Animação de "explosão" sutil
+        const originalScale = bubble.scale.clone();
+        bubble.scale.multiplyScalar(1.3);
+        
+        // Reduzir opacidade
+        bubble.material.opacity = 0.2;
+        
+        // Voltar ao normal após um tempo
+        setTimeout(() => {
+            bubble.scale.copy(originalScale);
+            bubble.material.opacity = 0.4;
+            data.speed = 0.2 + Math.random() * 0.3;
+        }, 1000);
+        
+        // Som de bolha
+        this.playBubbleSound();
+        
+        // Feedback visual no HUD
+        this.showBubbleHint();
+    }
+    
+    /**
+     * Mostra dica visual quando toca bolha
+     */
+    showBubbleHint() {
+        const narrationText = document.getElementById('narration-text');
+        if (narrationText && Math.random() < 0.3) { // 30% de chance
+            const hints = [
+                "✨ Liberado...",
+                "💧 Deixe ir...",
+                "🌊 Solte...",
+                "💫 Leve e livre..."
+            ];
+            const hint = hints[Math.floor(Math.random() * hints.length)];
+            
+            // Salvar texto anterior
+            const previousText = narrationText.textContent;
+            const wasVisible = narrationText.classList.contains('visible');
+            
+            // Mostrar hint
+            narrationText.textContent = hint;
+            narrationText.classList.add('visible');
+            
+            // Voltar ao texto anterior após 2 segundos
+            setTimeout(() => {
+                narrationText.textContent = previousText;
+                if (!wasVisible) {
+                    narrationText.classList.remove('visible');
+                }
+            }, 2000);
+        }
+    }
+    
+    /**
+     * Toca som de bolha
+     */
+    playBubbleSound() {
+        // Som procedural de bolha
+        if (this.audioSystem && this.audioSystem.audioContext) {
+            const ctx = this.audioSystem.audioContext;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            
+            osc.frequency.value = 800 + Math.random() * 400;
+            osc.type = 'sine';
+            
+            gain.gain.value = 0.05;
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            const currentTime = ctx.currentTime;
+            osc.start(currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, currentTime + 0.3);
+            osc.stop(currentTime + 0.3);
+        }
+    }
+
+    /**
      * Completa a fase
      */
     complete() {
         this.isActive = false;
+        this.disableInteraction();
         
         if (this.onComplete) {
             this.onComplete();
@@ -410,6 +614,7 @@ class Phase2Underwater {
      */
     cleanup() {
         this.isActive = false;
+        this.disableInteraction();
         
         if (this.water) this.scene.remove(this.water);
         if (this.particleSystem) this.scene.remove(this.particleSystem);
