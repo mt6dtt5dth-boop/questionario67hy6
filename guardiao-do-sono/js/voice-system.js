@@ -202,9 +202,23 @@ class VoiceSystem {
         let bestVoice = null;
         let bestPriority = 999;
 
+        // LISTA DE VOZES BLOQUEADAS (Portugal)
+        const blockedPatterns = ['pt-PT', 'Cristiano', 'Amália', 'Portugal', 'portuguese portugal'];
+
         for (let voice of this.availableVoices) {
             // Só considerar vozes PT ou PT-BR
             if (!voice.lang.startsWith('pt')) continue;
+
+            // ❌ BLOQUEAR VOZES DE PORTUGAL EXPLICITAMENTE
+            let isBlocked = false;
+            for (let blocked of blockedPatterns) {
+                if (voice.lang.includes(blocked) || voice.name.toLowerCase().includes(blocked.toLowerCase())) {
+                    console.log(`🚫 Voz de Portugal bloqueada: ${voice.name} (${voice.lang})`);
+                    isBlocked = true;
+                    break;
+                }
+            }
+            if (isBlocked) continue;
 
             for (let { pattern, priority } of priorities) {
                 if (voice.name.includes(pattern) || voice.lang.includes(pattern)) {
@@ -222,11 +236,21 @@ class VoiceSystem {
             return bestVoice;
         }
 
-        // Fallback: qualquer voz português
-        const ptVoice = this.availableVoices.find(v => v.lang.startsWith('pt'));
-        if (ptVoice) {
-            console.log(`⚠️ Voz fallback PT: ${ptVoice.name} (${ptVoice.lang})`);
-            return ptVoice;
+        // Fallback: qualquer voz português do BRASIL (não Portugal)
+        const ptBrVoice = this.availableVoices.find(v => 
+            v.lang.includes('pt-BR') || v.lang.includes('pt_BR')
+        );
+        if (ptBrVoice) {
+            console.log(`⚠️ Voz fallback PT-BR: ${ptBrVoice.name} (${ptBrVoice.lang})`);
+            return ptBrVoice;
+        }
+
+        // Se realmente não houver nenhuma voz BR, avisar claramente
+        console.error('❌ NENHUMA VOZ BRASILEIRA ENCONTRADA! Usando voz padrão (pode ser Portugal)');
+        const anyPtVoice = this.availableVoices.find(v => v.lang.startsWith('pt'));
+        if (anyPtVoice) {
+            console.warn(`⚠️ AVISO: Usando voz não-brasileira: ${anyPtVoice.name} (${anyPtVoice.lang})`);
+            return anyPtVoice;
         }
 
         // Último fallback: primeira voz disponível

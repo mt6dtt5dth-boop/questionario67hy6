@@ -240,6 +240,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 8000);
     }
 
+    // Listar todas as vozes disponíveis (diagnóstico)
+    const listVoicesButton = document.getElementById('list-voices-button');
+    if (listVoicesButton) {
+        listVoicesButton.addEventListener('click', async () => {
+            console.log('🎤 ========== LISTANDO TODAS AS VOZES ==========');
+            
+            const voiceSystem = new VoiceSystem();
+            await voiceSystem.initialize();
+            
+            const voices = voiceSystem.availableVoices || [];
+            
+            console.log(`📊 Total de vozes encontradas: ${voices.length}`);
+            console.log('');
+            
+            // Separar por idioma
+            const ptVoices = voices.filter(v => v.lang.startsWith('pt'));
+            const otherVoices = voices.filter(v => !v.lang.startsWith('pt'));
+            
+            console.log(`🇧🇷🇵🇹 Vozes em Português: ${ptVoices.length}`);
+            ptVoices.forEach((v, i) => {
+                const isBrazil = v.lang.includes('BR') || v.name.includes('Brasil');
+                const flag = isBrazil ? '🇧🇷' : '🇵🇹';
+                console.log(`  ${i+1}. ${flag} ${v.name}`);
+                console.log(`      Lang: ${v.lang} | Default: ${v.default ? 'SIM' : 'NÃO'} | Local: ${v.localService ? 'SIM' : 'NÃO'}`);
+            });
+            
+            console.log('');
+            console.log(`🌍 Outras vozes: ${otherVoices.length}`);
+            
+            // Testar qual voz seria escolhida
+            console.log('');
+            console.log('🎯 ========== VOZ SELECIONADA PELO SISTEMA ==========');
+            const selectedVoice = voiceSystem.getBestVoice();
+            if (selectedVoice) {
+                const isBrazil = selectedVoice.lang.includes('BR') || selectedVoice.name.includes('Brasil');
+                const flag = isBrazil ? '🇧🇷' : '🇵🇹';
+                console.log(`${flag} VOZ ESCOLHIDA: ${selectedVoice.name}`);
+                console.log(`   Lang: ${selectedVoice.lang}`);
+                console.log(`   É brasileira? ${isBrazil ? '✅ SIM' : '❌ NÃO - PROBLEMA!'}`);
+            } else {
+                console.error('❌ NENHUMA VOZ FOI SELECIONADA!');
+            }
+            
+            alert(`📊 Vozes encontradas:\n\n🇧🇷🇵🇹 Português: ${ptVoices.length}\n🌍 Outros idiomas: ${otherVoices.length}\n\n✅ Veja o console (F12) para detalhes completos`);
+        });
+    }
+
     // Testar voz ao clicar duas vezes (debug)
     voiceOptions.forEach(option => {
         option.addEventListener('dblclick', async () => {
