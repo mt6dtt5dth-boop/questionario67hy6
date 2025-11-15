@@ -11,7 +11,8 @@
 
 class VoiceSystem {
     constructor() {
-        this.voiceMode = 'webspeech'; // 'webspeech', 'google', 'elevenlabs', 'recorded'
+        this.voiceMode = 'elevenlabs'; // PADRÃO: ElevenLabs (voz ultra-realista PT-BR)
+        // Outras opções: 'webspeech', 'google', 'recorded'
         this.speechSynthesis = window.speechSynthesis;
         this.audioContext = null;
         this.voiceCache = {}; // Cache de áudios gravados
@@ -568,7 +569,18 @@ class VoiceSystem {
      * Obtém API key do ElevenLabs (do localStorage ou variável)
      */
     getElevenLabsAPIKey() {
-        return localStorage.getItem('elevenlabs_api_key') || null;
+        // Tentar localStorage primeiro (configuração manual do usuário)
+        const storedKey = localStorage.getItem('elevenlabs_api_key');
+        if (storedKey) {
+            return storedKey;
+        }
+        
+        // Fallback: API key padrão para uso familiar
+        // ⚠️ ATENÇÃO: Esta chave está exposta no código
+        const defaultKey = 'sk_409b7c09814aff595144b90467fc0650ec5906300ce2adf4';
+        
+        console.log('🔑 Usando API key padrão do ElevenLabs (uso familiar)');
+        return defaultKey;
     }
 
     /**

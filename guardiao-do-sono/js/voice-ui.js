@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const googleAPIInput = document.getElementById('google-api-key');
     const elevenLabsAPIInput = document.getElementById('elevenlabs-api-key');
 
-    // Carregar preferência salva
-    const savedVoiceMode = localStorage.getItem('guardiao_voice_mode') || 'webspeech';
+    // Carregar preferência salva (padrão: ElevenLabs - voz mais realista)
+    const savedVoiceMode = localStorage.getItem('guardiao_voice_mode') || 'elevenlabs';
     
     // Marcar opção salva
     voiceOptions.forEach(option => {

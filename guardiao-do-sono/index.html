@@ -29,7 +29,7 @@
             <div class="voice-selector">
                 <h3>🎤 Qualidade da Voz:</h3>
                 <div class="voice-options">
-                    <button class="voice-option active" data-voice="webspeech">
+                    <button class="voice-option" data-voice="webspeech">
                         <span class="option-icon">🔊</span>
                         <span class="option-name">Voz Sintética</span>
                         <span class="option-desc">Grátis • Offline</span>
@@ -39,16 +39,19 @@
                         <span class="option-name">Google TTS</span>
                         <span class="option-desc">Natural • Requer API</span>
                     </button>
-                    <button class="voice-option" data-voice="elevenlabs">
+                    <button class="voice-option active" data-voice="elevenlabs">
                         <span class="option-icon">✨</span>
                         <span class="option-name">ElevenLabs</span>
-                        <span class="option-desc">Ultra Realista • Requer API</span>
+                        <span class="option-desc">Ultra Realista PT-BR 🇧🇷 • Padrão</span>
                     </button>
                 </div>
                 <div class="voice-buttons">
-                    <button id="test-voice-button" class="small-button test-button">🎵 Testar Voz Atual</button>
-                    <button id="config-api-button" class="small-button">⚙️ Configurar APIs</button>
+                    <button id="test-voice-button" class="small-button test-button">🎵 Testar Voz</button>
+                    <button id="config-api-button" class="small-button" style="display: none;">⚙️ Configurar APIs</button>
                 </div>
+                <p style="font-size: 0.85em; color: #aaa; margin-top: 8px;">
+                    🇧🇷 Voz Lotte (PT-BR) configurada • Uso familiar
+                </p>
             </div>
 
             <button id="start-button" class="glow-button">
