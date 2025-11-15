@@ -1,433 +1,318 @@
 /**
- * 🌟 Avatar 3D - Guardião Personalizado do Sono
+ * 🌙 Sistema de Avatar 3D - Guardião do Sono
  * 
- * Cria um avatar 3D que evolui conforme o usuário progride:
- * - Nível 1: Esfera azul simples
- * - Nível 2: Esfera com anéis orbitais
- * - Nível 3: Forma cristalina pulsante
- * - Nível 4: Galáxia espiral
- * - Nível 5: Guardião supremo radiante
+ * Renderiza um avatar 3D animado que evolui conforme o usuário progride
+ * Usa Three.js em um canvas dedicado dentro do painel lateral
  */
 
 class Avatar3D {
-    constructor(canvasId) {
-        this.canvas = document.getElementById(canvasId);
-        if (!this.canvas) {
-            console.error('Canvas do avatar não encontrado!');
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.avatar = null;
+        this.lights = [];
+        this.clock = new THREE.Clock();
+        
+        this.currentLevel = 1;
+        this.isAnimating = false;
+        
+        this.init();
+    }
+    
+    /**
+     * Inicializa o sistema 3D
+     */
+    init() {
+        if (!this.container) {
+            console.error('❌ Container do avatar não encontrado');
             return;
         }
-
-        this.currentLevel = 1;
-        this.initThree();
-        this.createAvatar(this.currentLevel);
-        this.animate();
-        this.setupResize();
-    }
-
-    /**
-     * Inicializa Three.js para o avatar
-     */
-    initThree() {
-        // Scene
+        
+        // Obter canvas
+        const canvas = document.getElementById('avatar-canvas');
+        if (!canvas) {
+            console.error('❌ Canvas do avatar não encontrado');
+            return;
+        }
+        
+        // Dimensões do container
+        const width = this.container.offsetWidth;
+        const height = this.container.offsetHeight;
+        
+        console.log(`🎨 Inicializando avatar 3D (${width}x${height})`);
+        
+        // Cena
         this.scene = new THREE.Scene();
-        this.scene.background = null; // Transparente
-
-        // Camera
-        const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
-        this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
-        this.camera.position.z = 3;
-
+        this.scene.fog = new THREE.Fog(0x1a1a2e, 5, 15);
+        
+        // Câmera
+        this.camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
+        this.camera.position.set(0, 0, 5);
+        this.camera.lookAt(0, 0, 0);
+        
         // Renderer
         this.renderer = new THREE.WebGLRenderer({
-            canvas: this.canvas,
-            alpha: true,
-            antialias: true
+            canvas: canvas,
+            antialias: true,
+            alpha: true
         });
-        this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
+        this.renderer.setSize(width, height);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        // Lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        this.scene.add(ambientLight);
-
-        const pointLight = new THREE.PointLight(0x8ab4f8, 1, 100);
-        pointLight.position.set(2, 2, 2);
-        this.scene.add(pointLight);
-
-        console.log('🎨 Avatar 3D inicializado');
+        this.renderer.setClearColor(0x000000, 0); // Transparente
+        
+        // Criar avatar
+        this.createAvatar();
+        
+        // Iluminação
+        this.setupLights();
+        
+        // Iniciar animação
+        this.isAnimating = true;
+        this.animate();
+        
+        // Responsividade
+        window.addEventListener('resize', () => this.onResize());
+        
+        console.log('✅ Avatar 3D inicializado');
     }
-
+    
     /**
-     * Cria o avatar baseado no nível
+     * Cria o avatar (esfera com shader personalizado)
      */
-    createAvatar(level) {
-        // Remove avatar anterior
-        if (this.avatarGroup) {
-            this.scene.remove(this.avatarGroup);
-        }
-
-        this.avatarGroup = new THREE.Group();
-        this.currentLevel = level;
-
-        switch(level) {
-            case 1:
-                this.createLevel1Avatar();
-                break;
-            case 2:
-                this.createLevel2Avatar();
-                break;
-            case 3:
-                this.createLevel3Avatar();
-                break;
-            case 4:
-                this.createLevel4Avatar();
-                break;
-            case 5:
-                this.createLevel5Avatar();
-                break;
-            default:
-                this.createLevel1Avatar();
-        }
-
-        this.scene.add(this.avatarGroup);
-        console.log(`🌙 Avatar nível ${level} criado`);
-    }
-
-    /**
-     * Nível 1: Esfera azul simples pulsante
-     */
-    createLevel1Avatar() {
-        const geometry = new THREE.SphereGeometry(0.8, 32, 32);
+    createAvatar() {
+        // Geometria: Icosaedro (parece mais orgânico que esfera perfeita)
+        const geometry = new THREE.IcosahedronGeometry(1.2, 3);
+        
+        // Material com efeito de energia
         const material = new THREE.MeshPhongMaterial({
-            color: 0x667eea,
-            emissive: 0x667eea,
+            color: this.getLevelColor(this.currentLevel),
+            emissive: this.getLevelColor(this.currentLevel),
             emissiveIntensity: 0.3,
-            shininess: 100
-        });
-        
-        this.mainMesh = new THREE.Mesh(geometry, material);
-        this.avatarGroup.add(this.mainMesh);
-
-        // Partículas ao redor
-        this.addParticles(20, 0x667eea, 1.5);
-    }
-
-    /**
-     * Nível 2: Esfera com anéis orbitais
-     */
-    createLevel2Avatar() {
-        // Esfera central
-        const sphereGeometry = new THREE.SphereGeometry(0.7, 32, 32);
-        const sphereMaterial = new THREE.MeshPhongMaterial({
-            color: 0x764ba2,
-            emissive: 0x764ba2,
-            emissiveIntensity: 0.4,
-            shininess: 100
-        });
-        
-        this.mainMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-        this.avatarGroup.add(this.mainMesh);
-
-        // Anéis orbitais
-        this.rings = [];
-        for (let i = 0; i < 2; i++) {
-            const ringGeometry = new THREE.TorusGeometry(1.2 + i * 0.3, 0.05, 16, 100);
-            const ringMaterial = new THREE.MeshPhongMaterial({
-                color: 0x8ab4f8,
-                emissive: 0x8ab4f8,
-                emissiveIntensity: 0.5,
-                transparent: true,
-                opacity: 0.6
-            });
-            
-            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-            ring.rotation.x = Math.PI / 2 + i * 0.3;
-            this.rings.push(ring);
-            this.avatarGroup.add(ring);
-        }
-
-        this.addParticles(30, 0x764ba2, 2);
-    }
-
-    /**
-     * Nível 3: Cristal pulsante
-     */
-    createLevel3Avatar() {
-        const geometry = new THREE.OctahedronGeometry(0.9, 0);
-        const material = new THREE.MeshPhongMaterial({
-            color: 0xf093fb,
-            emissive: 0xf093fb,
-            emissiveIntensity: 0.5,
             shininess: 100,
             transparent: true,
             opacity: 0.9
         });
         
-        this.mainMesh = new THREE.Mesh(geometry, material);
-        this.avatarGroup.add(this.mainMesh);
-
-        // Cristais menores orbitando
-        this.orbitingCrystals = [];
-        for (let i = 0; i < 4; i++) {
-            const smallGeometry = new THREE.TetrahedronGeometry(0.2);
-            const smallMaterial = new THREE.MeshPhongMaterial({
-                color: 0xf093fb,
-                emissive: 0xf093fb,
-                emissiveIntensity: 0.6,
-                transparent: true,
-                opacity: 0.8
-            });
-            
-            const crystal = new THREE.Mesh(smallGeometry, smallMaterial);
-            const angle = (i / 4) * Math.PI * 2;
-            crystal.position.set(
-                Math.cos(angle) * 1.5,
-                Math.sin(angle) * 0.5,
-                Math.sin(angle) * 1.5
-            );
-            
-            this.orbitingCrystals.push({ mesh: crystal, angle: angle });
-            this.avatarGroup.add(crystal);
-        }
-
-        this.addParticles(50, 0xf093fb, 2.5);
-    }
-
-    /**
-     * Nível 4: Galáxia espiral
-     */
-    createLevel4Avatar() {
-        // Núcleo galáctico
-        const coreGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-        const coreMaterial = new THREE.MeshPhongMaterial({
-            color: 0x4facfe,
-            emissive: 0x4facfe,
-            emissiveIntensity: 0.8,
-            shininess: 100
-        });
+        this.avatar = new THREE.Mesh(geometry, material);
+        this.scene.add(this.avatar);
         
-        this.mainMesh = new THREE.Mesh(coreGeometry, coreMaterial);
-        this.avatarGroup.add(this.mainMesh);
-
-        // Espiral de partículas
-        this.spiralParticles = [];
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particlesMaterial = new THREE.PointsMaterial({
-            color: 0x4facfe,
+        // Adicionar partículas ao redor
+        this.createParticles();
+        
+        console.log('✅ Avatar criado');
+    }
+    
+    /**
+     * Cria partículas orbitando o avatar
+     */
+    createParticles() {
+        const particleCount = 50;
+        const particles = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        
+        for (let i = 0; i < particleCount; i++) {
+            const radius = 2 + Math.random() * 1;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.random() * Math.PI;
+            
+            positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+            positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+            positions[i * 3 + 2] = radius * Math.cos(phi);
+        }
+        
+        particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        
+        const particleMaterial = new THREE.PointsMaterial({
+            color: this.getLevelColor(this.currentLevel),
             size: 0.05,
-            transparent: true,
-            opacity: 0.8,
-            blending: THREE.AdditiveBlending
-        });
-
-        const positions = [];
-        for (let i = 0; i < 200; i++) {
-            const t = i / 200;
-            const angle = t * Math.PI * 6;
-            const radius = 0.5 + t * 1.5;
-            
-            positions.push(
-                Math.cos(angle) * radius,
-                (Math.random() - 0.5) * 0.3,
-                Math.sin(angle) * radius
-            );
-        }
-
-        particlesGeometry.setAttribute('position', 
-            new THREE.Float32BufferAttribute(positions, 3));
-        
-        this.spiral = new THREE.Points(particlesGeometry, particlesMaterial);
-        this.avatarGroup.add(this.spiral);
-
-        this.addParticles(70, 0x4facfe, 3);
-    }
-
-    /**
-     * Nível 5: Guardião Supremo (forma complexa e radiante)
-     */
-    createLevel5Avatar() {
-        // Núcleo dourado radiante
-        const coreGeometry = new THREE.IcosahedronGeometry(0.6, 1);
-        const coreMaterial = new THREE.MeshPhongMaterial({
-            color: 0xffd700,
-            emissive: 0xffd700,
-            emissiveIntensity: 1.0,
-            shininess: 100
-        });
-        
-        this.mainMesh = new THREE.Mesh(coreGeometry, coreMaterial);
-        this.avatarGroup.add(this.mainMesh);
-
-        // Múltiplas camadas de anéis
-        this.supremeRings = [];
-        for (let i = 0; i < 3; i++) {
-            const ringGeometry = new THREE.TorusGeometry(1 + i * 0.4, 0.03, 16, 100);
-            const ringMaterial = new THREE.MeshPhongMaterial({
-                color: 0xffd700,
-                emissive: 0xffd700,
-                emissiveIntensity: 0.8,
-                transparent: true,
-                opacity: 0.7
-            });
-            
-            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-            ring.rotation.x = Math.PI / 2 + i * 0.5;
-            ring.rotation.y = i * 0.3;
-            this.supremeRings.push(ring);
-            this.avatarGroup.add(ring);
-        }
-
-        // Halo de luz
-        const haloGeometry = new THREE.RingGeometry(1.5, 1.8, 32);
-        const haloMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffd700,
-            transparent: true,
-            opacity: 0.3,
-            side: THREE.DoubleSide
-        });
-        
-        this.halo = new THREE.Mesh(haloGeometry, haloMaterial);
-        this.halo.rotation.x = Math.PI / 2;
-        this.avatarGroup.add(this.halo);
-
-        this.addParticles(100, 0xffd700, 3.5);
-    }
-
-    /**
-     * Adiciona partículas ao redor do avatar
-     */
-    addParticles(count, color, radius) {
-        const geometry = new THREE.BufferGeometry();
-        const material = new THREE.PointsMaterial({
-            color: color,
-            size: 0.03,
             transparent: true,
             opacity: 0.6,
             blending: THREE.AdditiveBlending
         });
-
-        const positions = [];
-        for (let i = 0; i < count; i++) {
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.random() * Math.PI;
-            const r = radius * (0.8 + Math.random() * 0.4);
-            
-            positions.push(
-                r * Math.sin(phi) * Math.cos(theta),
-                r * Math.sin(phi) * Math.sin(theta),
-                r * Math.cos(phi)
-            );
-        }
-
-        geometry.setAttribute('position', 
-            new THREE.Float32BufferAttribute(positions, 3));
         
-        this.particles = new THREE.Points(geometry, material);
-        this.avatarGroup.add(this.particles);
+        this.particles = new THREE.Points(particles, particleMaterial);
+        this.scene.add(this.particles);
     }
-
+    
+    /**
+     * Configura iluminação
+     */
+    setupLights() {
+        // Luz ambiente
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        this.scene.add(ambientLight);
+        
+        // Luz direcional principal
+        const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        mainLight.position.set(5, 5, 5);
+        this.scene.add(mainLight);
+        this.lights.push(mainLight);
+        
+        // Luz de preenchimento
+        const fillLight = new THREE.DirectionalLight(this.getLevelColor(this.currentLevel), 0.4);
+        fillLight.position.set(-3, 2, -2);
+        this.scene.add(fillLight);
+        this.lights.push(fillLight);
+        
+        // Luz pontual (brilho)
+        const pointLight = new THREE.PointLight(this.getLevelColor(this.currentLevel), 1, 10);
+        pointLight.position.set(0, 0, 3);
+        this.scene.add(pointLight);
+        this.lights.push(pointLight);
+    }
+    
+    /**
+     * Retorna cor baseada no nível
+     */
+    getLevelColor(level) {
+        const colors = {
+            1: 0x667eea, // Azul-roxo
+            2: 0x764ba2, // Roxo
+            3: 0xf093fb, // Rosa
+            4: 0x4facfe, // Azul claro
+            5: 0xffd700  // Dourado
+        };
+        return colors[level] || colors[1];
+    }
+    
+    /**
+     * Atualiza o nível do avatar
+     */
+    setLevel(level) {
+        if (level === this.currentLevel) return;
+        
+        console.log(`⬆️ Avatar: Level ${this.currentLevel} → ${level}`);
+        this.currentLevel = level;
+        
+        // Animar transição de cor
+        this.animateLevelUp(level);
+    }
+    
+    /**
+     * Animação de level up
+     */
+    animateLevelUp(newLevel) {
+        const newColor = this.getLevelColor(newLevel);
+        const duration = 2000; // 2 segundos
+        const startTime = Date.now();
+        
+        const startColor = this.avatar.material.color.clone();
+        const endColor = new THREE.Color(newColor);
+        
+        const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Interpolar cor
+            this.avatar.material.color.lerpColors(startColor, endColor, progress);
+            this.avatar.material.emissive.copy(this.avatar.material.color);
+            
+            // Pulsar durante transição
+            const scale = 1 + Math.sin(progress * Math.PI) * 0.3;
+            this.avatar.scale.setScalar(scale);
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                this.avatar.scale.setScalar(1);
+                
+                // Atualizar partículas
+                if (this.particles) {
+                    this.particles.material.color.set(newColor);
+                }
+                
+                // Atualizar luzes
+                this.lights[1].color.set(newColor);
+                this.lights[2].color.set(newColor);
+            }
+        };
+        
+        animate();
+    }
+    
     /**
      * Loop de animação
      */
     animate() {
+        if (!this.isAnimating) return;
+        
         requestAnimationFrame(() => this.animate());
-
-        const time = Date.now() * 0.001;
-
-        if (this.avatarGroup) {
-            // Rotação base
-            this.avatarGroup.rotation.y = time * 0.3;
-
-            // Animações específicas por nível
-            if (this.mainMesh) {
-                // Pulsação
-                const scale = 1 + Math.sin(time * 2) * 0.1;
-                this.mainMesh.scale.set(scale, scale, scale);
-            }
-
-            if (this.rings) {
-                this.rings.forEach((ring, i) => {
-                    ring.rotation.z = time * (0.5 + i * 0.2);
-                });
-            }
-
-            if (this.orbitingCrystals) {
-                this.orbitingCrystals.forEach((crystal, i) => {
-                    const angle = crystal.angle + time;
-                    crystal.mesh.position.x = Math.cos(angle) * 1.5;
-                    crystal.mesh.position.z = Math.sin(angle) * 1.5;
-                    crystal.mesh.rotation.y = time * 2;
-                });
-            }
-
-            if (this.spiral) {
-                this.spiral.rotation.y = time * 0.5;
-            }
-
-            if (this.supremeRings) {
-                this.supremeRings.forEach((ring, i) => {
-                    ring.rotation.z = time * (0.3 + i * 0.15);
-                });
-            }
-
-            if (this.halo) {
-                this.halo.rotation.z = time * 0.2;
-                const haloOpacity = 0.3 + Math.sin(time * 3) * 0.2;
-                this.halo.material.opacity = haloOpacity;
-            }
-
-            if (this.particles) {
-                this.particles.rotation.y = -time * 0.1;
-            }
+        
+        const delta = this.clock.getDelta();
+        const elapsed = this.clock.getElapsedTime();
+        
+        if (this.avatar) {
+            // Rotação suave
+            this.avatar.rotation.y += delta * 0.3;
+            this.avatar.rotation.x = Math.sin(elapsed * 0.5) * 0.1;
+            
+            // Respiração (escala)
+            const breathe = 1 + Math.sin(elapsed * 1.5) * 0.05;
+            this.avatar.scale.setScalar(breathe);
         }
-
+        
+        if (this.particles) {
+            // Rotação das partículas (oposta ao avatar)
+            this.particles.rotation.y -= delta * 0.2;
+            this.particles.rotation.x += delta * 0.1;
+        }
+        
         this.renderer.render(this.scene, this.camera);
     }
-
+    
     /**
-     * Atualiza o avatar quando o nível muda
+     * Redimensionamento responsivo
      */
-    updateLevel(newLevel) {
-        if (newLevel !== this.currentLevel) {
-            console.log(`🆙 Atualizando avatar para nível ${newLevel}`);
-            this.createAvatar(newLevel);
-        }
+    onResize() {
+        if (!this.container || !this.renderer || !this.camera) return;
+        
+        const width = this.container.offsetWidth;
+        const height = this.container.offsetHeight;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        
+        this.renderer.setSize(width, height);
     }
-
-    /**
-     * Ajusta o canvas quando a janela é redimensionada
-     */
-    setupResize() {
-        const resizeObserver = new ResizeObserver(() => {
-            const width = this.canvas.clientWidth;
-            const height = this.canvas.clientHeight;
-            
-            this.camera.aspect = width / height;
-            this.camera.updateProjectionMatrix();
-            
-            this.renderer.setSize(width, height);
-        });
-
-        resizeObserver.observe(this.canvas);
-    }
-
+    
     /**
      * Limpa recursos
      */
     dispose() {
-        this.renderer.dispose();
-        console.log('🧹 Avatar 3D descartado');
+        this.isAnimating = false;
+        
+        if (this.renderer) {
+            this.renderer.dispose();
+        }
+        
+        if (this.avatar) {
+            this.avatar.geometry.dispose();
+            this.avatar.material.dispose();
+        }
+        
+        if (this.particles) {
+            this.particles.geometry.dispose();
+            this.particles.material.dispose();
+        }
+        
+        console.log('🗑️ Avatar 3D descartado');
     }
 }
 
-// Inicializa o avatar quando o DOM carregar
+// Inicializar quando o DOM carregar
 let avatar3D;
 document.addEventListener('DOMContentLoaded', () => {
-    avatar3D = new Avatar3D('avatar-canvas');
-    console.log('🌟 Avatar 3D carregado!');
-    
-    // Sincroniza com o sistema de evolução
-    if (window.evolutionSystem) {
-        avatar3D.updateLevel(evolutionSystem.currentLevel);
-    }
+    // Aguardar o evolutionSystem estar pronto
+    setTimeout(() => {
+        avatar3D = new Avatar3D('avatar-container');
+        
+        // Sincronizar com o sistema de evolução
+        if (window.evolutionSystem) {
+            const level = window.evolutionSystem.currentLevel;
+            avatar3D.setLevel(level);
+            console.log('🔗 Avatar sincronizado com level', level);
+        }
+    }, 500);
 });
