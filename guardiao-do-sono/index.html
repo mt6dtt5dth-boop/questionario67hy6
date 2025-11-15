@@ -54,6 +54,69 @@
     <!-- Canvas 3D -->
     <canvas id="game-canvas"></canvas>
 
+    <!-- 🌟 PAINEL PREMIUM: Guardião da Evolução -->
+    <div id="evolution-panel" class="evolution-panel">
+        <div class="panel-header">
+            <h3>🌙 Seu Guardião</h3>
+            <button id="toggle-panel" class="toggle-btn">◀</button>
+        </div>
+
+        <!-- Avatar 3D Container -->
+        <div id="avatar-container" class="avatar-container">
+            <canvas id="avatar-canvas"></canvas>
+        </div>
+
+        <!-- Nível e Progresso -->
+        <div class="progress-section">
+            <div class="level-info">
+                <span class="level-label">Nível</span>
+                <span id="user-level" class="level-number">1</span>
+                <span id="level-title" class="level-title">Iniciante</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="progress-text">
+                <span id="sessions-count">0</span>/5 sessões
+            </div>
+        </div>
+
+        <!-- Conquistas -->
+        <div class="achievements-section">
+            <h4>🏆 Conquistas</h4>
+            <div id="achievements-list" class="achievements-grid">
+                <!-- Preenchido por JS -->
+            </div>
+        </div>
+
+        <!-- Cristais de Energia -->
+        <div class="crystals-section">
+            <div class="crystals-display">
+                <span class="crystal-icon">💎</span>
+                <span id="crystal-count" class="crystal-count">0</span>
+                <span class="crystal-label">Cristais</span>
+            </div>
+        </div>
+
+        <!-- Benefícios Premium -->
+        <div class="premium-benefits">
+            <div class="benefit-item locked" id="benefit-narrations">
+                <span class="benefit-icon">🎙️</span>
+                <div class="benefit-info">
+                    <div class="benefit-name">Narrações Extras</div>
+                    <div class="benefit-requirement">Nível 3 • 15 💎</div>
+                </div>
+            </div>
+            <div class="benefit-item locked" id="benefit-phase">
+                <span class="benefit-icon">🌌</span>
+                <div class="benefit-info">
+                    <div class="benefit-name">Fase Secreta</div>
+                    <div class="benefit-requirement">Nível 5 • 30 💎</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- HUD overlay -->
     <div id="hud-overlay">
         <div id="phase-indicator" class="fade-text"></div>
@@ -98,6 +161,8 @@
     <script src="js/phase-1-sunset.js"></script>
     <script src="js/phase-2-underwater.js"></script>
     <script src="js/phase-3-guardian.js"></script>
+    <script src="js/evolution-system.js"></script>
+    <script src="js/avatar-3d.js"></script>
     <script src="js/main.js"></script>
     <script src="js/voice-ui.js"></script>
 </body>

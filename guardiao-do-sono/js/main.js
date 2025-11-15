@@ -281,6 +281,11 @@ class GuardianGame {
     async endExperience() {
         console.log('🌟 Experiência finalizada');
         
+        // 🎉 REGISTRAR SESSÃO COMPLETA NO SISTEMA DE EVOLUÇÃO
+        if (window.evolutionSystem) {
+            evolutionSystem.completeSession();
+        }
+        
         // Fade out final
         await this.delay(3000);
         
@@ -394,6 +399,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Disponibilizar globalmente para debug
     window.game = game;
+    
+    // 🌟 Sincronizar avatar com nível atual (após evolutionSystem e avatar3D carregarem)
+    setTimeout(() => {
+        if (window.evolutionSystem && window.avatar3D) {
+            avatar3D.updateLevel(evolutionSystem.currentLevel);
+        }
+    }, 500);
     
     console.log('💤 Pronto para iniciar. Clique em "Iniciar Jornada"');
 });
