@@ -44,6 +44,21 @@ class BinauralBeats {
             this.merger.connect(this.masterGain);
             this.masterGain.connect(this.audioContext.destination);
             
+            // 🆕 Guardar referência global
+            window.binauralContext = this.audioContext;
+            
+            // 🆕 Listener para manter áudio em background
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden && this.audioContext) {
+                    console.log('🎵 Mantendo binaural beats ativo em background...');
+                    if (this.audioContext.state === 'suspended') {
+                        this.audioContext.resume()
+                            .then(() => console.log('✅ Binaural AudioContext resumido'))
+                            .catch(e => console.warn('⚠️ Erro:', e));
+                    }
+                }
+            });
+            
             return true;
         } catch (error) {
             console.error('Erro ao inicializar áudio binaural:', error);

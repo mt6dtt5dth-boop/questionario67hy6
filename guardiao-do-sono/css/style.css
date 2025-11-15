@@ -1826,20 +1826,33 @@ body {
     font-size: 1.2rem;
 }
 
-/* Mobile: Esconder painel ou tornar collapse por padrão */
+/* Mobile: Painel minimizado por padrão */
 @media (max-width: 768px) {
     .evolution-panel {
-        width: 280px;
-        transform: translateX(240px);
+        width: 300px;
+        transform: translateX(260px); /* Minimizado, mostra só 40px */
     }
     
     .evolution-panel.collapsed {
-        transform: translateX(280px);
+        transform: translateX(300px); /* Totalmente escondido */
+    }
+    
+    /* Quando expandido manualmente */
+    .evolution-panel.expanded {
+        transform: translateX(0) !important;
     }
     
     .evolution-notification {
         right: 50px;
         max-width: calc(100vw - 100px);
+    }
+    
+    /* Botão de toggle mais visível no mobile */
+    .toggle-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.3rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
 }
 

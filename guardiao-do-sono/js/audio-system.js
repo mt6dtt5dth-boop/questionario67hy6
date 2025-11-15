@@ -37,11 +37,63 @@ class AudioSystem {
                 console.log('✅ VoiceSystem avançado inicializado');
             }
             
+            // 🆕 Setup listeners para manter áudio em background
+            this.setupBackgroundAudioListeners();
+            
+            // 🆕 Guardar referência global
+            window.audioContext = this.audioContext;
+            window.voiceContext = this.voiceSystem?.audioContext;
+            
             return true;
         } catch (error) {
             console.error('Erro ao inicializar sistema de áudio:', error);
             return false;
         }
+    }
+    
+    /**
+     * 🆕 Configura listeners para manter áudio funcionando em background
+     */
+    setupBackgroundAudioListeners() {
+        console.log('🔊 Configurando proteção de áudio em background...');
+        
+        // Listener para quando página fica oculta
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('📱 Página oculta - forçando AudioContext a continuar...');
+                
+                // Resumir AudioContext se suspenso
+                if (this.audioContext && this.audioContext.state === 'suspended') {
+                    this.audioContext.resume()
+                        .then(() => console.log('✅ AudioContext resumido'))
+                        .catch(e => console.warn('⚠️ Erro ao resumir:', e));
+                }
+                
+                // Resumir VoiceSystem AudioContext
+                if (this.voiceSystem?.audioContext && this.voiceSystem.audioContext.state === 'suspended') {
+                    this.voiceSystem.audioContext.resume()
+                        .then(() => console.log('✅ Voice AudioContext resumido'))
+                        .catch(e => console.warn('⚠️ Erro ao resumir voice:', e));
+                }
+            } else {
+                console.log('📱 Página visível novamente');
+            }
+        });
+        
+        // Listener customizado do WakeLockSystem
+        window.addEventListener('keep-audio-alive', () => {
+            console.log('🔊 Evento keep-audio-alive recebido');
+            
+            if (this.audioContext) {
+                this.audioContext.resume().catch(e => console.warn('⚠️ Erro:', e));
+            }
+            
+            if (this.voiceSystem?.audioContext) {
+                this.voiceSystem.audioContext.resume().catch(e => console.warn('⚠️ Erro:', e));
+            }
+        });
+        
+        console.log('✅ Proteção de background áudio configurada');
     }
 
     /**

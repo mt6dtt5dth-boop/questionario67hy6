@@ -66,7 +66,22 @@ class GuardianGame {
         // Configurar transições
         this.setupPhaseTransitions();
         
+        // 🆕 Inicializar Wake Lock System
+        this.initializeWakeLock();
+        
         console.log('✅ Jogo inicializado com sucesso');
+    }
+    
+    /**
+     * 🆕 Inicializa sistema de Wake Lock
+     */
+    initializeWakeLock() {
+        if (typeof WakeLockSystem !== 'undefined') {
+            this.wakeLock = new WakeLockSystem();
+            console.log('🔒 Wake Lock System inicializado');
+        } else {
+            console.warn('⚠️ WakeLockSystem não encontrado');
+        }
     }
 
     /**
@@ -114,6 +129,17 @@ class GuardianGame {
         
         // 🔒 Wake Lock System (mantém áudio quando tela desliga)
         this.wakeLock = new WakeLockSystem();
+        
+        // 🆕 EXPOR AUDIOCONTEXTS GLOBALMENTE (para Wake Lock System acessar)
+        if (this.binauralBeats && this.binauralBeats.audioContext) {
+            window.binauralContext = this.binauralBeats.audioContext;
+            console.log('📢 Binaural AudioContext exposto globalmente');
+        }
+        
+        if (this.audioSystem && this.audioSystem.voiceSystem && this.audioSystem.voiceSystem.audioContext) {
+            window.voiceContext = this.audioSystem.voiceSystem.audioContext;
+            console.log('📢 Voice AudioContext exposto globalmente');
+        }
         
         console.log('🎵 Sistemas de áudio inicializados');
     }
