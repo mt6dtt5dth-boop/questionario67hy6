@@ -1,0 +1,193 @@
+/**
+ * 🔒 Sistema de Wake Lock - Mantém áudio tocando quando tela desliga
+ * 
+ * Previne que o navegador pause o áudio quando:
+ * - Usuário desliga a tela do celular
+ * - App vai para background
+ * - Celular entra em modo de economia de energia
+ * 
+ * Usa Screen Wake Lock API (quando disponível) + fallbacks
+ */
+
+class WakeLockSystem {
+    constructor() {
+        this.wakeLock = null;
+        this.isSupported = 'wakeLock' in navigator;
+        this.isActive = false;
+        
+        console.log(`🔒 Wake Lock suportado: ${this.isSupported}`);
+        
+        // Listeners para reativar wake lock
+        this.setupEventListeners();
+    }
+    
+    /**
+     * Ativa o Wake Lock
+     */
+    async enable() {
+        if (!this.isSupported) {
+            console.warn('⚠️ Wake Lock API não suportada neste navegador');
+            this.setupFallbacks();
+            return false;
+        }
+        
+        try {
+            console.log('🔒 Solicitando Wake Lock...');
+            this.wakeLock = await navigator.wakeLock.request('screen');
+            this.isActive = true;
+            
+            console.log('✅ Wake Lock ativado!');
+            
+            // Listener para quando wake lock é liberado
+            this.wakeLock.addEventListener('release', () => {
+                console.log('🔓 Wake Lock liberado');
+                this.isActive = false;
+            });
+            
+            return true;
+            
+        } catch (error) {
+            console.error('❌ Erro ao ativar Wake Lock:', error);
+            this.setupFallbacks();
+            return false;
+        }
+    }
+    
+    /**
+     * Desativa o Wake Lock
+     */
+    async disable() {
+        if (this.wakeLock && this.isActive) {
+            try {
+                await this.wakeLock.release();
+                this.wakeLock = null;
+                this.isActive = false;
+                console.log('🔓 Wake Lock desativado');
+            } catch (error) {
+                console.error('❌ Erro ao desativar Wake Lock:', error);
+            }
+        }
+    }
+    
+    /**
+     * Configura event listeners para reativar wake lock
+     */
+    setupEventListeners() {
+        // Reativar quando página fica visível novamente
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState === 'visible' && !this.isActive) {
+                console.log('👁️ Página ficou visível, reativando Wake Lock...');
+                await this.enable();
+            }
+        });
+        
+        // iOS: Listeners específicos
+        window.addEventListener('focus', async () => {
+            if (!this.isActive) {
+                console.log('🎯 Window focus, tentando reativar Wake Lock...');
+                await this.enable();
+            }
+        });
+        
+        // Listener para quando usuário interage novamente
+        const reactivate = async () => {
+            if (!this.isActive) {
+                console.log('👆 Interação detectada, reativando Wake Lock...');
+                await this.enable();
+            }
+        };
+        
+        // Só adiciona uma vez
+        document.addEventListener('touchstart', reactivate, { once: true, passive: true });
+        document.addEventListener('click', reactivate, { once: true, passive: true });
+    }
+    
+    /**
+     * Fallbacks para navegadores sem Wake Lock API
+     */
+    setupFallbacks() {
+        console.log('🔄 Configurando fallbacks para manter áudio ativo...');
+        
+        // 1️⃣ Prevenir pausa automática via Page Visibility API
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('📱 Página oculta - mantendo áudio...');
+                // Forçar áudio a continuar (será implementado em audio-system.js)
+                window.dispatchEvent(new CustomEvent('keep-audio-alive'));
+            } else {
+                console.log('📱 Página visível novamente');
+            }
+        });
+        
+        // 2️⃣ iOS: Prevenir sleep via meta viewport (já adicionado no HTML)
+        
+        // 3️⃣ Criar oscillator invisível que mantém AudioContext ativo
+        this.createSilentOscillator();
+    }
+    
+    /**
+     * Cria oscillator silencioso para manter AudioContext ativo
+     * (truque para iOS/Safari)
+     */
+    createSilentOscillator() {
+        try {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextClass) return;
+            
+            const ctx = new AudioContextClass();
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            
+            // Volume zero (inaudível mas mantém contexto ativo)
+            gainNode.gain.value = 0;
+            
+            oscillator.frequency.value = 440;
+            oscillator.start();
+            
+            console.log('🔇 Oscillator silencioso criado (mantém AudioContext)');
+            
+            // Guardar referência
+            this.silentOscillator = oscillator;
+            this.silentContext = ctx;
+            
+        } catch (error) {
+            console.warn('⚠️ Não foi possível criar oscillator silencioso:', error);
+        }
+    }
+    
+    /**
+     * Para o oscillator silencioso
+     */
+    stopSilentOscillator() {
+        if (this.silentOscillator) {
+            try {
+                this.silentOscillator.stop();
+                this.silentContext?.close();
+                console.log('🔇 Oscillator silencioso parado');
+            } catch (error) {
+                console.warn('⚠️ Erro ao parar oscillator:', error);
+            }
+        }
+    }
+    
+    /**
+     * Verifica status atual
+     */
+    getStatus() {
+        return {
+            supported: this.isSupported,
+            active: this.isActive,
+            wakeLock: !!this.wakeLock,
+            silentOscillator: !!this.silentOscillator
+        };
+    }
+}
+
+// Exportar para uso global
+window.WakeLockSystem = WakeLockSystem;
+
+// Log de inicialização
+console.log('🔒 Wake Lock System carregado');

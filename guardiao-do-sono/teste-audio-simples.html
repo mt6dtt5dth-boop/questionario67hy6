@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>🎧 Teste Áudio Simples - iPhone</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            min-width: 300px;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .log {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-width: 90%;
+            width: 500px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .log-line {
+            margin: 5px 0;
+        }
+        
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        
+        #status {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        
+        audio {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎧 Teste de Áudio - iPhone</h1>
+    
+    <div id="status">⏹️ Pronto para testar</div>
+    
+    <button class="btn" onclick="testarAudio1()">🎵 TESTE 1: Tocar MP3</button>
+    <button class="btn" onclick="testarAudio2()">🎵 TESTE 2: Com Controles</button>
+    <button class="btn" onclick="testarAudio3()">🎵 TESTE 3: Pre-load</button>
+    
+    <!-- Player de áudio com controles (para teste manual) -->
+    <audio id="audio-player" controls style="display:none;">
+        <source src="audio/narrations/fase1_introducao.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div class="log" id="log"></div>
+    
+    <script>
+        let audioElement = null;
+        
+        function log(msg, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const line = document.createElement('div');
+            line.className = `log-line ${type}`;
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logDiv.appendChild(line);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(msg);
+        }
+        
+        function updateStatus(msg, icon = '🎵') {
+            document.getElementById('status').textContent = `${icon} ${msg}`;
+        }
+        
+        // TESTE 1: Método mais simples possível
+        function testarAudio1() {
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            log('🎵 TESTE 1: Criando Audio() e tocando', 'info');
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            
+            updateStatus('Carregando...', '⏳');
+            
+            // Limpar áudio anterior
+            if (audioElement) {
+                audioElement.pause();
+                audioElement = null;
+            }
+            
+            // Criar novo
+            audioElement = new Audio('audio/narrations/fase1_introducao.mp3');
+            audioElement.volume = 1.0;
+            
+            audioElement.addEventListener('loadedmetadata', () => {
+                log(`✅ Metadata carregada: ${audioElement.duration.toFixed(2)}s`, 'success');
+            });
+            
+            audioElement.addEventListener('canplaythrough', () => {
+                log('✅ Pode tocar completamente', 'success');
+            });
+            
+            audioElement.addEventListener('play', () => {
+                log('▶️ Evento PLAY disparado', 'success');
+                updateStatus('Tocando!', '▶️');
+            });
+            
+            audioElement.addEventListener('playing', () => {
+                log('🎵 Evento PLAYING - REALMENTE TOCANDO!', 'success');
+                updateStatus('Tocando!', '🎵');
+            });
+            
+            audioElement.addEventListener('pause', () => {
+                log('⏸️ Pausado', 'warning');
+                updateStatus('Pausado', '⏸️');
+            });
+            
+            audioElement.addEventListener('ended', () => {
+                log('⏹️ Finalizado', 'info');
+                updateStatus('Finalizado', '⏹️');
+            });
+            
+            audioElement.addEventListener('error', (e) => {
+                log(`❌ ERRO: ${audioElement.error?.message}`, 'error');
+                log(`Error code: ${audioElement.error?.code}`, 'error');
+                updateStatus('Erro!', '❌');
+            });
+            
+            // Tentar tocar
+            log('🚀 Chamando play()...', 'info');
+            
+            const playPromise = audioElement.play();
+            
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        log('✅ play() RESOLVEU COM SUCESSO!', 'success');
+                        log(`Estado: paused=${audioElement.paused}, currentTime=${audioElement.currentTime}`, 'info');
+                        
+                        if (audioElement.paused) {
+                            log('⚠️ PROBLEMA: play() resolveu mas áudio está PAUSADO!', 'error');
+                            updateStatus('Erro: pausado após play()', '⚠️');
+                        }
+                    })
+                    .catch(error => {
+                        log(`❌ play() REJEITOU: ${error.name}`, 'error');
+                        log(`Mensagem: ${error.message}`, 'error');
+                        updateStatus(`Erro: ${error.name}`, '❌');
+                        
+                        if (error.name === 'NotAllowedError') {
+                            log('💡 NotAllowedError = Precisa de interação do usuário', 'warning');
+                            log('💡 Mas você JÁ CLICOU no botão, então algo está errado', 'warning');
+                        }
+                    });
+            }
+        }
+        
+        // TESTE 2: Mostrar controles nativos
+        function testarAudio2() {
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            log('🎵 TESTE 2: Usando elemento <audio> com controles', 'info');
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            
+            const player = document.getElementById('audio-player');
+            player.style.display = 'block';
+            
+            updateStatus('Use os controles abaixo', '👇');
+            log('✅ Player com controles ativado', 'success');
+            log('💡 Tente tocar manualmente com os controles nativos', 'info');
+            log('💡 Se funcionar, o problema é com JavaScript', 'info');
+        }
+        
+        // TESTE 3: Pre-load + play
+        function testarAudio3() {
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            log('🎵 TESTE 3: Pre-load explícito', 'info');
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            
+            updateStatus('Pre-carregando...', '⏳');
+            
+            if (audioElement) {
+                audioElement.pause();
+                audioElement = null;
+            }
+            
+            audioElement = new Audio();
+            audioElement.preload = 'auto';
+            audioElement.volume = 1.0;
+            
+            audioElement.addEventListener('loadeddata', () => {
+                log('✅ Dados carregados', 'success');
+            });
+            
+            audioElement.addEventListener('canplaythrough', () => {
+                log('✅ Totalmente carregado, tentando tocar...', 'success');
+                
+                setTimeout(() => {
+                    log('🚀 Tocando após 500ms de delay...', 'info');
+                    
+                    audioElement.play()
+                        .then(() => {
+                            log('✅ Tocando!', 'success');
+                            updateStatus('Tocando!', '▶️');
+                        })
+                        .catch(e => {
+                            log(`❌ Erro: ${e.message}`, 'error');
+                            updateStatus('Erro!', '❌');
+                        });
+                }, 500);
+            });
+            
+            audioElement.addEventListener('error', (e) => {
+                log(`❌ Erro ao carregar: ${audioElement.error?.message}`, 'error');
+                updateStatus('Erro!', '❌');
+            });
+            
+            // Definir src e forçar load
+            audioElement.src = 'audio/narrations/fase1_introducao.mp3';
+            log('📥 Carregando arquivo...', 'info');
+            audioElement.load();
+        }
+        
+        // Info inicial
+        window.onload = () => {
+            log('🚀 Página carregada', 'info');
+            log(`📱 User-Agent: ${navigator.userAgent}`, 'info');
+            log(`🔊 Audio suportado: ${!!Audio}`, 'info');
+            
+            const testAudio = new Audio();
+            const mp3Support = testAudio.canPlayType('audio/mpeg');
+            log(`🎵 Suporte MP3: ${mp3Support || 'Desconhecido'}`, mp3Support ? 'success' : 'error');
+            
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            log('💡 Clique em qualquer botão TESTE para começar', 'warning');
+            log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        };
+    </script>
+</body>
+</html>

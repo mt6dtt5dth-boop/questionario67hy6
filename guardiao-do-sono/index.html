@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- iOS Specific Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Guardião do Sono">
     <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Prevent iOS from pausing audio when screen locks -->
+    <meta name="format-detection" content="telephone=no">
+    
     <title>O Guardião do Sono - Experiência Terapêutica 3D</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -89,6 +97,69 @@
             </div>
         </div>
 
+        <!-- 🌱 INCUBADOR DE SONHOS (NOVO!) -->
+        <div class="dream-incubator-section">
+            <div class="incubator-header">
+                <h4>🌱 Incubador de Sonhos</h4>
+                <span class="incubator-badge">INÉDITO</span>
+            </div>
+            
+            <p class="incubator-description">
+                Plante uma intenção antes de dormir. Sua mente subconsciente cuidará dela enquanto você descansa.
+            </p>
+            
+            <!-- Input de Intenção -->
+            <div class="dream-input-container">
+                <textarea 
+                    id="dream-intention" 
+                    class="dream-input" 
+                    placeholder="Quero sonhar com..."
+                    maxlength="200"
+                    rows="3"
+                ></textarea>
+                <div class="char-counter">
+                    <span id="char-count">0</span>/200
+                </div>
+            </div>
+            
+            <!-- Botão de Plantar -->
+            <button id="plant-dream-btn" class="plant-button" disabled>
+                🌱 Plantar Semente do Sonho
+            </button>
+            
+            <!-- Semente Ativa -->
+            <div id="active-seed" class="active-seed" style="display: none;">
+                <div class="seed-visual">
+                    <canvas id="seed-canvas" width="280" height="120"></canvas>
+                </div>
+                <div class="seed-info">
+                    <div class="seed-label">🌱 Semente Ativa:</div>
+                    <div id="seed-text" class="seed-text"></div>
+                    <div class="seed-progress">
+                        <div class="seed-growth-bar">
+                            <div id="seed-growth-fill" class="seed-growth-fill"></div>
+                        </div>
+                        <div class="seed-status">
+                            <span id="seed-age">Plantada há 0 min</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="harvest-dream-btn" class="harvest-button">
+                    ✨ Colher Sonho
+                </button>
+            </div>
+            
+            <!-- Histórico de Sonhos -->
+            <div class="dream-history">
+                <button id="toggle-history" class="toggle-history-btn">
+                    📖 Ver Histórico (<span id="history-count">0</span> sonhos)
+                </button>
+                <div id="history-list" class="history-list" style="display: none;">
+                    <!-- Preenchido por JS -->
+                </div>
+            </div>
+        </div>
+
         <!-- Cristais de Energia -->
         <div class="crystals-section">
             <div class="crystals-display">
@@ -154,6 +225,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <!-- Scripts do jogo -->
+    <script src="js/wake-lock.js"></script>
     <script src="js/voice-system.js"></script>
     <script src="js/audio-system.js"></script>
     <script src="js/binaural-beats.js"></script>
@@ -163,6 +235,7 @@
     <script src="js/phase-3-guardian.js"></script>
     <script src="js/evolution-system.js"></script>
     <script src="js/avatar-3d.js"></script>
+    <script src="js/dream-incubator.js"></script>
     <script src="js/main.js"></script>
     <script src="js/voice-ui.js"></script>
 </body>

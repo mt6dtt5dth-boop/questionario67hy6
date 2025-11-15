@@ -15,6 +15,7 @@ class GuardianGame {
         this.audioSystem = null;
         this.binauralBeats = null;
         this.phaseTransition = null;
+        this.wakeLock = null; // 🔒 Sistema de Wake Lock
         
         // Fases
         this.phase1 = null;
@@ -110,6 +111,9 @@ class GuardianGame {
         // Batidas binaurais
         this.binauralBeats = new BinauralBeats();
         await this.binauralBeats.initialize();
+        
+        // 🔒 Wake Lock System (mantém áudio quando tela desliga)
+        this.wakeLock = new WakeLockSystem();
         
         console.log('🎵 Sistemas de áudio inicializados');
     }
@@ -212,6 +216,11 @@ class GuardianGame {
         
         // 🔧 CORREÇÃO MOBILE: Desbloquear AudioContext IMEDIATAMENTE no click
         await this.unlockAudioContext();
+        
+        // 🔒 Ativar Wake Lock (mantém áudio quando tela desliga)
+        if (this.wakeLock) {
+            await this.wakeLock.enable();
+        }
         
         // Mostrar loading
         this.showScreen('loading');
