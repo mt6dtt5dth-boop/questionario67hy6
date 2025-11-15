@@ -350,6 +350,85 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 8000);
     }
 
+    // Baixar áudio puro do ElevenLabs (teste sem navegador)
+    const downloadTestButton = document.getElementById('download-test-button');
+    if (downloadTestButton) {
+        downloadTestButton.addEventListener('click', async () => {
+            downloadTestButton.disabled = true;
+            downloadTestButton.textContent = '⏳ Gerando...';
+            
+            showNotification('🎤 Gerando áudio no ElevenLabs...', 'info');
+            
+            try {
+                const voiceSystem = new VoiceSystem();
+                await voiceSystem.initialize();
+                
+                const apiKey = voiceSystem.getElevenLabsAPIKey();
+                const voiceId = 'S9K4e72HyPCxvHe7p5rK'; // Lotte
+                const testText = "Esta é uma demonstração da voz Lotte em português do Brasil. O Guardião do Sono está testando o áudio puro.";
+                
+                showNotification('📡 Conectando com ElevenLabs...', 'info');
+                
+                const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'audio/mpeg',
+                        'Content-Type': 'application/json',
+                        'xi-api-key': apiKey
+                    },
+                    body: JSON.stringify({
+                        text: testText,
+                        model_id: 'eleven_multilingual_v2',
+                        voice_settings: {
+                            stability: 0.65,
+                            similarity_boost: 0.8,
+                            style: 0.3,
+                            use_speaker_boost: true
+                        }
+                    })
+                });
+                
+                if (response.ok) {
+                    const audioBlob = await response.blob();
+                    showNotification(`✅ Áudio recebido: ${(audioBlob.size / 1024).toFixed(2)} KB`, 'success');
+                    
+                    // Criar link de download
+                    const url = URL.createObjectURL(audioBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'guardiao-do-sono-teste-elevenlabs.mp3';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    showNotification('💾 Áudio baixado! Ouça no seu player de música', 'success');
+                    alert(
+                        '✅ ÁUDIO BAIXADO!\n\n' +
+                        'Um arquivo MP3 foi baixado para seu dispositivo:\n' +
+                        '"guardiao-do-sono-teste-elevenlabs.mp3"\n\n' +
+                        '🎧 Ouça esse arquivo no seu player de música.\n\n' +
+                        'Se esse áudio estiver NATURAL (não robótico),\n' +
+                        'o problema está no navegador, não no ElevenLabs.\n\n' +
+                        'Me diga: o arquivo MP3 baixado está natural ou robótico?'
+                    );
+                } else {
+                    const errorText = await response.text();
+                    showNotification(`❌ Erro ${response.status}: ${errorText}`, 'error');
+                    alert(`Erro: ${response.status}\n${errorText}`);
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                showNotification(`❌ Erro: ${error.message}`, 'error');
+                alert('Erro ao baixar áudio: ' + error.message);
+            } finally {
+                downloadTestButton.disabled = false;
+                downloadTestButton.textContent = '💾 Baixar Áudio ElevenLabs (Teste Puro)';
+            }
+        });
+    }
+
     // Listar todas as vozes disponíveis (diagnóstico)
     const listVoicesButton = document.getElementById('list-voices-button');
     if (listVoicesButton) {
