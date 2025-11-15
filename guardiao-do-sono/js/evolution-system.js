@@ -183,9 +183,25 @@ class EvolutionSystem {
         const toggleBtn = document.getElementById('toggle-panel');
         const panel = document.getElementById('evolution-panel');
         
-        toggleBtn.addEventListener('click', () => {
-            panel.classList.toggle('collapsed');
-            toggleBtn.textContent = panel.classList.contains('collapsed') ? '▶' : '◀';
+        // 📱 No mobile, começar minimizado
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            // Não adicionar 'collapsed', usar o padrão do CSS que já minimiza
+            console.log('📱 Mobile detectado - painel minimizado por padrão');
+        }
+        
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevenir propagação
+            
+            if (isMobile) {
+                // Mobile: Toggle entre minimizado e expandido
+                panel.classList.toggle('expanded');
+                toggleBtn.textContent = panel.classList.contains('expanded') ? '▶' : '◀';
+            } else {
+                // Desktop: Toggle collapsed
+                panel.classList.toggle('collapsed');
+                toggleBtn.textContent = panel.classList.contains('collapsed') ? '▶' : '◀';
+            }
         });
 
         // Click nos benefícios premium
