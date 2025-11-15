@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>🎤 Teste Voz iPhone</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .status-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 20px;
+            margin: 10px 0;
+            font-size: 18px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .log {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .log-line {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #667eea;
+            padding-left: 10px;
+        }
+        
+        .success { border-left-color: #4caf50; color: #4caf50; }
+        .error { border-left-color: #f44336; color: #f44336; }
+        .warning { border-left-color: #ff9800; color: #ff9800; }
+    </style>
+</head>
+<body>
+    <h1>🎤 Teste de Voz Direta</h1>
+    
+    <div class="status">
+        <div class="status-item">
+            📱 Dispositivo: <strong id="device"></strong>
+        </div>
+        <div class="status-item">
+            🔊 Status: <strong id="status">Aguardando teste...</strong>
+        </div>
+    </div>
+    
+    <button onclick="testeCompleto()">🎧 TESTE COMPLETO</button>
+    
+    <div class="log" id="log"></div>
+    
+    <script>
+        let audioAtual = null;
+        
+        function log(msg, tipo = 'info') {
+            const logDiv = document.getElementById('log');
+            const linha = document.createElement('div');
+            linha.className = `log-line ${tipo}`;
+            linha.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logDiv.appendChild(linha);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(msg);
+        }
+        
+        function status(msg) {
+            document.getElementById('status').textContent = msg;
+        }
+        
+        // Detectar dispositivo
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent);
+        document.getElementById('device').textContent = 
+            `${isIOS ? 'iOS' : 'Outro'} / ${isSafari ? 'Safari' : 'Chrome'}`;
+        
+        async function testeCompleto() {
+            log('═══════════════════════════════════', 'info');
+            log('🚀 INICIANDO TESTE COMPLETO', 'info');
+            log('═══════════════════════════════════', 'info');
+            
+            // Parar áudio anterior se existir
+            if (audioAtual) {
+                log('⏹️ Parando áudio anterior', 'warning');
+                audioAtual.pause();
+                audioAtual = null;
+            }
+            
+            status('Testando...');
+            
+            // TESTE 1: Áudio silencioso (unlock)
+            log('', 'info');
+            log('📍 TESTE 1: Desbloqueando áudio móvel', 'info');
+            try {
+                const silencioso = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAA4T0DIwcAAAAAAAAAAAAAAAAAAAA//sQZAAP8AAAaQAAAAgAAA0gAAABAAABpAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ==');
+                silencioso.volume = 0.01;
+                await silencioso.play();
+                silencioso.pause();
+                log('✅ Áudio silencioso tocou (unlock bem-sucedido)', 'success');
+            } catch (e) {
+                log(`❌ Falha no unlock: ${e.message}`, 'error');
+            }
+            
+            await aguardar(500);
+            
+            // TESTE 2: Carregar áudio real
+            log('', 'info');
+            log('📍 TESTE 2: Carregando áudio pré-gravado', 'info');
+            
+            const caminhoAudio = 'audio/narrations/fase1_introducao.mp3';
+            log(`📁 Arquivo: ${caminhoAudio}`, 'info');
+            
+            audioAtual = new Audio();
+            audioAtual.preload = 'auto';
+            audioAtual.volume = 1.0;
+            
+            // Eventos detalhados
+            audioAtual.onloadstart = () => log('📡 loadstart: Iniciando carregamento', 'info');
+            audioAtual.onloadedmetadata = () => {
+                log(`⏱️ loadedmetadata: Duração = ${audioAtual.duration.toFixed(2)}s`, 'success');
+                log(`🔊 Volume = ${audioAtual.volume}`, 'info');
+            };
+            audioAtual.onloadeddata = () => log('📦 loadeddata: Dados carregados', 'success');
+            audioAtual.oncanplay = () => log('✅ canplay: Pronto para tocar', 'success');
+            audioAtual.oncanplaythrough = () => log('✅ canplaythrough: Buffer completo', 'success');
+            
+            audioAtual.onplay = () => {
+                log('▶️ play: Evento disparado', 'success');
+                status('Tocando...');
+            };
+            
+            audioAtual.onplaying = () => {
+                log('🎵 playing: REALMENTE TOCANDO AGORA!', 'success');
+                status('🎵 Tocando áudio!');
+            };
+            
+            audioAtual.ontimeupdate = () => {
+                const progresso = (audioAtual.currentTime / audioAtual.duration * 100).toFixed(0);
+                status(`🎵 Tocando: ${progresso}%`);
+            };
+            
+            audioAtual.onpause = () => log('⏸️ pause: Pausado', 'warning');
+            audioAtual.onended = () => {
+                log('⏹️ ended: Áudio finalizado', 'success');
+                status('✅ Teste concluído!');
+            };
+            
+            audioAtual.onerror = (e) => {
+                log(`❌ ERROR: ${audioAtual.error?.message}`, 'error');
+                log(`Error code: ${audioAtual.error?.code}`, 'error');
+                log(`Network state: ${audioAtual.networkState}`, 'error');
+                log(`Ready state: ${audioAtual.readyState}`, 'error');
+                status('❌ Erro ao carregar');
+            };
+            
+            audioAtual.onstalled = () => log('⚠️ stalled: Download travou', 'warning');
+            audioAtual.onwaiting = () => log('⏳ waiting: Aguardando buffer', 'warning');
+            
+            // Definir src e carregar
+            audioAtual.src = caminhoAudio;
+            audioAtual.load();
+            log('🔄 load() chamado', 'info');
+            
+            await aguardar(1000);
+            
+            // TESTE 3: Tentar reproduzir
+            log('', 'info');
+            log('📍 TESTE 3: Tentando reproduzir', 'info');
+            
+            try {
+                const playPromise = audioAtual.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            log('✅ play() promise RESOLVIDA com sucesso!', 'success');
+                            log(`📊 Estado: paused=${audioAtual.paused}, time=${audioAtual.currentTime.toFixed(2)}s`, 'success');
+                        })
+                        .catch(erro => {
+                            log(`❌ play() promise REJEITADA: ${erro.name}`, 'error');
+                            log(`Mensagem: ${erro.message}`, 'error');
+                            status('❌ Erro: ' + erro.name);
+                            
+                            if (erro.name === 'NotAllowedError') {
+                                log('💡 NotAllowedError = navegador bloqueou autoplay', 'warning');
+                            } else if (erro.name === 'NotSupportedError') {
+                                log('💡 NotSupportedError = formato de arquivo não suportado', 'error');
+                            }
+                        });
+                } else {
+                    log('⚠️ play() não retornou promise (navegador antigo)', 'warning');
+                }
+            } catch (e) {
+                log(`❌ Exceção ao chamar play(): ${e.message}`, 'error');
+                status('❌ Exceção: ' + e.message);
+            }
+            
+            log('', 'info');
+            log('═══════════════════════════════════', 'info');
+            log('✅ Teste finalizado (aguarde reprodução)', 'info');
+            log('═══════════════════════════════════', 'info');
+        }
+        
+        function aguardar(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // Log inicial
+        log('🚀 Página carregada', 'success');
+        log(`📱 Dispositivo: ${isIOS ? 'iOS' : 'Outro'}`, 'info');
+        log(`🌐 Navegador: ${isSafari ? 'Safari' : 'Outro'}`, 'info');
+        log('', 'info');
+        log('💡 Clique no botão "TESTE COMPLETO" acima', 'warning');
+    </script>
+</body>
+</html>

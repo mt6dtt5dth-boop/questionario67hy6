@@ -1167,6 +1167,351 @@ body {
     }
 }
 
+/* ========== PAINEL DE EVOLUÇÃO (PREMIUM) ========== */
+
+.evolution-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: 100vh;
+    background: linear-gradient(180deg, rgba(26, 30, 62, 0.95) 0%, rgba(15, 23, 41, 0.95) 100%);
+    backdrop-filter: blur(10px);
+    border-left: 2px solid rgba(138, 180, 248, 0.2);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: transform 0.3s ease;
+    box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.evolution-panel.collapsed {
+    transform: translateX(280px);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(138, 180, 248, 0.2);
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.panel-header h3 {
+    font-size: 1.4rem;
+    font-weight: 300;
+}
+
+.toggle-btn {
+    background: rgba(138, 180, 248, 0.2);
+    border: 1px solid rgba(138, 180, 248, 0.3);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+    background: rgba(138, 180, 248, 0.3);
+    transform: scale(1.1);
+}
+
+/* Avatar Container */
+.avatar-container {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#avatar-canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Progress Section */
+.progress-section {
+    padding: 20px;
+    border-bottom: 1px solid rgba(138, 180, 248, 0.1);
+}
+
+.level-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.level-label {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.level-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.level-title {
+    font-size: 1.1rem;
+    color: #8ab4f8;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    text-align: center;
+}
+
+/* Achievements Section */
+.achievements-section {
+    padding: 20px;
+    border-bottom: 1px solid rgba(138, 180, 248, 0.1);
+}
+
+.achievements-section h4 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: #8ab4f8;
+}
+
+.achievements-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.achievement {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.achievement.unlocked {
+    background: rgba(102, 126, 234, 0.2);
+    border: 1px solid rgba(138, 180, 248, 0.3);
+}
+
+.achievement.locked {
+    opacity: 0.5;
+}
+
+.achievement-icon {
+    font-size: 1.8rem;
+}
+
+.achievement-info {
+    flex: 1;
+}
+
+.achievement-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.achievement-desc {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.achievement-reward {
+    font-size: 0.8rem;
+    color: #4caf50;
+    margin-top: 5px;
+}
+
+.achievement-locked {
+    font-size: 0.8rem;
+    opacity: 0.5;
+}
+
+/* Crystals Section */
+.crystals-section {
+    padding: 20px;
+    border-bottom: 1px solid rgba(138, 180, 248, 0.1);
+}
+
+.crystals-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+    background: rgba(102, 126, 234, 0.2);
+    border-radius: 15px;
+}
+
+.crystal-icon {
+    font-size: 2rem;
+}
+
+.crystal-count {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #8ab4f8;
+}
+
+.crystal-label {
+    font-size: 1rem;
+    opacity: 0.7;
+}
+
+/* Premium Benefits */
+.premium-benefits {
+    padding: 20px;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(-5px);
+}
+
+.benefit-item.locked {
+    opacity: 0.5;
+}
+
+.benefit-item.unlocked {
+    background: rgba(76, 175, 80, 0.2);
+    border: 1px solid rgba(76, 175, 80, 0.5);
+}
+
+.benefit-icon {
+    font-size: 2rem;
+}
+
+.benefit-info {
+    flex: 1;
+}
+
+.benefit-name {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.benefit-requirement {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* Evolution Notifications */
+.evolution-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 20px 25px;
+    border-radius: 15px;
+    background: rgba(102, 126, 234, 0.95);
+    backdrop-filter: blur(10px);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 200;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s ease;
+    max-width: 300px;
+    text-align: center;
+}
+
+.evolution-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.evolution-notification.success {
+    background: rgba(76, 175, 80, 0.95);
+}
+
+.evolution-notification.achievement {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.evolution-notification.levelup {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    color: #333;
+}
+
+.evolution-notification.warning {
+    background: rgba(255, 152, 0, 0.95);
+}
+
+/* Mobile Adjustments para Evolution Panel */
+@media (max-width: 768px) {
+    .evolution-panel {
+        width: 100%;
+        height: auto;
+        max-height: 40vh;
+        top: auto;
+        bottom: 0;
+        border-left: none;
+        border-top: 2px solid rgba(138, 180, 248, 0.2);
+        transform: translateY(0);
+    }
+    
+    .evolution-panel.collapsed {
+        transform: translateY(calc(100% - 60px));
+    }
+    
+    .avatar-container {
+        height: 150px;
+    }
+    
+    .evolution-notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
 /* ========== PAINEL DE EVOLUÇÃO (SIDEBAR PREMIUM) ========== */
 
 .evolution-panel {
