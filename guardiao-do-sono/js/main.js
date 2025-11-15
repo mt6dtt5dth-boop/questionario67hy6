@@ -12,6 +12,7 @@ class GuardianGame {
         this.clock = new THREE.Clock();
         
         // Sistemas
+        this.userManagement = null; // 👥 Sistema de Usuários
         this.audioSystem = null;
         this.binauralBeats = null;
         this.phaseTransition = null;
@@ -42,6 +43,12 @@ class GuardianGame {
      */
     async initialize() {
         console.log('🌙 Inicializando O Guardião do Sono...');
+        
+        // 👥 Inicializar Sistema de Usuários PRIMEIRO
+        if (typeof UserManagementSystem !== 'undefined') {
+            this.userManagement = new UserManagementSystem();
+            console.log('👥 Sistema de Usuários inicializado');
+        }
         
         // Obter elementos UI
         this.canvas = document.getElementById('game-canvas');
