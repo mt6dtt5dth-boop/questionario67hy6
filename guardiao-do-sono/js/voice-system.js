@@ -439,9 +439,16 @@ class VoiceSystem {
             console.log(`📡 Response status: ${response.status}`);
 
             if (response.ok) {
-                console.log('✅ Áudio recebido, reproduzindo...');
+                console.log('✅ Áudio recebido do ElevenLabs!');
                 const audioBlob = await response.blob();
-                console.log(`📦 Blob size: ${audioBlob.size} bytes`);
+                console.log(`📦 Blob recebido: ${audioBlob.size} bytes (${(audioBlob.size / 1024).toFixed(2)} KB)`);
+                
+                // DEBUG: Criar link de download para testar o áudio diretamente
+                const downloadUrl = URL.createObjectURL(audioBlob);
+                console.log('🔗 Link de download do áudio (teste):');
+                console.log(downloadUrl);
+                console.log('💡 Copie o link acima e cole no navegador para ouvir o áudio puro do ElevenLabs');
+                
                 await this.playAudioBlob(audioBlob);
                 console.log('✅ ElevenLabs concluído com sucesso!');
             } else {
@@ -475,13 +482,34 @@ class VoiceSystem {
     async playAudioBlob(blob) {
         return new Promise((resolve, reject) => {
             console.log('🎵 Criando URL do blob...');
+            console.log(`📦 Tamanho do blob: ${blob.size} bytes (${(blob.size / 1024).toFixed(2)} KB)`);
+            console.log(`📄 Tipo do blob: ${blob.type}`);
+            
+            // Verificar se o blob não está vazio
+            if (blob.size === 0) {
+                console.error('❌ Blob vazio! ElevenLabs não retornou áudio válido');
+                reject(new Error('Blob vazio'));
+                return;
+            }
+            
+            // Verificar se é realmente um áudio MP3
+            if (!blob.type.includes('audio') && !blob.type.includes('mpeg')) {
+                console.warn(`⚠️ Tipo de blob inesperado: ${blob.type}`);
+            }
+            
             const url = URL.createObjectURL(blob);
             const audio = new Audio(url);
+            
+            // Aumentar volume para garantir que seja audível
+            audio.volume = 1.0;
             
             console.log('🔊 Configurando eventos de áudio...');
             
             audio.onloadedmetadata = () => {
                 console.log(`⏱️ Duração do áudio: ${audio.duration.toFixed(2)}s`);
+                if (audio.duration < 1) {
+                    console.warn('⚠️ Áudio muito curto! Pode ser um erro.');
+                }
             };
             
             audio.oncanplaythrough = () => {
@@ -490,6 +518,15 @@ class VoiceSystem {
             
             audio.onplay = () => {
                 console.log('▶️ Reprodução iniciada');
+                console.log(`🔊 Volume: ${audio.volume}`);
+                console.log(`⏱️ currentTime: ${audio.currentTime}s / ${audio.duration}s`);
+            };
+            
+            audio.ontimeupdate = () => {
+                // Log apenas a cada 2 segundos
+                if (Math.floor(audio.currentTime) % 2 === 0 && audio.currentTime > 0) {
+                    console.log(`⏱️ Progresso: ${audio.currentTime.toFixed(1)}s / ${audio.duration.toFixed(1)}s`);
+                }
             };
             
             audio.onended = () => {
