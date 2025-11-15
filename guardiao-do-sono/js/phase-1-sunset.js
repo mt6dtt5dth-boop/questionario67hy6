@@ -187,20 +187,14 @@ class Phase1Sunset {
         // Iniciar som de vento suave
         this.audioSystem.startWind();
 
-        // Narração inicial
+        // Narração inicial (usando CHAVE para encontrar áudio pré-gravado)
         setTimeout(() => {
-            this.audioSystem.narrate(
-                "Cada luz que se apaga no horizonte é um pensamento que se despede. " +
-                "Você não precisa fazer nada. Só deixar que o silêncio volte a morar em você."
-            );
+            this.audioSystem.narrate('phase1_1'); // ✅ USA A CHAVE!
         }, 3000);
 
-        // Segunda narração
+        // Segunda narração (usando CHAVE para encontrar áudio pré-gravado)
         setTimeout(() => {
-            this.audioSystem.narrate(
-                "Observe as cores se transformando. Cada respiração escurece o cenário. " +
-                "O dia já passou. Agora é hora de descansar."
-            );
+            this.audioSystem.narrate('phase1_2'); // ✅ USA A CHAVE!
         }, 45000); // 45 segundos
     }
 

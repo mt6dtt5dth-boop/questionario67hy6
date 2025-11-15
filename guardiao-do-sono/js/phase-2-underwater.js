@@ -258,31 +258,19 @@ class Phase2Underwater {
         // Ativar interação com bolhas
         this.enableInteraction();
 
-        // Narração inicial
+        // Narração inicial (usando CHAVE)
         setTimeout(() => {
-            this.audioSystem.narrate(
-                "Essas bolhas são partes do seu dia. " +
-                "Toque, e veja-as subirem... libertas. " +
-                "A mente aprende que soltar é dormir."
-            );
+            this.audioSystem.narrate('phase2_1'); // ✅ USA A CHAVE!
         }, 3000);
 
-        // Segunda narração
+        // Segunda narração (usando CHAVE)
         setTimeout(() => {
-            this.audioSystem.narrate(
-                "Cada bolha que sobe leva consigo uma preocupação. " +
-                "Você está seguro aqui, no fundo tranquilo. " +
-                "Nada pode perturbá-lo."
-            );
+            this.audioSystem.narrate('phase2_2'); // ✅ USA A CHAVE!
         }, 80000); // 1:20
 
-        // Terceira narração
+        // Terceira narração (usando CHAVE)
         setTimeout(() => {
-            this.audioSystem.narrate(
-                "Sinta a leveza da água sustentando você. " +
-                "Não há peso. Não há pressa. " +
-                "Apenas a suave corrente do descanso."
-            );
+            this.audioSystem.narrate('phase2_3'); // ✅ USA A CHAVE!
         }, 160000); // 2:40
     }
 

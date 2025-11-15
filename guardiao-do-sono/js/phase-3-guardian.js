@@ -182,35 +182,19 @@ class Phase3Guardian {
         // Parar sons de água, manter apenas binaural
         this.audioSystem.stopAllAmbient();
 
-        // Narração principal - a essência do guardião
+        // Narração principal (usando CHAVE) - a essência do guardião
         setTimeout(() => {
-            this.audioSystem.narrate(
-                "Sou o reflexo do seu próprio descanso. " +
-                "Enquanto você dorme, eu permaneço desperto. " +
-                "Tudo está bem. Tudo pode parar.",
-                { rate: 0.6, pitch: 0.85 } // Mais lento e grave
-            );
+            this.audioSystem.narrate('phase3_1'); // ✅ USA A CHAVE!
         }, 5000);
 
-        // Segunda narração
+        // Segunda narração (usando CHAVE)
         setTimeout(() => {
-            this.audioSystem.narrate(
-                "Não há nada a fazer. Não há nada a controlar. " +
-                "Seu corpo descansa. Sua mente se cura. " +
-                "Eu cuido de tudo enquanto você se entrega ao sono.",
-                { rate: 0.6, pitch: 0.85 }
-            );
+            this.audioSystem.narrate('phase3_2'); // ✅ USA A CHAVE!
         }, 60000); // 1 minuto
 
-        // Narração final
+        // Narração final (usando CHAVE)
         setTimeout(() => {
-            this.audioSystem.narrate(
-                "Agora, feche seus olhos internos. " +
-                "Deixe a escuridão abraçá-lo. " +
-                "Você está seguro. Você está em paz. " +
-                "Durma.",
-                { rate: 0.5, pitch: 0.8 } // Ainda mais lento
-            );
+            this.audioSystem.narrate('phase3_3'); // ✅ USA A CHAVE!
         }, 120000); // 2 minutos
 
         // Iniciar fade out final

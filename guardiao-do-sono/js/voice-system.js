@@ -56,20 +56,20 @@ class VoiceSystem {
                 phase: 1
             },
             phase2_1: {
-                text: "Cada bolha é uma lembrança do seu dia. Uma conversa difícil. Uma tarefa inacabada. Uma preocupação sem nome. Toque nelas. Deixe-as subir. Deixe-as ir embora.",
-                audio: 'audio/narrations/fase2_introducao_nova.mp3', // 🆕 NOVO texto
+                text: "Essas bolhas são partes do seu dia. Toque, e veja-as subirem... libertas. A mente aprende que soltar é dormir.",
+                audio: 'audio/narrations/fase2_introducao.mp3', // ✅ Áudio EXISTENTE (texto antigo temporariamente)
                 timing: 3000,
                 phase: 2
             },
             phase2_2: {
-                text: "O que aconteceu hoje não pertence mais a você. Cada bolha que toca a superfície libera o passado. Você está seguro aqui embaixo. O fundo do oceano não tem memórias.",
-                audio: 'audio/narrations/fase2_meio_nova.mp3', // 🆕 NOVO texto
+                text: "Cada bolha que sobe leva consigo uma preocupação. Você está seguro aqui, no fundo tranquilo. Nada pode perturbá-lo.",
+                audio: 'audio/narrations/fase2_meio.mp3', // ✅ Áudio EXISTENTE (texto antigo temporariamente)
                 timing: 80000,
                 phase: 2
             },
             phase2_3: {
-                text: "Esqueça o que ficou para trás. Amanhã será um novo dia. Agora, só existe este momento de paz. A água lava tudo. O silêncio cura tudo.",
-                audio: 'audio/narrations/fase2_final_nova.mp3', // 🆕 NOVO texto
+                text: "Sinta a leveza da água sustentando você. Não há peso. Não há pressa. Apenas a suave corrente do descanso.",
+                audio: 'audio/narrations/fase2_final.mp3', // ✅ Áudio EXISTENTE (texto antigo temporariamente)
                 timing: 160000,
                 phase: 2
             },
