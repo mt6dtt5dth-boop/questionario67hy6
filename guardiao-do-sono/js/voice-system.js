@@ -41,35 +41,41 @@ class VoiceSystem {
             }
         };
         
-        // Lista de narrações do jogo
+        // Lista de narrações do jogo (COM ÁUDIOS PRÉ-GRAVADOS EM PT-BR)
         this.narrations = {
             phase1_1: {
                 text: "Cada luz que se apaga no horizonte é um pensamento que se despede. Você não precisa fazer nada. Só deixar que o silêncio volte a morar em você.",
+                audio: 'audio/narrations/fase1_introducao.mp3', // ✅ Áudio pré-gravado
                 timing: 3000,
                 phase: 1
             },
             phase1_2: {
                 text: "Observe as cores se transformando. Cada respiração escurece o cenário. O dia já passou. Agora é hora de descansar.",
+                audio: 'audio/narrations/fase1_meio.mp3', // ✅ Áudio pré-gravado
                 timing: 45000,
                 phase: 1
             },
             phase2_1: {
                 text: "Essas bolhas são partes do seu dia. Toque, e veja-as subirem... libertas. A mente aprende que soltar é dormir.",
+                audio: 'audio/narrations/fase2_introducao.mp3', // ✅ Áudio pré-gravado
                 timing: 3000,
                 phase: 2
             },
             phase2_2: {
                 text: "Cada bolha que sobe leva consigo uma preocupação. Você está seguro aqui, no fundo tranquilo. Nada pode perturbá-lo.",
+                audio: 'audio/narrations/fase2_meio.mp3', // ✅ Áudio pré-gravado
                 timing: 80000,
                 phase: 2
             },
             phase2_3: {
                 text: "Sinta a leveza da água sustentando você. Não há peso. Não há pressa. Apenas a suave corrente do descanso.",
+                audio: 'audio/narrations/fase2_final.mp3', // ✅ Áudio pré-gravado
                 timing: 160000,
                 phase: 2
             },
             phase3_1: {
                 text: "Sou o reflexo do seu próprio descanso. Enquanto você dorme, eu permaneço desperto. Tudo está bem. Tudo pode parar.",
+                audio: 'audio/narrations/fase3_introducao.mp3', // ✅ Áudio pré-gravado
                 timing: 5000,
                 phase: 3,
                 rate: 0.6,
@@ -77,6 +83,7 @@ class VoiceSystem {
             },
             phase3_2: {
                 text: "Não há nada a fazer. Não há nada a controlar. Seu corpo descansa. Sua mente se cura. Eu cuido de tudo enquanto você se entrega ao sono.",
+                audio: 'audio/narrations/fase3_meio.mp3', // ✅ Áudio pré-gravado
                 timing: 60000,
                 phase: 3,
                 rate: 0.6,
@@ -84,6 +91,7 @@ class VoiceSystem {
             },
             phase3_3: {
                 text: "Agora, feche seus olhos internos. Deixe a escuridão abraçá-lo. Você está seguro. Você está em paz. Durma.",
+                audio: 'audio/narrations/fase3_final.mp3', // ✅ Áudio pré-gravado
                 timing: 120000,
                 phase: 3,
                 rate: 0.5,
@@ -559,8 +567,12 @@ class VoiceSystem {
     async narrate(textOrKey, options = {}) {
         // Se for uma chave, buscar nos narrations
         let text = textOrKey;
+        let audioFile = null;
+        
         if (this.narrations[textOrKey]) {
             text = this.narrations[textOrKey].text;
+            audioFile = this.narrations[textOrKey].audio; // Caminho do áudio pré-gravado
+            
             // Usar configurações específicas da narração se existirem
             if (this.narrations[textOrKey].rate) {
                 options.rate = this.narrations[textOrKey].rate;
@@ -572,10 +584,20 @@ class VoiceSystem {
 
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         console.log(`🎤 INICIANDO NARRAÇÃO`);
-        console.log(`📌 Modo atual: ${this.voiceMode}`);
+        console.log(`📌 Modo: ${audioFile ? '🎵 Áudio Pré-gravado (PT-BR Natural)' : this.voiceMode}`);
         console.log(`📝 Texto: "${text.substring(0, 50)}..."`);
+        if (audioFile) {
+            console.log(`🎧 Arquivo: ${audioFile}`);
+        }
         console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
+        // ✅ PRIORIDADE 1: Usar áudio pré-gravado se disponível
+        if (audioFile) {
+            console.log('➡️ Usando áudio pré-gravado (Google TTS PT-BR)');
+            return this.playPreRecordedAudio(audioFile);
+        }
+
+        // ❌ Fallback para síntese online (se não houver áudio pré-gravado)
         switch (this.voiceMode) {
             case 'google':
                 console.log('➡️ Usando Google TTS');
@@ -590,6 +612,49 @@ class VoiceSystem {
                 console.log('➡️ Usando Web Speech (voz sintética)');
                 return this.narrateWebSpeech(text, options);
         }
+    }
+
+    /**
+     * Reproduz áudio pré-gravado
+     */
+    async playPreRecordedAudio(audioPath) {
+        return new Promise((resolve, reject) => {
+            console.log(`🎵 Carregando áudio: ${audioPath}`);
+            
+            const audio = new Audio(audioPath);
+            audio.volume = 1.0;
+            
+            audio.onloadedmetadata = () => {
+                console.log(`⏱️ Duração: ${audio.duration.toFixed(2)}s`);
+            };
+            
+            audio.oncanplaythrough = () => {
+                console.log('✅ Áudio carregado e pronto');
+            };
+            
+            audio.onplay = () => {
+                console.log('▶️ Reprodução iniciada (áudio pré-gravado)');
+            };
+            
+            audio.onended = () => {
+                console.log('⏹️ Reprodução concluída');
+                resolve();
+            };
+            
+            audio.onerror = (error) => {
+                console.error(`❌ Erro ao carregar áudio: ${audioPath}`, error);
+                console.error('Audio error code:', audio.error?.code);
+                reject(error);
+            };
+            
+            console.log('🚀 Iniciando reprodução...');
+            audio.play()
+                .then(() => console.log('✅ Play() executado com sucesso'))
+                .catch(error => {
+                    console.error('❌ Erro no play():', error);
+                    reject(error);
+                });
+        });
     }
 
     /**
