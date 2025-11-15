@@ -1,0 +1,23 @@
+# Configuração Netlify - O Guardião do Sono
+
+[build]
+  # Sem build necessário (HTML puro)
+  publish = "guardiao-do-sono"
+  
+[build.environment]
+  NODE_VERSION = "18"
+
+# Configurações de deploy
+[[redirects]]
+  from = "/"
+  to = "/guardiao-do-sono/index.html"
+  status = 200
+
+# Headers de segurança
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
