@@ -602,7 +602,7 @@ class VoiceSystem {
         
         // Fallback: API key padrão para uso familiar
         // ⚠️ ATENÇÃO: Esta chave está exposta no código
-        const defaultKey = 'sk_409b7c09814aff595144b90467fc0650ec5906300ce2adf4';
+        const defaultKey = 'sk_c846ea63d55d09f39f4b424c15d267d3a39ce0adeb9e32839b3a8742a248f638';
         
         console.log('🔑 Usando API key padrão do ElevenLabs (uso familiar)');
         return defaultKey;
