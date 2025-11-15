@@ -102,6 +102,24 @@ class VoiceSystem {
             // Carregar vozes disponíveis
             await this.loadAvailableVoices();
             
+            // FORÇAR ElevenLabs como padrão se não houver preferência salva
+            const savedMode = localStorage.getItem('guardiao_voice_mode');
+            if (!savedMode) {
+                console.log('🎯 Forçando ElevenLabs como padrão (primeira vez)');
+                this.setVoiceMode('elevenlabs');
+            } else {
+                this.voiceMode = savedMode;
+                console.log('📂 Modo de voz carregado:', savedMode);
+            }
+            
+            // Verificar se API key está disponível
+            const apiKey = this.getElevenLabsAPIKey();
+            if (apiKey) {
+                console.log('✅ ElevenLabs API key disponível e pronta!');
+            } else {
+                console.warn('⚠️ ElevenLabs API key não encontrada (deveria estar embutida)');
+            }
+            
             return true;
         } catch (error) {
             console.error('Erro ao inicializar sistema de voz:', error);
@@ -515,17 +533,24 @@ class VoiceSystem {
             }
         }
 
-        console.log(`🎤 Narrando (${this.voiceMode}):`, text.substring(0, 40) + '...');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log(`🎤 INICIANDO NARRAÇÃO`);
+        console.log(`📌 Modo atual: ${this.voiceMode}`);
+        console.log(`📝 Texto: "${text.substring(0, 50)}..."`);
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
         switch (this.voiceMode) {
             case 'google':
+                console.log('➡️ Usando Google TTS');
                 return this.narrateGoogleTTS(text, options);
             
             case 'elevenlabs':
+                console.log('➡️ Usando ElevenLabs (voz ultra-realista)');
                 return this.narrateElevenLabs(text, options);
             
             case 'webspeech':
             default:
+                console.log('➡️ Usando Web Speech (voz sintética)');
                 return this.narrateWebSpeech(text, options);
         }
     }
