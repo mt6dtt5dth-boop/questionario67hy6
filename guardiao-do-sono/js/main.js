@@ -249,49 +249,99 @@ class GuardianGame {
      * Desbloqueia AudioContext para iOS/Android (restrição de autoplay)
      */
     async unlockAudioContext() {
-        console.log('🔓 Desbloqueando AudioContext...');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('🔓 DESBLOQUEANDO ÁUDIO PARA IPHONE/ANDROID');
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         
         try {
-            // Desbloquear binaural beats AudioContext
+            // 1️⃣ Desbloquear binaural beats AudioContext
             if (this.binauralBeats && this.binauralBeats.audioContext) {
                 const ctx = this.binauralBeats.audioContext;
-                console.log(`🎵 AudioContext state: ${ctx.state}`);
+                console.log(`🎵 Binaural AudioContext state: ${ctx.state}`);
                 
                 if (ctx.state === 'suspended') {
-                    console.log('⏸️ AudioContext está suspenso, tentando resumir...');
+                    console.log('⏸️ Suspenso, tentando resumir...');
                     await ctx.resume();
-                    console.log(`✅ AudioContext resumido! Novo state: ${ctx.state}`);
+                    console.log(`✅ Resumido! Novo state: ${ctx.state}`);
                 } else {
-                    console.log('✅ AudioContext já está ativo');
+                    console.log('✅ Já está ativo');
                 }
             }
             
-            // Desbloquear voice system AudioContext
+            // 2️⃣ Desbloquear voice system AudioContext
             if (this.audioSystem && this.audioSystem.voiceSystem && this.audioSystem.voiceSystem.audioContext) {
                 const voiceCtx = this.audioSystem.voiceSystem.audioContext;
                 console.log(`🎤 Voice AudioContext state: ${voiceCtx.state}`);
                 
                 if (voiceCtx.state === 'suspended') {
-                    console.log('⏸️ Voice AudioContext está suspenso, tentando resumir...');
+                    console.log('⏸️ Suspenso, tentando resumir...');
                     await voiceCtx.resume();
-                    console.log(`✅ Voice AudioContext resumido! Novo state: ${voiceCtx.state}`);
+                    console.log(`✅ Resumido! Novo state: ${voiceCtx.state}`);
                 }
             }
             
-            // 🔧 MOBILE FIX: Criar e tocar um áudio silencioso para desbloquear
-            console.log('🔊 Criando áudio silencioso para desbloquear mobile...');
+            // 3️⃣ TÉCNICA 1: Áudio silencioso inline (base64)
+            console.log('🔊 Técnica 1: Áudio silencioso inline...');
             const silentAudio = new Audio();
             silentAudio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAA4T0DIwcAAAAAAAAAAAAAAAAAAAA//sQZAAP8AAAaQAAAAgAAA0gAAABAAABpAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ==';
             silentAudio.volume = 0.01;
             
             try {
                 await silentAudio.play();
+                console.log('✅ Silencioso tocou!');
                 silentAudio.pause();
                 silentAudio.remove();
-                console.log('✅ Áudio silencioso tocado com sucesso (mobile desbloqueado)');
             } catch (e) {
-                console.warn('⚠️ Não foi possível tocar áudio silencioso:', e.message);
+                console.warn('⚠️ Silencioso falhou:', e.message);
             }
+            
+            // 4️⃣ TÉCNICA 2: Pre-carregar primeiro áudio de narração
+            console.log('🎧 Técnica 2: Pre-carregando narração real...');
+            try {
+                const testAudio = new Audio('audio/narrations/fase1_introducao.mp3');
+                testAudio.volume = 0.3;
+                testAudio.preload = 'auto';
+                testAudio.load();
+                
+                // Tentar dar play e pausar imediatamente (força o iOS a carregar)
+                await testAudio.play();
+                console.log('✅ Narração real PRE-CARREGADA com sucesso!');
+                testAudio.pause();
+                testAudio.currentTime = 0; // Resetar para início
+                
+                // Guardar referência para uso posterior
+                window._preloadedNarration = testAudio;
+                
+            } catch (e) {
+                console.warn('⚠️ Pre-load de narração falhou:', e.message);
+            }
+            
+            // 5️⃣ TÉCNICA 3: Criar oscillator (Web Audio API)
+            console.log('🎛️ Técnica 3: Oscillator Web Audio...');
+            try {
+                if (this.binauralBeats && this.binauralBeats.audioContext) {
+                    const ctx = this.binauralBeats.audioContext;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    gain.gain.value = 0.001; // Quase inaudível
+                    osc.frequency.value = 440;
+                    
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.1); // 100ms
+                    
+                    console.log('✅ Oscillator criado e tocado');
+                }
+            } catch (e) {
+                console.warn('⚠️ Oscillator falhou:', e.message);
+            }
+            
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('✅ DESBLOQUEIO COMPLETO!');
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             
         } catch (error) {
             console.error('❌ Erro ao desbloquear AudioContext:', error);

@@ -615,58 +615,68 @@ class VoiceSystem {
     }
 
     /**
-     * Reproduz áudio pré-gravado (com suporte para mobile)
+     * Reproduz áudio pré-gravado (com suporte OTIMIZADO para iPhone)
      */
     async playPreRecordedAudio(audioPath) {
         return new Promise((resolve, reject) => {
-            console.log(`🎵 Carregando áudio: ${audioPath}`);
-            console.log(`📱 User-Agent: ${navigator.userAgent.substring(0, 50)}...`);
+            console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+            console.log(`🎵 REPRODUZINDO: ${audioPath}`);
+            console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
             
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            console.log(`📱 iPhone: ${isIOS}, Mobile: ${isMobile}`);
+            
+            // 🎯 ESTRATÉGIA 1: Reusar áudio pre-carregado (se for o primeiro)
+            if (audioPath.includes('fase1_introducao.mp3') && window._preloadedNarration) {
+                console.log('✨ USANDO ÁUDIO PRE-CARREGADO (já desbloqueado)!');
+                const audio = window._preloadedNarration;
+                
+                audio.volume = 1.0;
+                audio.currentTime = 0;
+                
+                audio.onended = () => {
+                    console.log('⏹️ Pre-carregado concluído');
+                    resolve();
+                };
+                
+                audio.onerror = (error) => {
+                    console.error('❌ Erro no pre-carregado:', error);
+                    reject(error);
+                };
+                
+                console.log('▶️ Play() no pre-carregado...');
+                audio.play()
+                    .then(() => console.log('✅ SUCCESS! Áudio tocando!'))
+                    .catch(reject);
+                
+                return;
+            }
+            
+            // 🎯 ESTRATÉGIA 2: Criar novo Audio (outros arquivos)
+            console.log('🆕 Criando novo elemento Audio...');
             const audio = new Audio();
             
-            // 🔧 CORREÇÃO MOBILE: Configurar ANTES de definir src
+            // Configurar ANTES de src
             audio.volume = 1.0;
             audio.preload = 'auto';
             
-            // Para iOS: tentar usar AudioContext primeiro
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            console.log(`📱 Dispositivo móvel detectado: ${isMobile}`);
-            
+            // Eventos detalhados
             audio.onloadedmetadata = () => {
                 console.log(`⏱️ Duração: ${audio.duration.toFixed(2)}s`);
-                console.log(`🔊 Volume configurado: ${audio.volume}`);
-                console.log(`⏸️ Paused: ${audio.paused}`);
-                console.log(`🔇 Muted: ${audio.muted}`);
-            };
-            
-            audio.onloadeddata = () => {
-                console.log('📦 Dados do áudio carregados');
-            };
-            
-            audio.oncanplay = () => {
-                console.log('✅ Áudio pronto para tocar (canplay)');
+                console.log(`🔊 Volume: ${audio.volume}, Muted: ${audio.muted}`);
             };
             
             audio.oncanplaythrough = () => {
-                console.log('✅ Áudio totalmente carregado (canplaythrough)');
+                console.log('✅ Pronto para tocar (canplaythrough)');
             };
             
             audio.onplay = () => {
-                console.log('▶️ Reprodução INICIADA (evento onplay)');
-                console.log(`🔊 Volume atual: ${audio.volume}`);
-                console.log(`⏱️ currentTime: ${audio.currentTime}s`);
+                console.log('▶️ EVENTO onplay disparado!');
             };
             
             audio.onplaying = () => {
-                console.log('🎵 REALMENTE TOCANDO (evento onplaying)');
-            };
-            
-            audio.onwaiting = () => {
-                console.log('⏳ Aguardando buffer...');
-            };
-            
-            audio.onstalled = () => {
-                console.warn('⚠️ Download travado');
+                console.log('🎵 EVENTO onplaying - REALMENTE TOCANDO!');
             };
             
             audio.onended = () => {
@@ -675,38 +685,43 @@ class VoiceSystem {
             };
             
             audio.onerror = (error) => {
-                console.error(`❌ Erro ao carregar áudio: ${audioPath}`);
-                console.error('Audio error code:', audio.error?.code);
-                console.error('Audio error message:', audio.error?.message);
-                console.error('Network state:', audio.networkState);
-                console.error('Ready state:', audio.readyState);
+                console.error(`❌ Erro: ${audioPath}`);
+                console.error(`Error code: ${audio.error?.code}`);
+                console.error(`Error message: ${audio.error?.message}`);
                 reject(error);
             };
             
-            // 🔧 DEFINIR SRC DEPOIS de configurar eventos
+            // Definir src e carregar
             audio.src = audioPath;
-            audio.load(); // Forçar carregamento
+            audio.load();
             
-            console.log('🚀 Tentando reproduzir...');
+            console.log('🚀 Chamando play()...');
             
-            // 🔧 CORREÇÃO MOBILE: Usar promise com timeout
             const playPromise = audio.play();
             
             if (playPromise !== undefined) {
                 playPromise
                     .then(() => {
-                        console.log('✅ Play() promise resolvida com sucesso!');
-                        console.log(`📊 Estado: paused=${audio.paused}, currentTime=${audio.currentTime}`);
+                        console.log('✅ play() PROMISE RESOLVIDA!');
+                        console.log(`📊 paused=${audio.paused}, time=${audio.currentTime}`);
+                        
+                        // VERIFICAÇÃO EXTRA: Se ainda estiver pausado, algo está errado
+                        if (audio.paused) {
+                            console.error('⚠️ ALERTA: play() resolveu mas áudio está pausado!');
+                            console.error('💡 Isso pode indicar restrição do iOS não contornada');
+                        }
                     })
                     .catch(error => {
-                        console.error('❌ Play() promise rejeitada:', error);
-                        console.error('Tipo do erro:', error.name);
-                        console.error('Mensagem:', error.message);
+                        console.error('❌ play() PROMISE REJEITADA!');
+                        console.error(`Tipo: ${error.name}`);
+                        console.error(`Mensagem: ${error.message}`);
                         
-                        // Tentar novamente após pequeno delay (workaround iOS)
-                        if (isMobile && error.name === 'NotAllowedError') {
-                            console.warn('🔧 NotAllowedError detectado - pode ser restrição do iOS');
-                            console.warn('💡 Solução: O usuário precisa interagir primeiro (já feito no botão)');
+                        if (error.name === 'NotAllowedError') {
+                            console.error('🚫 NotAllowedError = Restrição de autoplay');
+                            console.error('💡 SOLUÇÃO: Unlock deve ser chamado no botão de início');
+                        } else if (error.name === 'NotSupportedError') {
+                            console.error('🚫 NotSupportedError = Formato não suportado');
+                            console.error('💡 SOLUÇÃO: Verificar se MP3 está disponível');
                         }
                         
                         reject(error);
