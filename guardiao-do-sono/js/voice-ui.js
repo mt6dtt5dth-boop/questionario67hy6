@@ -2,6 +2,60 @@
  * Interface UI para configuração de voz
  */
 
+// Função para mostrar notificações visuais na tela
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+        max-width: 350px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    `;
+    
+    // Cores por tipo
+    const colors = {
+        'info': { bg: '#2196F3', color: '#fff' },
+        'success': { bg: '#4CAF50', color: '#fff' },
+        'warning': { bg: '#FF9800', color: '#fff' },
+        'error': { bg: '#f44336', color: '#fff' }
+    };
+    
+    const color = colors[type] || colors.info;
+    notification.style.background = color.bg;
+    notification.style.color = color.color;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Remover após 4 segundos
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 4000);
+}
+
+// Adicionar animações CSS
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(400px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(400px); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+
 document.addEventListener('DOMContentLoaded', () => {
     const voiceOptions = document.querySelectorAll('.voice-option');
     const testVoiceButton = document.getElementById('test-voice-button');
@@ -15,6 +69,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Carregar preferência salva (padrão: ElevenLabs - voz mais realista)
     const savedVoiceMode = localStorage.getItem('guardiao_voice_mode') || 'elevenlabs';
+    
+    // Mostrar notificação de boas-vindas
+    setTimeout(() => {
+        const voiceNames = {
+            'webspeech': '🔊 Voz Sintética (Robótica)',
+            'google': '🌐 Google TTS',
+            'elevenlabs': '✨ ElevenLabs PT-BR (Ultra-realista)'
+        };
+        showNotification(`Voz ativa: ${voiceNames[savedVoiceMode]}`, 'success');
+    }, 500);
     
     // Marcar opção salva
     voiceOptions.forEach(option => {
@@ -74,6 +138,15 @@ document.addEventListener('DOMContentLoaded', () => {
         testVoiceButton.disabled = true;
         testVoiceButton.textContent = '⏳ Testando...';
         
+        // Mostrar qual voz será usada
+        const voiceNames = {
+            'webspeech': '🔊 Voz Sintética (Robótica)',
+            'google': '🌐 Google TTS',
+            'elevenlabs': '✨ ElevenLabs (Ultra-realista PT-BR)'
+        };
+        
+        showNotification(`Testando: ${voiceNames[voiceMode] || voiceMode}`, 'info');
+        
         try {
             const testText = "Esta é uma demonstração da voz selecionada. Eu sou o Guardião do Sono e vou ajudá-lo a relaxar profundamente.";
             
@@ -81,6 +154,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const tempVoiceSystem = new VoiceSystem();
             await tempVoiceSystem.initialize();
             tempVoiceSystem.setVoiceMode(voiceMode);
+            
+            // Verificar API key se for ElevenLabs
+            if (voiceMode === 'elevenlabs') {
+                const apiKey = tempVoiceSystem.getElevenLabsAPIKey();
+                if (!apiKey) {
+                    showNotification('❌ API key do ElevenLabs não encontrada!', 'error');
+                    throw new Error('API key não configurada');
+                } else {
+                    showNotification(`✅ API key encontrada: ${apiKey.substring(0, 10)}...`, 'success');
+                }
+            }
             
             console.log('🎤 Testando voz:', voiceMode);
             await tempVoiceSystem.narrate(testText, {
@@ -90,12 +174,38 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             console.log('✅ Teste de voz concluído');
+            
+            // Perguntar ao usuário se a voz está correta
+            setTimeout(() => {
+                const resultado = confirm(
+                    `🎧 Você ouviu a voz?\n\n` +
+                    `Modo testado: ${voiceNames[voiceMode]}\n\n` +
+                    `A voz estava NATURAL (não robótica)?\n\n` +
+                    `Clique OK se estava boa.\n` +
+                    `Clique CANCELAR se ainda estava robótica.`
+                );
+                
+                if (!resultado && voiceMode === 'elevenlabs') {
+                    showNotification('⚠️ Voz robótica detectada! Verificando problema...', 'warning');
+                    alert(
+                        '🔍 DIAGNÓSTICO:\n\n' +
+                        '❌ A voz do ElevenLabs está robótica\n\n' +
+                        'POSSÍVEIS CAUSAS:\n' +
+                        '1. API key inválida ou sem créditos\n' +
+                        '2. Problema de conexão com servidor\n' +
+                        '3. Navegador bloqueando áudio\n\n' +
+                        'Me informe este problema para eu corrigir!'
+                    );
+                }
+            }, 1000);
+            
         } catch (error) {
             console.error('❌ Erro no teste de voz:', error);
+            showNotification(`❌ Erro: ${error.message}`, 'error');
             alert('Erro ao testar voz: ' + error.message);
         } finally {
             testVoiceButton.disabled = false;
-            testVoiceButton.textContent = '🎵 Testar Voz Atual';
+            testVoiceButton.textContent = '🎵 Testar Voz';
         }
     });
 
