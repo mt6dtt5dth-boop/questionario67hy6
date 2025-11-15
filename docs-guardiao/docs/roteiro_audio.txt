@@ -1,0 +1,348 @@
+═══════════════════════════════════════════════════════════════════════════════
+    O GUARDIÃO DO SONO - ROTEIRO DE ÁUDIO E NARRAÇÃO COMPLETO
+═══════════════════════════════════════════════════════════════════════════════
+
+ESPECIFICAÇÕES GERAIS DE VOZ:
+- Idioma: Português do Brasil
+- Velocidade (rate): 0.5 a 0.7 (70 BPM aproximado)
+- Tom (pitch): 0.8 a 0.9 (levemente grave)
+- Volume: 0.8 (80% do máximo)
+- Estilo: Voz suave, hipnótica, permissiva (sem imperativos diretos)
+- Pausas: Naturais e prolongadas entre frases
+
+
+═══════════════════════════════════════════════════════════════════════════════
+FASE 1: TRANSIÇÃO - "APAGAR O DIA" (2 minutos)
+═══════════════════════════════════════════════════════════════════════════════
+
+[ÁUDIO BINAURAL]
+Frequência: 7 Hz (Ondas Alfa - Relaxamento)
+Volume: 0.15 (15%)
+Fade in: 3 segundos
+Duração: 120 segundos
+Transição para próxima fase: Sim (fade para 4Hz em 10 segundos)
+
+[SOM AMBIENTE]
+Tipo: Vento suave
+Frequência base: 150 Hz (onda dente de serra)
+Volume: 0.05 (5%)
+Modulação: Aleatória a cada 3 segundos (100-200 Hz)
+Efeito: Simula brisa natural
+
+───────────────────────────────────────────────────────────────────────────────
+NARRAÇÃO 1 - Tempo: 0:03 (3 segundos após início)
+───────────────────────────────────────────────────────────────────────────────
+Configuração de voz:
+  rate: 0.7
+  pitch: 0.9
+  volume: 0.8
+
+Texto:
+"Cada luz que se apaga no horizonte [pausa 1s] é um pensamento que se despede.
+[pausa 2s]
+Você não precisa fazer nada. [pausa 1s] Só deixar que o silêncio [pausa 0.5s] 
+volte a morar em você."
+
+Duração aproximada: 18 segundos
+
+Função psicológica:
+- Estabelecer permissividade ("não precisa fazer nada")
+- Metáfora de encerramento ("luz que se apaga")
+- Reforçar segurança passiva
+
+───────────────────────────────────────────────────────────────────────────────
+NARRAÇÃO 2 - Tempo: 0:45 (45 segundos)
+───────────────────────────────────────────────────────────────────────────────
+Configuração de voz:
+  rate: 0.7
+  pitch: 0.9
+  volume: 0.8
+
+Texto:
+"Observe as cores se transformando. [pausa 1s]
+Cada respiração [pausa 0.5s] escurece o cenário. [pausa 2s]
+O dia já passou. [pausa 1s]
+Agora [pausa 0.5s] é hora de descansar."
+
+Duração aproximada: 16 segundos
+
+Função psicológica:
+- Ancoragem respiratória ("cada respiração")
+- Reforço de passagem temporal ("dia já passou")
+- Indução permissiva ("é hora de descansar")
+
+
+═══════════════════════════════════════════════════════════════════════════════
+FASE 2: IMERSÃO - "O JARDIM SUBMERSO" (4 minutos)
+═══════════════════════════════════════════════════════════════════════════════
+
+[ÁUDIO BINAURAL]
+Frequência inicial: 7 Hz (transição de fase 1)
+Frequência final: 4 Hz (Ondas Teta - Meditação profunda)
+Transição: Exponencial de 10 segundos
+Volume: 0.15 (15%)
+Duração: 240 segundos
+Transição para próxima fase: Sim (fade para 2Hz em 15 segundos)
+
+[SOM AMBIENTE]
+Tipo: Água subaquática
+Frequência base: 200 Hz (onda senoidal)
+Volume: 0.08 (8%)
+Efeito adicional: Bolhas
+  - Frequência: 400-800 Hz (aleatória)
+  - Volume: 0.02 (2%)
+  - Intervalo: 1-4 segundos entre bolhas
+  - Fade out: 0.5 segundos (rápido)
+
+───────────────────────────────────────────────────────────────────────────────
+NARRAÇÃO 3 - Tempo: 2:03 (início da fase 2 + 3s)
+───────────────────────────────────────────────────────────────────────────────
+Configuração de voz:
+  rate: 0.7
+  pitch: 0.9
+  volume: 0.8
+
+Texto:
+"Essas bolhas [pausa 1s] são partes do seu dia. [pausa 2s]
+Toque, [pausa 0.5s] e veja-as subirem... [pausa 1s] libertas. [pausa 2s]
+A mente aprende [pausa 1s] que soltar [pausa 0.5s] é dormir."
+
+Duração aproximada: 20 segundos
+
+Função psicológica:
+- Metáfora de liberação ("bolhas que sobem")
+- Associação soltar/dormir (condicionamento)
+- Reforço de naturalidade do processo
+
+───────────────────────────────────────────────────────────────────────────────
+NARRAÇÃO 4 - Tempo: 3:20 (1 minuto e 20 segundos)
+───────────────────────────────────────────────────────────────────────────────
+Configuração de voz:
+  rate: 0.7
+  pitch: 0.9
+  volume: 0.8
+
+Texto:
+"Cada bolha que sobe [pausa 1s] leva consigo uma preocupação. [pausa 2s]
+Você está seguro aqui, [pausa 1s] no fundo tranquilo. [pausa 2s]
+Nada [pausa 0.5s] pode perturbá-lo."
+
+Duração aproximada: 18 segundos
+
+Função psicológica:
+- Reforço de segurança ("você está seguro")
+- Distanciamento de preocupações
+- Proteção emocional ("nada pode perturbá-lo")
+
+───────────────────────────────────────────────────────────────────────────────
+NARRAÇÃO 5 - Tempo: 4:40 (2 minutos e 40 segundos)
+───────────────────────────────────────────────────────────────────────────────
+Configuração de voz:
+  rate: 0.7
+  pitch: 0.9
+  volume: 0.8
+
+Texto:
+"Sinta a leveza da água [pausa 1s] sustentando você. [pausa 2s]
+Não há peso. [pausa 1s] Não há pressa. [pausa 2s]
+Apenas [pausa 0.5s] a suave corrente [pausa 1s] do descanso."
+
+Duração aproximada: 17 segundos
+
+Função psicológica:
+- Sensação física de suporte ("água sustentando")
+- Eliminação de urgência ("não há pressa")
+- Metáfora de entrega ("corrente do descanso")
+
+
+═══════════════════════════════════════════════════════════════════════════════
+FASE 3: DISSOLUÇÃO - "O GUARDIÃO DO SONO" (3 minutos)
+═══════════════════════════════════════════════════════════════════════════════
+
+[ÁUDIO BINAURAL]
+Frequência inicial: 4 Hz (transição de fase 2)
+Frequência final: 2 Hz (Ondas Delta - Sono profundo)
+Transição: Exponencial de 15 segundos
+Volume: 0.15 (15%)
+Duração: 180 segundos
+Fade out: Início aos 150 segundos (30s de fade)
+Continuação pós-experiência: Sim (mais 120 segundos em fade out)
+
+[SOM AMBIENTE]
+Tipo: Nenhum (apenas binaural)
+Objetivo: Máxima simplicidade auditiva para facilitar sono
+
+───────────────────────────────────────────────────────────────────────────────
+NARRAÇÃO 6 - Tempo: 6:05 (início da fase 3 + 5s)
+───────────────────────────────────────────────────────────────────────────────
+Configuração de voz:
+  rate: 0.6 (MAIS LENTO)
+  pitch: 0.85 (MAIS GRAVE)
+  volume: 0.8
+
+Texto:
+"Sou o reflexo [pausa 1s] do seu próprio descanso. [pausa 3s]
+Enquanto você dorme, [pausa 1s] eu permaneço desperto. [pausa 3s]
+Tudo está bem. [pausa 2s]
+Tudo [pausa 1s] pode parar."
+
+Duração aproximada: 22 segundos
+
+Função psicológica:
+- Personificação do descanso (arquétipo do guardião)
+- Transferência de vigilância ("eu permaneço desperto")
+- Permissão para soltar controle ("pode parar")
+- Reforço de segurança absoluta
+
+───────────────────────────────────────────────────────────────────────────────
+NARRAÇÃO 7 - Tempo: 7:00 (1 minuto na fase 3)
+───────────────────────────────────────────────────────────────────────────────
+Configuração de voz:
+  rate: 0.6
+  pitch: 0.85
+  volume: 0.8
+
+Texto:
+"Não há nada a fazer. [pausa 2s] Não há nada a controlar. [pausa 3s]
+Seu corpo descansa. [pausa 2s] Sua mente se cura. [pausa 3s]
+Eu cuido de tudo [pausa 1s] enquanto você se entrega [pausa 1s] ao sono."
+
+Duração aproximada: 24 segundos
+
+Função psicológica:
+- Eliminação de responsabilidade ("nada a fazer")
+- Separação corpo/mente (relaxamento dissociativo)
+- Confiança delegada ("eu cuido de tudo")
+- Indução permissiva final
+
+───────────────────────────────────────────────────────────────────────────────
+NARRAÇÃO 8 - Tempo: 8:00 (2 minutos na fase 3) - NARRAÇÃO FINAL
+───────────────────────────────────────────────────────────────────────────────
+Configuração de voz:
+  rate: 0.5 (MUITO LENTO)
+  pitch: 0.8 (MAIS GRAVE AINDA)
+  volume: 0.8
+
+Texto:
+"Agora, [pausa 2s] feche seus olhos internos. [pausa 3s]
+Deixe a escuridão [pausa 2s] abraçá-lo. [pausa 4s]
+Você está seguro. [pausa 2s] Você está em paz. [pausa 4s]
+Durma."
+
+Duração aproximada: 26 segundos
+
+Função psicológica:
+- Comando indireto hipnótico ("feche seus olhos internos")
+- Ressignificação da escuridão (abraço, não medo)
+- Reforço final de segurança
+- Comando final permissivo ("durma")
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PÓS-EXPERIÊNCIA (após 9:00)
+═══════════════════════════════════════════════════════════════════════════════
+
+[ÁUDIO BINAURAL]
+Continua em 2 Hz (Delta)
+Fade out: 30 segundos
+Término: 11:00 (2 minutos após fim visual)
+
+[MENSAGEM EM TELA]
+Tempo: 8:45
+Duração: 15 segundos
+Texto: "Agora, seu corpo sabe o caminho do descanso."
+Estilo: Fade in 3s, permanece 9s, fade out 3s
+
+[SEM NARRAÇÃO ADICIONAL]
+Objetivo: Permitir transição natural para o sono sem interrupções
+
+
+═══════════════════════════════════════════════════════════════════════════════
+ESTATÍSTICAS GERAIS
+═══════════════════════════════════════════════════════════════════════════════
+
+Total de narrações: 8
+Duração total narrada: ~161 segundos (~2min 41s)
+Silêncio total: ~379 segundos (~6min 19s)
+Proporção narração/silêncio: 29% / 71%
+
+Palavras totais: ~276 palavras
+Velocidade média: ~40 palavras por minuto (muito lenta)
+
+Progressão de velocidade:
+  Fase 1: 0.7 (normal-lenta)
+  Fase 2: 0.7 (mantém)
+  Fase 3: 0.6 → 0.5 (progressivamente mais lenta)
+
+Progressão de tom:
+  Fase 1: 0.9 (levemente grave)
+  Fase 2: 0.9 (mantém)
+  Fase 3: 0.85 → 0.8 (progressivamente mais grave)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+TÉCNICAS HIPNÓTICAS APLICADAS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. LINGUAGEM PERMISSIVA:
+   - "Você não precisa fazer nada"
+   - "Pode parar"
+   - "Deixe que..."
+
+2. COMANDOS EMBUTIDOS:
+   - "...é hora de descansar"
+   - "...se entrega ao sono"
+   - "Durma"
+
+3. METÁFORAS TERAPÊUTICAS:
+   - Luzes que se apagam = pensamentos que se vão
+   - Bolhas que sobem = preocupações liberadas
+   - Guardião desperto = segurança delegada
+
+4. ANCORAGEM RESPIRATÓRIA:
+   - "Cada respiração escurece o cenário"
+   - "Sinta a leveza da água sustentando você"
+
+5. DISSOCIAÇÃO MENTE/CORPO:
+   - "Seu corpo descansa. Sua mente se cura."
+   - "Feche seus olhos internos"
+
+6. PROGRESSÃO TEMPORAL:
+   - "O dia já passou"
+   - "Agora é hora de..."
+
+7. REFORÇO DE SEGURANÇA:
+   - "Você está seguro" (repetido 3 vezes)
+   - "Nada pode perturbá-lo"
+   - "Eu cuido de tudo"
+
+
+═══════════════════════════════════════════════════════════════════════════════
+NOTAS DE IMPLEMENTAÇÃO
+═══════════════════════════════════════════════════════════════════════════════
+
+SÍNTESE DE VOZ:
+- Usar Web Speech API (speechSynthesis)
+- Preferir voz Google PT-BR se disponível
+- Fallback para qualquer voz em português
+- Pausas implementadas através de vírgulas e pontos
+
+SINCRONIZAÇÃO:
+- Usar setTimeout para timing preciso
+- Aguardar conclusão de narração antes de próxima
+- Permitir que usuário adormeça durante narração
+
+CONSIDERAÇÕES MOBILE:
+- Testar síntese de voz em iOS (requer interação inicial)
+- Verificar volume adequado para fones
+- Implementar Wake Lock para evitar desligamento de tela
+
+ACESSIBILIDADE:
+- Legendas opcionais podem ser adicionadas
+- Usuários com deficiência auditiva devem ter alternativa visual
+- Volume controlável pelo usuário
+
+
+═══════════════════════════════════════════════════════════════════════════════
+FIM DO ROTEIRO
+═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,442 @@
+═══════════════════════════════════════════════════════════════════════════════
+    ASSETS SUGERIDOS PARA "O GUARDIÃO DO SONO"
+═══════════════════════════════════════════════════════════════════════════════
+
+Este documento lista assets visuais e sonoros sugeridos caso o projeto seja
+expandido com recursos externos em vez de elementos procedurais.
+
+NOTA: A versão atual usa geração procedural via Three.js para máxima portabilidade
+e performance. Os assets abaixo são OPCIONAIS e melhorariam a qualidade visual.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+ASSETS VISUAIS 3D - THREE.JS / UNITY / UNREAL
+═══════════════════════════════════════════════════════════════════════════════
+
+FASE 1: PÔR DO SOL
+─────────────────────────────────────────────────────────────────────────────
+
+🌅 SKYBOX/HDRI:
+  Nome sugerido: "Sunset Desert HDRI" ou "Golden Hour Sky"
+  Fonte: Poly Haven (polyhaven.com)
+  Formato: .hdr ou cubemap .jpg
+  Resolução: 2K-4K
+  
+  Alternativa gratuita:
+  - "Kloofendal 48d Clear" (Poly Haven)
+  - "Sunset in the Saddle" (HDRIHaven)
+
+🌾 CAMPO/TERRENO:
+  Asset Store: "Stylized Nature" (Unity Asset Store)
+  Ou procedural: Shader de plano com ondulações suaves
+  Textura: Grass texture seamless (1024x1024)
+  
+  Fonte gratuita:
+  - TextureCan.com (categoria: Natural/Grass)
+  - FreePBR.com
+
+✨ PARTÍCULAS DE LUZ:
+  Tipo: Sprite particles com glow
+  Textura sugerida: Soft glowing orb (PNG com alpha)
+  Quantidade: 50-100 partículas
+  
+  Criar com: Photoshop/GIMP (gradiente radial branco com blur)
+  Formato: 128x128 PNG com transparência
+
+☀️ SOL:
+  Geometria: Esfera UV com shader emissivo
+  Textura opcional: Solar surface texture (512x512)
+  Glow effect: Bloom post-processing
+  
+  Fonte:
+  - Solar Textures Project (solarsystemscope.com/textures)
+
+
+FASE 2: JARDIM SUBMERSO
+─────────────────────────────────────────────────────────────────────────────
+
+💧 AMBIENTE AQUÁTICO:
+  Asset sugerido: "Underwater Environment" (Unity Asset Store)
+  Shader: Água volumétrica com caustics
+  Fog/Névoa: Exponential fog azul-turquesa
+  
+  Alternativa procedural:
+  - Post-processing azulado + particle fog
+  - Caustics projection (animated texture)
+
+🫧 BOLHAS:
+  Modelo 3D: Esfera com shader translúcido refractivo
+  Textura: Bubble normal map para detalhes
+  Material: Glass/Water BRDF shader
+  Quantidade: 20-50 bolhas
+  
+  Material sugerido:
+  - PBR water/glass material
+  - Índice de refração: 1.33 (água)
+  - Roughness: 0.1-0.2
+
+🌿 PLANTAS AQUÁTICAS:
+  Asset pack: "Stylized Underwater Plants" 
+  Ou modelar: Curvas Bezier com tube geometry
+  Textura: Algae/seaweed texture (512x512)
+  Shader: Two-sided with subsurface scattering
+  
+  Fontes gratuitas:
+  - Sketchfab (filtrar por "free", "underwater plants")
+  - TurboSquid free section
+
+🐠 ELEMENTOS OPCIONAIS:
+  - Peixes pequenos distantes (opcional, não implementado ainda)
+  - Algas flutuantes
+  - Raios de luz volumétrica (god rays)
+  
+  Implementação:
+  - Volumetric light scattering shader
+  - Particle system para detalhes flutuantes
+
+✨ PARTÍCULAS BIOLUMINESCENTES:
+  Tipo: Point sprites com additive blending
+  Textura: Glow particle (64x64)
+  Cores: Cyan (#00CED1) a White (#FFFFFF)
+  Quantidade: 100-300
+  
+  Comportamento:
+  - Float com Perlin noise
+  - Fade in/out aleatório
+  - Slow rotation
+
+
+FASE 3: O GUARDIÃO
+─────────────────────────────────────────────────────────────────────────────
+
+👤 GUARDIÃO (FIGURA DE LUZ):
+  Geometria base: Cilindro alongado + esfera (cabeça)
+  Shader: Translúcido emissivo com fresnel
+  Efeitos: Aura pulsante, partículas ao redor
+  Cor: Violeta (#9370DB) a Lavanda (#E6E6FA)
+  
+  Shader features:
+  - Emissive intensity animation
+  - Fresnel rim lighting
+  - Vertex displacement sutil (respiração)
+  
+  Asset similar:
+  - "Holographic Character Shader" (Unity)
+  - "Ghost/Spirit shader" (Unreal Marketplace)
+
+✨ AURA:
+  Geometria: Esfera envolvente (escala 1.5-2x guardião)
+  Shader: Additive blending, opacity pulsante
+  Textura: Soft gradient radial
+  Animação: Scale pulse 0.9-1.1 em 4 segundos
+  
+  Implementação:
+  - MeshBasicMaterial com blending aditivo
+  - Animated uniform para opacity
+
+⭐ ESTRELAS/COSMOS:
+  Sistema: Particle system esférico
+  Textura: Star sprite (diferentes tamanhos)
+  Quantidade: 200-500
+  Distribuição: Esférica uniforme
+  
+  Cores:
+  - Violeta (#9370DB)
+  - Lavanda (#E6E6FA)
+  - Branco (#FFFFFF)
+  
+  Skybox alternativo:
+  - "Night Sky HDRI" (Poly Haven)
+  - "Purple Nebula Skybox" (Asset Store)
+
+🌌 NEBULOSA/FOG ESPACIAL:
+  Shader: Volumetric fog com gradiente
+  Cores: Roxo escuro a negro
+  Densidade: Baixa (0.01-0.05)
+  
+  Textura opcional:
+  - Perlin noise 3D para variação
+  - Cloud texture com UV scroll lento
+
+
+═══════════════════════════════════════════════════════════════════════════════
+ASSETS SONOROS
+═══════════════════════════════════════════════════════════════════════════════
+
+ÁUDIO BINAURAL
+─────────────────────────────────────────────────────────────────────────────
+
+Implementação atual: PROCEDURAL (Web Audio API)
+✅ Vantagem: Zero dependências, funciona offline, customizável
+
+Assets pré-gravados (alternativa):
+  Fonte: BrainwaveEntrainment.com ou YouTube Audio Library
+  
+  Arquivos sugeridos:
+  - "7Hz Alpha Binaural Beat" (10 min loop)
+  - "4Hz Theta Binaural Beat" (10 min loop)
+  - "2Hz Delta Binaural Beat" (10 min loop)
+  
+  Formato: MP3 320kbps ou FLAC
+  Duração: Loop de 10+ minutos
+  Volume: -18dB normalizado
+
+NOTA: Implementação procedural é PREFERÍVEL pois permite transições suaves
+entre frequências sem artifacts.
+
+
+SOM AMBIENTE - FASE 1 (VENTO)
+─────────────────────────────────────────────────────────────────────────────
+
+Implementação atual: PROCEDURAL (Oscillator + filtro)
+
+Assets pré-gravados (upgrade):
+  Nome: "Gentle Wind Loop" ou "Soft Breeze"
+  Fonte: Freesound.org
+  
+  Sugestões específicas:
+  - "Soft Wind Through Trees" by InspectorJ
+  - "Light Wind Ambience" by felix.blume
+  
+  Formato: OGG Vorbis ou MP3
+  Duração: 2+ minutos seamless loop
+  Frequência: Low-pass filter < 500Hz
+  Volume: -30dB (muito sutil)
+
+
+SOM AMBIENTE - FASE 2 (ÁGUA/BOLHAS)
+─────────────────────────────────────────────────────────────────────────────
+
+Implementação atual: PROCEDURAL (Oscillator + efeito bolhas)
+
+Assets pré-gravados (upgrade):
+  
+  💧 ÁGUA BASE:
+    Nome: "Underwater Ambience Loop"
+    Fonte: Freesound.org
+    
+    Sugestões:
+    - "Underwater Ambience" by soundscalpel.com
+    - "Deep Underwater" by jalastram
+    
+    Formato: OGG Vorbis
+    Duração: 3+ minutos loop
+    Frequência: 100-300Hz predominante
+    Volume: -25dB
+  
+  🫧 BOLHAS:
+    Nome: "Bubble Pop" (individual samples)
+    Quantidade: 5-10 variações
+    
+    Sugestões:
+    - "Bubble Pop" collection by CGEffex
+    - "Water Bubbles" by InspectorJ
+    
+    Formato: WAV (melhor para triggers)
+    Duração: 0.2-1 segundo cada
+    Volume: -28dB
+    Trigger: Aleatório 1-4 segundos intervalo
+
+
+SOM AMBIENTE - FASE 3 (SILÊNCIO)
+─────────────────────────────────────────────────────────────────────────────
+
+Implementação: Apenas binaural 2Hz
+Objetivo: Máxima simplicidade para induzir sono
+
+Assets opcionais (para versão estendida):
+  - "Deep Space Drone" (harmônicos graves sutis)
+  - "Om Chant Low" (frequência 110Hz)
+  
+  USO CUIDADOSO: Apenas se usuário solicitar
+  Volume máximo: -35dB (quase imperceptível)
+
+
+NARRAÇÃO/VOZ
+─────────────────────────────────────────────────────────────────────────────
+
+Implementação atual: Web Speech API (síntese em tempo real)
+✅ Vantagem: Funciona em qualquer idioma, zero storage
+
+Upgrade profissional (gravação humana):
+  
+  PERFIL DE VOZ IDEAL:
+  - Gênero: Indiferente (masculino ou feminino, confortável)
+  - Idade: 30-50 anos (maturidade e confiança)
+  - Tom: Médio-grave (100-150Hz fundamental)
+  - Sotaque: Neutro brasileiro ou paulista suave
+  - Velocidade: 40-50 palavras/minuto
+  - Estilo: Hipnótico, permissivo, caloroso
+  
+  EQUIPAMENTO SUGERIDO:
+  - Microfone: Condensador de diafragma grande
+    (ex: Audio-Technica AT2020, Rode NT1-A)
+  - Interface: Focusrite Scarlett 2i2 ou similar
+  - Ambiente: Tratamento acústico (espuma ou cobertor)
+  
+  PÓS-PRODUÇÃO:
+  - EQ: Corte high-pass 80Hz, boost suave 150-200Hz
+  - Compressão: Ratio 3:1, threshold -20dB
+  - De-esser: Reduzir sibilância 6-8kHz
+  - Reverb: Room muito sutil (wet 5-10%)
+  - Normalização: -18dB LUFS
+  
+  FORMATO FINAL:
+  - WAV 48kHz 24bit (master)
+  - MP3 192kbps (web)
+  - OGG Vorbis Q7 (alternativa)
+  
+  ARQUIVOS:
+  - fase1_narracao1.mp3 (18s)
+  - fase1_narracao2.mp3 (16s)
+  - fase2_narracao1.mp3 (20s)
+  - fase2_narracao2.mp3 (18s)
+  - fase2_narracao3.mp3 (17s)
+  - fase3_narracao1.mp3 (22s)
+  - fase3_narracao2.mp3 (24s)
+  - fase3_narracao3.mp3 (26s)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+TEXTURAS E MATERIAIS
+═══════════════════════════════════════════════════════════════════════════════
+
+TEXTURAS GERAIS
+─────────────────────────────────────────────────────────────────────────────
+
+Para melhorar visual sem impactar performance:
+
+📦 SOURCES GRATUITAS:
+  1. Poly Haven (polyhaven.com)
+     - HDRIs, texturas PBR, modelos 3D
+     - CC0 license (uso livre)
+  
+  2. FreePBR (freepbr.com)
+     - Texturas PBR seamless
+     - Mapas completos (albedo, normal, roughness, etc)
+  
+  3. TextureCan (texturecan.com)
+     - Texturas tileables
+     - Categorias: nature, water, sky
+  
+  4. CC0 Textures (cc0textures.com)
+     - Photogrammetry PBR
+     - Alta qualidade
+
+FORMATO RECOMENDADO:
+  - Albedo/Diffuse: JPG (compressão 90%)
+  - Normal maps: PNG (sem compressão)
+  - Roughness/Metallic: JPG (compressão 85%)
+  - Emissive: PNG com alpha se necessário
+
+RESOLUÇÃO:
+  - Desktop: 2048x2048 (2K)
+  - Mobile: 1024x1024 (1K)
+  - Partículas: 128x128 a 512x512
+
+
+MATERIAIS PBR SUGERIDOS
+─────────────────────────────────────────────────────────────────────────────
+
+ÁGUA (Fase 2):
+  Base Color: #1a4d5c
+  Metallic: 0.1
+  Roughness: 0.2
+  Normal: Water normal map (animated)
+  IOR: 1.33
+  Transmission: 0.8
+
+VIDRO/BOLHA (Fase 2):
+  Base Color: #87CEEB
+  Metallic: 0.0
+  Roughness: 0.1
+  Transmission: 0.9
+  IOR: 1.5
+  Thin: false (volume correto)
+
+GUARDIÃO (Fase 3):
+  Base Color: #9370DB
+  Metallic: 0.0
+  Roughness: 0.3
+  Emissive: #9370DB
+  Emissive Intensity: 0.8 (animated)
+  Opacity: 0.4 (translúcido)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+FERRAMENTAS DE CRIAÇÃO
+═══════════════════════════════════════════════════════════════════════════════
+
+MODELAGEM 3D:
+  - Blender 3.x (gratuito, open-source)
+  - Cinema 4D (pago, intuitivo)
+  - Maya (pago, profissional)
+
+EDIÇÃO DE ÁUDIO:
+  - Audacity (gratuito, básico)
+  - Reaper (pago barato, completo)
+  - Adobe Audition (pago, profissional)
+
+GERAÇÃO DE BINAURAL:
+  - Gnaural (gratuito, open-source)
+  - I-Doser (pago, biblioteca pronta)
+  - Web Audio API (implementação atual ✅)
+
+EDIÇÃO DE IMAGEM:
+  - GIMP (gratuito)
+  - Photoshop (pago)
+  - Affinity Photo (pago barato)
+
+POST-PROCESSING:
+  - Three.js EffectComposer
+  - Unity Post-Processing Stack v2
+  - Unreal Post Process Volume
+
+
+═══════════════════════════════════════════════════════════════════════════════
+OTIMIZAÇÃO PARA MOBILE
+═══════════════════════════════════════════════════════════════════════════════
+
+REDUÇÃO DE ASSETS:
+  ✅ Usar texturas comprimidas (basis universal, KTX2)
+  ✅ LOD (Level of Detail) para modelos 3D
+  ✅ Geometry instancing para objetos repetidos
+  ✅ Texture atlasing para reduzir draw calls
+  ✅ Audio streaming em vez de carregar tudo
+
+TAMANHO MÁXIMO RECOMENDADO:
+  - Total de texturas: < 50MB
+  - Total de geometria: < 10MB
+  - Total de áudio: < 20MB
+  - TOTAL: < 80MB (ideal < 50MB)
+
+COMPRESSÃO DE ASSETS:
+  - Texturas: Basis Universal (.ktx2)
+  - Modelos: glTF 2.0 com Draco compression
+  - Áudio: OGG Vorbis Q4-6
+
+
+═══════════════════════════════════════════════════════════════════════════════
+CONCLUSÃO
+═══════════════════════════════════════════════════════════════════════════════
+
+A versão atual do projeto usa GERAÇÃO PROCEDURAL para todos os elementos,
+garantindo:
+  ✅ Zero dependências de assets externos
+  ✅ Tamanho de download mínimo (~200KB total)
+  ✅ Funciona offline completamente
+  ✅ Performance otimizada para mobile
+  ✅ Fácil customização e manutenção
+
+Os assets listados neste documento são OPCIONAIS e destinados a:
+  - Upgrades futuros de qualidade visual/sonora
+  - Versões comerciais ou premium
+  - Referências para criação de conteúdo original
+
+Para 90% dos casos de uso, a implementação procedural atual é SUFICIENTE
+e PREFERÍVEL.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+FIM DO DOCUMENTO
+═══════════════════════════════════════════════════════════════════════════════
