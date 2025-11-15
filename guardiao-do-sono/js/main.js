@@ -210,6 +210,9 @@ class GuardianGame {
         
         console.log('🎮 Iniciando jogo...');
         
+        // 🔧 CORREÇÃO MOBILE: Desbloquear AudioContext IMEDIATAMENTE no click
+        await this.unlockAudioContext();
+        
         // Mostrar loading
         this.showScreen('loading');
         
@@ -240,6 +243,59 @@ class GuardianGame {
         this.animate();
         
         console.log('✨ Jogo iniciado!');
+    }
+    
+    /**
+     * Desbloqueia AudioContext para iOS/Android (restrição de autoplay)
+     */
+    async unlockAudioContext() {
+        console.log('🔓 Desbloqueando AudioContext...');
+        
+        try {
+            // Desbloquear binaural beats AudioContext
+            if (this.binauralBeats && this.binauralBeats.audioContext) {
+                const ctx = this.binauralBeats.audioContext;
+                console.log(`🎵 AudioContext state: ${ctx.state}`);
+                
+                if (ctx.state === 'suspended') {
+                    console.log('⏸️ AudioContext está suspenso, tentando resumir...');
+                    await ctx.resume();
+                    console.log(`✅ AudioContext resumido! Novo state: ${ctx.state}`);
+                } else {
+                    console.log('✅ AudioContext já está ativo');
+                }
+            }
+            
+            // Desbloquear voice system AudioContext
+            if (this.audioSystem && this.audioSystem.voiceSystem && this.audioSystem.voiceSystem.audioContext) {
+                const voiceCtx = this.audioSystem.voiceSystem.audioContext;
+                console.log(`🎤 Voice AudioContext state: ${voiceCtx.state}`);
+                
+                if (voiceCtx.state === 'suspended') {
+                    console.log('⏸️ Voice AudioContext está suspenso, tentando resumir...');
+                    await voiceCtx.resume();
+                    console.log(`✅ Voice AudioContext resumido! Novo state: ${voiceCtx.state}`);
+                }
+            }
+            
+            // 🔧 MOBILE FIX: Criar e tocar um áudio silencioso para desbloquear
+            console.log('🔊 Criando áudio silencioso para desbloquear mobile...');
+            const silentAudio = new Audio();
+            silentAudio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAA4T0DIwcAAAAAAAAAAAAAAAAAAAA//sQZAAP8AAAaQAAAAgAAA0gAAABAAABpAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ==';
+            silentAudio.volume = 0.01;
+            
+            try {
+                await silentAudio.play();
+                silentAudio.pause();
+                silentAudio.remove();
+                console.log('✅ Áudio silencioso tocado com sucesso (mobile desbloqueado)');
+            } catch (e) {
+                console.warn('⚠️ Não foi possível tocar áudio silencioso:', e.message);
+            }
+            
+        } catch (error) {
+            console.error('❌ Erro ao desbloquear AudioContext:', error);
+        }
     }
 
     /**

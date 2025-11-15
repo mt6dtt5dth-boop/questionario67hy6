@@ -615,25 +615,58 @@ class VoiceSystem {
     }
 
     /**
-     * Reproduz áudio pré-gravado
+     * Reproduz áudio pré-gravado (com suporte para mobile)
      */
     async playPreRecordedAudio(audioPath) {
         return new Promise((resolve, reject) => {
             console.log(`🎵 Carregando áudio: ${audioPath}`);
+            console.log(`📱 User-Agent: ${navigator.userAgent.substring(0, 50)}...`);
             
-            const audio = new Audio(audioPath);
+            const audio = new Audio();
+            
+            // 🔧 CORREÇÃO MOBILE: Configurar ANTES de definir src
             audio.volume = 1.0;
+            audio.preload = 'auto';
+            
+            // Para iOS: tentar usar AudioContext primeiro
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            console.log(`📱 Dispositivo móvel detectado: ${isMobile}`);
             
             audio.onloadedmetadata = () => {
                 console.log(`⏱️ Duração: ${audio.duration.toFixed(2)}s`);
+                console.log(`🔊 Volume configurado: ${audio.volume}`);
+                console.log(`⏸️ Paused: ${audio.paused}`);
+                console.log(`🔇 Muted: ${audio.muted}`);
+            };
+            
+            audio.onloadeddata = () => {
+                console.log('📦 Dados do áudio carregados');
+            };
+            
+            audio.oncanplay = () => {
+                console.log('✅ Áudio pronto para tocar (canplay)');
             };
             
             audio.oncanplaythrough = () => {
-                console.log('✅ Áudio carregado e pronto');
+                console.log('✅ Áudio totalmente carregado (canplaythrough)');
             };
             
             audio.onplay = () => {
-                console.log('▶️ Reprodução iniciada (áudio pré-gravado)');
+                console.log('▶️ Reprodução INICIADA (evento onplay)');
+                console.log(`🔊 Volume atual: ${audio.volume}`);
+                console.log(`⏱️ currentTime: ${audio.currentTime}s`);
+            };
+            
+            audio.onplaying = () => {
+                console.log('🎵 REALMENTE TOCANDO (evento onplaying)');
+            };
+            
+            audio.onwaiting = () => {
+                console.log('⏳ Aguardando buffer...');
+            };
+            
+            audio.onstalled = () => {
+                console.warn('⚠️ Download travado');
             };
             
             audio.onended = () => {
@@ -642,18 +675,45 @@ class VoiceSystem {
             };
             
             audio.onerror = (error) => {
-                console.error(`❌ Erro ao carregar áudio: ${audioPath}`, error);
+                console.error(`❌ Erro ao carregar áudio: ${audioPath}`);
                 console.error('Audio error code:', audio.error?.code);
+                console.error('Audio error message:', audio.error?.message);
+                console.error('Network state:', audio.networkState);
+                console.error('Ready state:', audio.readyState);
                 reject(error);
             };
             
-            console.log('🚀 Iniciando reprodução...');
-            audio.play()
-                .then(() => console.log('✅ Play() executado com sucesso'))
-                .catch(error => {
-                    console.error('❌ Erro no play():', error);
-                    reject(error);
-                });
+            // 🔧 DEFINIR SRC DEPOIS de configurar eventos
+            audio.src = audioPath;
+            audio.load(); // Forçar carregamento
+            
+            console.log('🚀 Tentando reproduzir...');
+            
+            // 🔧 CORREÇÃO MOBILE: Usar promise com timeout
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        console.log('✅ Play() promise resolvida com sucesso!');
+                        console.log(`📊 Estado: paused=${audio.paused}, currentTime=${audio.currentTime}`);
+                    })
+                    .catch(error => {
+                        console.error('❌ Play() promise rejeitada:', error);
+                        console.error('Tipo do erro:', error.name);
+                        console.error('Mensagem:', error.message);
+                        
+                        // Tentar novamente após pequeno delay (workaround iOS)
+                        if (isMobile && error.name === 'NotAllowedError') {
+                            console.warn('🔧 NotAllowedError detectado - pode ser restrição do iOS');
+                            console.warn('💡 Solução: O usuário precisa interagir primeiro (já feito no botão)');
+                        }
+                        
+                        reject(error);
+                    });
+            } else {
+                console.warn('⚠️ play() não retornou promise (navegador antigo)');
+            }
         });
     }
 
