@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code - O Guardião do Sono</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #1a1a2e;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .emoji {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+        
+        .qrcode-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            display: inline-block;
+        }
+        
+        .qrcode-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .instructions h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            text-align: left;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin: 10px 0;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .link-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            word-break: break-all;
+            font-family: monospace;
+            color: #333;
+            font-size: 0.9em;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .feature-text {
+            color: #555;
+            font-size: 0.9em;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .buttons, .link-box {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">🌙</div>
+        <h1>O Guardião do Sono</h1>
+        <p class="subtitle">Experiência Terapêutica 3D para Relaxamento Profundo</p>
+        
+        <div class="qrcode-container">
+            <img src="qrcode-guardiao-sono.png" alt="QR Code - Guardião do Sono">
+        </div>
+        
+        <div class="instructions">
+            <h3>📱 Como usar:</h3>
+            <ol>
+                <li><strong>Abra a câmera</strong> do seu celular</li>
+                <li><strong>Aponte</strong> para o QR Code acima</li>
+                <li><strong>Toque na notificação</strong> que aparecer</li>
+                <li><strong>Relaxe</strong> e aproveite a jornada ao sono!</li>
+            </ol>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🎧</div>
+                <div class="feature-text">Narração em PT-BR</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎵</div>
+                <div class="feature-text">Áudio Binaural</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🌅</div>
+                <div class="feature-text">3 Fases Visuais</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⏱️</div>
+                <div class="feature-text">9 Minutos</div>
+            </div>
+        </div>
+        
+        <div class="link-box">
+            <strong>Link direto:</strong><br>
+            https://raw.githack.com/mt6dtt5dth-boop/questionario67hy6/main/guardiao-do-sono/index.html
+        </div>
+        
+        <div class="buttons">
+            <a href="https://raw.githack.com/mt6dtt5dth-boop/questionario67hy6/main/guardiao-do-sono/index.html" class="btn btn-primary">
+                🌙 Acessar Agora
+            </a>
+            <a href="javascript:window.print()" class="btn btn-secondary">
+                🖨️ Imprimir QR Code
+            </a>
+        </div>
+        
+        <p style="margin-top: 30px; color: #888; font-size: 0.9em;">
+            💡 <strong>Dica:</strong> Salve esta página nos favoritos ou imprima o QR Code<br>
+            para ter acesso fácil sempre que precisar relaxar
+        </p>
+    </div>
+</body>
+</html>
