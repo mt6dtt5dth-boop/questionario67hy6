@@ -182,39 +182,41 @@ class Phase3Guardian {
         // Parar sons de água, manter apenas binaural
         this.audioSystem.stopAllAmbient();
 
-        // Narração principal (usando CHAVE) - a essência do guardião
+        // Narração 1 - Logo após iniciar (5 segundos)
         setTimeout(() => {
             this.audioSystem.narrate('phase3_1'); // ✅ USA A CHAVE!
         }, 5000);
 
-        // Segunda narração (usando CHAVE)
+        // Narração 2 - No meio da fase (1 minuto)
         setTimeout(() => {
             this.audioSystem.narrate('phase3_2'); // ✅ USA A CHAVE!
-        }, 60000); // 1 minuto
+        }, 60000);
 
-        // Narração final (usando CHAVE)
+        // Narração 3 - Perto do final (2 minutos)
         setTimeout(() => {
             this.audioSystem.narrate('phase3_3'); // ✅ USA A CHAVE!
-        }, 120000); // 2 minutos
+        }, 120000);
 
-        // Iniciar fade out final
+        // Fade out final - Após 2:30
         setTimeout(() => {
             this.startFinalFadeOut();
-        }, 150000); // 2:30
+        }, 150000);
     }
 
     /**
      * Inicia o fade out final
      */
     startFinalFadeOut() {
-        // Fade out do áudio binaural
-        this.binauralBeats.fadeOut(30);
-        
-        // Mensagem final no HUD
+        // Mensagem visual opcional
         const narrationText = document.getElementById('narration-text');
         if (narrationText) {
-            narrationText.textContent = "Agora, seu corpo sabe o caminho do descanso.";
+            narrationText.textContent = "Boa noite...";
             narrationText.classList.add('visible');
+            
+            // Remover após 3 segundos
+            setTimeout(() => {
+                narrationText.classList.remove('visible');
+            }, 3000);
         }
     }
 
