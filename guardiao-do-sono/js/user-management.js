@@ -67,14 +67,14 @@ class UserManagementSystem {
      * Cria o usuário Master inicial
      */
     createMasterUser() {
-        // Gerar código master aleatório
-        this.masterCode = this.generateCode();
+        // Código master FIXO definido pelo terapeuta
+        this.masterCode = 'NEWDRI193117';
         
         const masterUser = {
             id: 'master',
             codigo: this.masterCode,
             tipo: 'master',
-            nome: 'Usuário',
+            nome: 'Terapeuta',
             sobrenome: 'Master',
             dataNascimento: null,
             queixaPrincipal: null,
@@ -93,8 +93,8 @@ class UserManagementSystem {
         console.log('🔐 Usuário Master criado!');
         console.log(`🔑 Código Master: ${this.masterCode}`);
         
-        // Mostrar código master ao usuário
-        this.showMasterCodeModal(this.masterCode);
+        // NÃO mostrar modal - código já é conhecido
+        console.log('ℹ️ Use o código NEWDRI193117 para acessar como terapeuta');
     }
     
     /**
@@ -179,6 +179,12 @@ class UserManagementSystem {
         const welcomeScreen = document.getElementById('welcome-screen');
         if (!welcomeScreen) return;
         
+        // ESCONDER todo o conteúdo da welcome screen
+        const welcomeContent = welcomeScreen.querySelector('.welcome-content');
+        if (welcomeContent) {
+            welcomeContent.style.display = 'none';
+        }
+        
         // Criar ou encontrar área de login
         let loginArea = document.getElementById('login-area');
         if (!loginArea) {
@@ -187,17 +193,46 @@ class UserManagementSystem {
             loginArea.className = 'login-container';
             
             loginArea.innerHTML = `
-                <div class="login-card">
-                    <h2>🔐 Acesso ao Guardião do Sono</h2>
-                    <p>Digite seu código de acesso:</p>
-                    <input 
-                        type="text" 
-                        id="access-code-input" 
-                        maxlength="6" 
-                        placeholder="ABC123"
-                        style="text-transform: uppercase; text-align: center; font-size: 24px; letter-spacing: 4px;"
-                    />
-                    <button id="login-button" class="primary-button">Entrar</button>
+                <div class="login-main-card">
+                    <h1 class="login-title">🌙 O Guardião do Sono</h1>
+                    <p class="login-subtitle">Selecione seu tipo de acesso</p>
+                    
+                    <div class="login-grid">
+                        <!-- ENTRADA TERAPEUTA -->
+                        <div class="login-card terapeuta-card">
+                            <div class="card-icon">👨‍⚕️</div>
+                            <h2>ENTRADA TERAPEUTA</h2>
+                            <p class="card-description">Acesso administrativo completo</p>
+                            <input 
+                                type="text" 
+                                id="terapeuta-code-input" 
+                                maxlength="13" 
+                                placeholder="NEWDRI193117"
+                                class="code-input"
+                            />
+                            <button id="terapeuta-login-btn" class="login-btn terapeuta-btn">
+                                🔐 Entrar como Terapeuta
+                            </button>
+                        </div>
+                        
+                        <!-- ENTRADA CLIENTE -->
+                        <div class="login-card cliente-card">
+                            <div class="card-icon">🧘</div>
+                            <h2>ENTRADA CLIENTE</h2>
+                            <p class="card-description">Acesso à jornada terapêutica</p>
+                            <input 
+                                type="text" 
+                                id="cliente-code-input" 
+                                maxlength="6" 
+                                placeholder="ABC123"
+                                class="code-input"
+                            />
+                            <button id="cliente-login-btn" class="login-btn cliente-btn">
+                                ✨ Entrar como Cliente
+                            </button>
+                        </div>
+                    </div>
+                    
                     <div id="login-error" class="error-message" style="display: none;"></div>
                 </div>
             `;
@@ -206,7 +241,7 @@ class UserManagementSystem {
             welcomeScreen.insertBefore(loginArea, welcomeScreen.firstChild);
         }
         
-        loginArea.style.display = 'block';
+        loginArea.style.display = 'flex';
     }
     
     /**
@@ -216,6 +251,12 @@ class UserManagementSystem {
         const loginArea = document.getElementById('login-area');
         if (loginArea) {
             loginArea.style.display = 'none';
+        }
+        
+        // MOSTRAR o conteúdo da welcome screen
+        const welcomeContent = document.querySelector('.welcome-content');
+        if (welcomeContent) {
+            welcomeContent.style.display = 'block';
         }
     }
     
@@ -256,46 +297,93 @@ class UserManagementSystem {
     }
     
     /**
-     * Adiciona botão de gerenciamento para Master
+     * Adiciona botões de controle (gerenciar + logout)
      */
     addMasterButton() {
         const hud = document.getElementById('hud');
-        if (!hud || document.getElementById('master-panel-btn')) return;
+        if (!hud || document.getElementById('user-controls')) return;
         
-        const btn = document.createElement('button');
-        btn.id = 'master-panel-btn';
-        btn.className = 'master-button';
-        btn.innerHTML = '👥 Gerenciar Usuários';
-        btn.style.cssText = `
+        // Container para botões
+        const container = document.createElement('div');
+        container.id = 'user-controls';
+        container.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 1001;
+            display: flex;
+            gap: 10px;
+        `;
+        
+        // Botão de Gerenciar (só para Master)
+        if (this.currentUser.tipo === 'master') {
+            const manageBtn = document.createElement('button');
+            manageBtn.id = 'master-panel-btn';
+            manageBtn.className = 'control-button';
+            manageBtn.innerHTML = '👥 Gerenciar';
+            manageBtn.style.cssText = `
+                padding: 12px 24px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+                transition: all 0.3s ease;
+            `;
+            
+            manageBtn.addEventListener('mouseenter', () => {
+                manageBtn.style.transform = 'translateY(-2px)';
+                manageBtn.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.6)';
+            });
+            
+            manageBtn.addEventListener('mouseleave', () => {
+                manageBtn.style.transform = 'translateY(0)';
+                manageBtn.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+            });
+            
+            manageBtn.addEventListener('click', () => this.showMasterPanel());
+            container.appendChild(manageBtn);
+        }
+        
+        // Botão de Sair (para todos)
+        const logoutBtn = document.createElement('button');
+        logoutBtn.id = 'logout-btn';
+        logoutBtn.className = 'control-button';
+        logoutBtn.innerHTML = '🚪 Sair';
+        logoutBtn.style.cssText = `
             padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
             transition: all 0.3s ease;
         `;
         
-        btn.addEventListener('mouseenter', () => {
-            btn.style.transform = 'translateY(-2px)';
-            btn.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.6)';
+        logoutBtn.addEventListener('mouseenter', () => {
+            logoutBtn.style.transform = 'translateY(-2px)';
+            logoutBtn.style.boxShadow = '0 6px 16px rgba(240, 147, 251, 0.6)';
         });
         
-        btn.addEventListener('mouseleave', () => {
-            btn.style.transform = 'translateY(0)';
-            btn.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+        logoutBtn.addEventListener('mouseleave', () => {
+            logoutBtn.style.transform = 'translateY(0)';
+            logoutBtn.style.boxShadow = '0 4px 12px rgba(240, 147, 251, 0.4)';
         });
         
-        btn.addEventListener('click', () => this.showMasterPanel());
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('Deseja realmente sair?')) {
+                this.logout();
+            }
+        });
         
-        document.body.appendChild(btn);
+        container.appendChild(logoutBtn);
+        document.body.appendChild(container);
     }
     
     /**
@@ -791,80 +879,122 @@ class UserManagementSystem {
      * Configura event listeners
      */
     setupEventListeners() {
-        // Login button
-        const loginBtn = document.getElementById('login-button');
-        if (loginBtn) {
-            loginBtn.addEventListener('click', () => this.attemptLogin());
-        }
-        
-        // Enter no input de código
-        const codeInput = document.getElementById('access-code-input');
-        if (codeInput) {
-            codeInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.attemptLogin();
-                }
-            });
+        // Aguardar DOM carregar completamente
+        setTimeout(() => {
+            // Login Terapeuta
+            const terapeutaBtn = document.getElementById('terapeuta-login-btn');
+            const terapeutaInput = document.getElementById('terapeuta-code-input');
             
-            // Auto uppercase
-            codeInput.addEventListener('input', (e) => {
-                e.target.value = e.target.value.toUpperCase();
-            });
-        }
+            if (terapeutaBtn) {
+                terapeutaBtn.addEventListener('click', () => this.attemptLogin('terapeuta'));
+            }
+            
+            if (terapeutaInput) {
+                terapeutaInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.attemptLogin('terapeuta');
+                    }
+                });
+                
+                terapeutaInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.toUpperCase();
+                });
+            }
+            
+            // Login Cliente
+            const clienteBtn = document.getElementById('cliente-login-btn');
+            const clienteInput = document.getElementById('cliente-code-input');
+            
+            if (clienteBtn) {
+                clienteBtn.addEventListener('click', () => this.attemptLogin('cliente'));
+            }
+            
+            if (clienteInput) {
+                clienteInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.attemptLogin('cliente');
+                    }
+                });
+                
+                clienteInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.toUpperCase();
+                });
+            }
+        }, 500);
     }
     
     /**
      * Tenta fazer login
      */
-    attemptLogin() {
-        const codeInput = document.getElementById('access-code-input');
+    attemptLogin(tipo) {
         const errorDiv = document.getElementById('login-error');
-        const code = codeInput.value.trim().toUpperCase();
+        let code, codeInput;
         
-        if (code.length !== 6) {
-            errorDiv.textContent = '❌ O código deve ter 6 caracteres';
-            errorDiv.style.display = 'block';
-            return;
-        }
-        
-        // Verificar se é código master
-        if (code === this.masterCode) {
+        if (tipo === 'terapeuta') {
+            codeInput = document.getElementById('terapeuta-code-input');
+            code = codeInput.value.trim().toUpperCase();
+            
+            // Verificar código terapeuta
+            if (code !== this.masterCode) {
+                errorDiv.textContent = '❌ Código de terapeuta inválido';
+                errorDiv.style.display = 'block';
+                setTimeout(() => { errorDiv.style.display = 'none'; }, 3000);
+                return;
+            }
+            
+            // Login como Master
             this.loginUser('master');
             return;
         }
         
-        // Procurar usuário pelo código
-        const user = Object.values(this.users).find(u => u.codigo === code);
-        
-        if (!user) {
-            errorDiv.textContent = '❌ Código inválido';
-            errorDiv.style.display = 'block';
-            return;
-        }
-        
-        // Verificar se está ativo
-        if (!user.ativo) {
-            errorDiv.textContent = '❌ Acesso desativado. Entre em contato com o administrador.';
-            errorDiv.style.display = 'block';
-            return;
-        }
-        
-        // Verificar expiração
-        if (user.expiraEm) {
-            const expiresAt = new Date(user.expiraEm);
-            const now = new Date();
+        if (tipo === 'cliente') {
+            codeInput = document.getElementById('cliente-code-input');
+            code = codeInput.value.trim().toUpperCase();
             
-            if (expiresAt < now) {
-                errorDiv.textContent = '❌ Acesso expirado. Entre em contato com o administrador.';
+            if (code.length < 6) {
+                errorDiv.textContent = '❌ O código do cliente deve ter pelo menos 6 caracteres';
                 errorDiv.style.display = 'block';
-                user.ativo = false;
-                this.saveUsers();
+                setTimeout(() => { errorDiv.style.display = 'none'; }, 3000);
                 return;
             }
+            
+            // Procurar usuário pelo código (exceto master)
+            const user = Object.values(this.users).find(u => u.codigo === code && u.tipo !== 'master');
+            
+            if (!user) {
+                errorDiv.textContent = '❌ Código de cliente inválido';
+                errorDiv.style.display = 'block';
+                setTimeout(() => { errorDiv.style.display = 'none'; }, 3000);
+                return;
+            }
+            
+            // Verificar se está ativo
+            if (!user.ativo) {
+                errorDiv.textContent = '❌ Acesso desativado. Entre em contato com seu terapeuta.';
+                errorDiv.style.display = 'block';
+                setTimeout(() => { errorDiv.style.display = 'none'; }, 5000);
+                return;
+            }
+            
+            // Verificar expiração
+            if (user.expiraEm) {
+                const expiresAt = new Date(user.expiraEm);
+                const now = new Date();
+                
+                if (expiresAt < now) {
+                    errorDiv.textContent = '❌ Acesso expirado. Entre em contato com seu terapeuta.';
+                    errorDiv.style.display = 'block';
+                    setTimeout(() => { errorDiv.style.display = 'none'; }, 5000);
+                    user.ativo = false;
+                    this.saveUsers();
+                    return;
+                }
+            }
+            
+            // Login bem-sucedido!
+            this.loginUser(user.id);
+            return;
         }
-        
-        // Login bem-sucedido!
-        this.loginUser(user.id);
     }
     
     /**
