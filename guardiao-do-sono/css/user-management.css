@@ -631,7 +631,8 @@
 
 .master-code-modal,
 .user-code-modal,
-.extend-modal {
+.extend-modal,
+.edit-user-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -643,6 +644,7 @@
     align-items: center;
     z-index: 100000;
     animation: fadeIn 0.3s ease;
+    overflow-y: auto;
 }
 
 .master-code-content,
@@ -656,6 +658,73 @@
     width: 90%;
     text-align: center;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.edit-user-content {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    margin: 20px auto;
+}
+
+.edit-user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.edit-user-header h2 {
+    margin: 0;
+    color: #f093fb;
+    font-size: 1.5rem;
+}
+
+.edit-user-form {
+    padding: 32px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .master-code-content h2,
@@ -810,5 +879,136 @@
     
     .modal-actions button {
         width: 100%;
+    }
+}
+
+/* ===========================
+   📊 SESSION STATISTICS
+   =========================== */
+
+.session-stats {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 12px;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.session-stats h4 {
+    margin: 0 0 16px 0;
+    color: #f093fb;
+    font-size: 1.1rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.stat-item {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.no-sessions {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+    padding: 12px;
+}
+
+/* ===========================
+   📖 SESSION HISTORY
+   =========================== */
+
+.session-history {
+    margin-top: 16px;
+}
+
+.toggle-history-btn {
+    width: 100%;
+    padding: 10px;
+    background: rgba(102, 126, 234, 0.2);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.toggle-history-btn:hover {
+    background: rgba(102, 126, 234, 0.3);
+    border-color: rgba(102, 126, 234, 0.5);
+}
+
+.history-table {
+    margin-top: 12px;
+    overflow-x: auto;
+}
+
+.history-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.history-table thead {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.history-table th {
+    padding: 10px;
+    text-align: left;
+    color: #f093fb;
+    font-weight: 600;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.history-table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.history-table tbody tr:hover {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.history-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .history-table {
+        font-size: 0.8rem;
+    }
+    
+    .history-table th,
+    .history-table td {
+        padding: 8px 6px;
     }
 }

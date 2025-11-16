@@ -618,7 +618,12 @@ class UserManagementSystem {
             return;
         }
         
-        container.innerHTML = usersList.map(user => `
+        container.innerHTML = usersList.map(user => {
+            // Obter histórico de sessões
+            const sessionHistory = this.getSessionHistoryHTML(user.id);
+            const stats = this.getUserSessionStats(user.id);
+            
+            return `
             <div class="user-card" data-user-id="${user.id}">
                 <div class="user-header">
                     <h3>${user.nome} ${user.sobrenome}</h3>
@@ -635,6 +640,31 @@ class UserManagementSystem {
                     ${user.queixaPrincipal ? `<p><strong>Queixa:</strong> ${user.queixaPrincipal}</p>` : ''}
                     <p><strong>Expira em:</strong> ${this.getExpirationText(user.expiraEm)}</p>
                 </div>
+                
+                <!-- 📊 ESTATÍSTICAS DE SESSÕES -->
+                <div class="session-stats">
+                    <h4>📊 Estatísticas de Uso</h4>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Total de Sessões</span>
+                            <span class="stat-value">${stats.totalSessions}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Tempo Total</span>
+                            <span class="stat-value">${this.formatDuration(stats.totalDuration)}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Tempo Médio</span>
+                            <span class="stat-value">${this.formatDuration(stats.averageDuration)}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Fases Completadas</span>
+                            <span class="stat-value">${stats.totalPhasesCompleted}</span>
+                        </div>
+                    </div>
+                    ${sessionHistory}
+                </div>
+                
                 <div class="user-actions">
                     <button class="action-btn edit-btn" data-action="edit" data-user-id="${user.id}">✏️ Editar</button>
                     <button class="action-btn extend-btn" data-action="extend" data-user-id="${user.id}">⏱️ Estender</button>
@@ -644,7 +674,8 @@ class UserManagementSystem {
                     </button>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
         
         // Event listeners para ações
         container.querySelectorAll('.action-btn').forEach(btn => {
@@ -652,6 +683,20 @@ class UserManagementSystem {
                 const action = e.target.dataset.action;
                 const userId = e.target.dataset.userId;
                 this.handleUserAction(action, userId);
+            });
+        });
+        
+        // 📊 Event listeners para toggle de histórico de sessões
+        container.querySelectorAll('.toggle-history-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const table = e.target.nextElementSibling;
+                if (table) {
+                    const isVisible = table.style.display !== 'none';
+                    table.style.display = isVisible ? 'none' : 'block';
+                    e.target.textContent = isVisible ? 
+                        `📖 Ver Últimas Sessões (${e.target.textContent.match(/\d+/)[0]})` :
+                        `📕 Ocultar Sessões`;
+                }
             });
         });
     }
@@ -672,6 +717,109 @@ class UserManagementSystem {
         if (daysLeft <= 7) return `⚠️ ${daysLeft} dias`;
         
         return `${expiresAt.toLocaleDateString('pt-BR')} (${daysLeft} dias)`;
+    }
+    
+    /**
+     * 📊 Obtém estatísticas de sessões do usuário
+     */
+    getUserSessionStats(userId) {
+        if (this.sessionTracker) {
+            return this.sessionTracker.getUserStats(userId);
+        }
+        
+        // Fallback se SessionTracker não estiver disponível
+        return {
+            totalSessions: 0,
+            totalDuration: 0,
+            averageDuration: 0,
+            totalPhasesCompleted: 0,
+            totalXP: 0,
+            totalCrystals: 0,
+            dreamIncubatorUses: 0,
+            lastSession: null
+        };
+    }
+    
+    /**
+     * 📊 Gera HTML do histórico de sessões
+     */
+    getSessionHistoryHTML(userId) {
+        if (!this.sessionTracker) {
+            return '<p class="no-sessions">Nenhuma sessão registrada ainda.</p>';
+        }
+        
+        const history = this.sessionTracker.getUserSessionHistory(userId);
+        
+        if (history.length === 0) {
+            return '<p class="no-sessions">Nenhuma sessão registrada ainda.</p>';
+        }
+        
+        // Pegar últimas 5 sessões
+        const recentSessions = history.slice(-5).reverse();
+        
+        return `
+            <div class="session-history">
+                <button class="toggle-history-btn" data-user-id="${userId}">
+                    📖 Ver Últimas Sessões (${history.length})
+                </button>
+                <div class="history-table" style="display: none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Duração</th>
+                                <th>Fases</th>
+                                <th>XP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${recentSessions.map(session => `
+                                <tr>
+                                    <td>${this.formatDateTime(session.startTime)}</td>
+                                    <td>${this.formatDuration(session.duration)}</td>
+                                    <td>${session.phasesCompleted.length}/3</td>
+                                    <td>+${session.xpGained || 0}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+    
+    /**
+     * 📊 Formata duração em segundos para texto legível
+     */
+    formatDuration(seconds) {
+        if (!seconds || seconds === 0) return '0s';
+        
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        
+        const parts = [];
+        if (hours > 0) parts.push(`${hours}h`);
+        if (minutes > 0) parts.push(`${minutes}min`);
+        if (secs > 0 || parts.length === 0) parts.push(`${secs}s`);
+        
+        return parts.join(' ');
+    }
+    
+    /**
+     * 📊 Formata data/hora em português
+     */
+    formatDateTime(isoString) {
+        if (!isoString) return '-';
+        
+        const date = new Date(isoString);
+        return date.toLocaleString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     }
     
     /**
@@ -780,9 +928,152 @@ class UserManagementSystem {
      * Edita usuário
      */
     editUser(userId) {
-        // TODO: Implementar modal de edição
-        console.log('Editar usuário:', userId);
-        this.showNotification('🔧 Funcionalidade de edição em desenvolvimento', 'info');
+        const user = this.users[userId];
+        if (!user) {
+            this.showNotification('❌ Usuário não encontrado', 'error');
+            return;
+        }
+        
+        // Não permitir editar usuário master
+        if (user.tipo === 'master') {
+            this.showNotification('❌ Não é possível editar o usuário Master', 'error');
+            return;
+        }
+        
+        // Criar modal de edição
+        const modal = document.createElement('div');
+        modal.className = 'edit-user-modal';
+        modal.innerHTML = `
+            <div class="edit-user-content">
+                <div class="edit-user-header">
+                    <h2>✏️ Editar Usuário</h2>
+                    <button id="close-edit-modal" class="close-button">✕</button>
+                </div>
+                
+                <form id="edit-user-form" class="edit-user-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nome *</label>
+                            <input type="text" name="nome" value="${user.nome}" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Sobrenome *</label>
+                            <input type="text" name="sobrenome" value="${user.sobrenome}" required />
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Data de Nascimento</label>
+                            <input type="date" name="dataNascimento" value="${user.dataNascimento || ''}" />
+                        </div>
+                        <div class="form-group">
+                            <label>WhatsApp</label>
+                            <input type="tel" name="whatsapp" value="${user.whatsapp || ''}" placeholder="(00) 00000-0000" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" name="email" value="${user.email || ''}" />
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cidade</label>
+                            <input type="text" name="cidade" value="${user.cidade || ''}" />
+                        </div>
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <select name="estado">
+                                <option value="">Selecione...</option>
+                                <option value="AC" ${user.estado === 'AC' ? 'selected' : ''}>Acre</option>
+                                <option value="AL" ${user.estado === 'AL' ? 'selected' : ''}>Alagoas</option>
+                                <option value="AP" ${user.estado === 'AP' ? 'selected' : ''}>Amapá</option>
+                                <option value="AM" ${user.estado === 'AM' ? 'selected' : ''}>Amazonas</option>
+                                <option value="BA" ${user.estado === 'BA' ? 'selected' : ''}>Bahia</option>
+                                <option value="CE" ${user.estado === 'CE' ? 'selected' : ''}>Ceará</option>
+                                <option value="DF" ${user.estado === 'DF' ? 'selected' : ''}>Distrito Federal</option>
+                                <option value="ES" ${user.estado === 'ES' ? 'selected' : ''}>Espírito Santo</option>
+                                <option value="GO" ${user.estado === 'GO' ? 'selected' : ''}>Goiás</option>
+                                <option value="MA" ${user.estado === 'MA' ? 'selected' : ''}>Maranhão</option>
+                                <option value="MT" ${user.estado === 'MT' ? 'selected' : ''}>Mato Grosso</option>
+                                <option value="MS" ${user.estado === 'MS' ? 'selected' : ''}>Mato Grosso do Sul</option>
+                                <option value="MG" ${user.estado === 'MG' ? 'selected' : ''}>Minas Gerais</option>
+                                <option value="PA" ${user.estado === 'PA' ? 'selected' : ''}>Pará</option>
+                                <option value="PB" ${user.estado === 'PB' ? 'selected' : ''}>Paraíba</option>
+                                <option value="PR" ${user.estado === 'PR' ? 'selected' : ''}>Paraná</option>
+                                <option value="PE" ${user.estado === 'PE' ? 'selected' : ''}>Pernambuco</option>
+                                <option value="PI" ${user.estado === 'PI' ? 'selected' : ''}>Piauí</option>
+                                <option value="RJ" ${user.estado === 'RJ' ? 'selected' : ''}>Rio de Janeiro</option>
+                                <option value="RN" ${user.estado === 'RN' ? 'selected' : ''}>Rio Grande do Norte</option>
+                                <option value="RS" ${user.estado === 'RS' ? 'selected' : ''}>Rio Grande do Sul</option>
+                                <option value="RO" ${user.estado === 'RO' ? 'selected' : ''}>Rondônia</option>
+                                <option value="RR" ${user.estado === 'RR' ? 'selected' : ''}>Roraima</option>
+                                <option value="SC" ${user.estado === 'SC' ? 'selected' : ''}>Santa Catarina</option>
+                                <option value="SP" ${user.estado === 'SP' ? 'selected' : ''}>São Paulo</option>
+                                <option value="SE" ${user.estado === 'SE' ? 'selected' : ''}>Sergipe</option>
+                                <option value="TO" ${user.estado === 'TO' ? 'selected' : ''}>Tocantins</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Queixa Principal</label>
+                        <textarea name="queixaPrincipal" rows="3" placeholder="Descreva a queixa principal...">${user.queixaPrincipal || ''}</textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="cancel-edit-btn" class="btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn-primary">💾 Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Event listeners
+        document.getElementById('close-edit-modal').addEventListener('click', () => {
+            modal.remove();
+        });
+        
+        document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+            modal.remove();
+        });
+        
+        document.getElementById('edit-user-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            
+            // Atualizar dados do usuário
+            user.nome = formData.get('nome');
+            user.sobrenome = formData.get('sobrenome');
+            user.dataNascimento = formData.get('dataNascimento') || null;
+            user.whatsapp = formData.get('whatsapp') || null;
+            user.email = formData.get('email') || null;
+            user.cidade = formData.get('cidade') || null;
+            user.estado = formData.get('estado') || null;
+            user.queixaPrincipal = formData.get('queixaPrincipal') || null;
+            
+            // Salvar alterações
+            this.saveUsers();
+            
+            // Fechar modal
+            modal.remove();
+            
+            // Atualizar lista
+            this.renderUsersList();
+            
+            // Notificação de sucesso
+            this.showNotification(`✅ Dados de ${user.nome} ${user.sobrenome} atualizados!`, 'success');
+        });
+        
+        // Fazer modal aparecer
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
     }
     
     /**
@@ -1025,6 +1316,12 @@ class UserManagementSystem {
         
         console.log('✅ Login bem-sucedido:', this.currentUser.nome);
         
+        // 📊 Iniciar rastreamento de sessão
+        if (this.sessionTracker) {
+            this.sessionTracker.startSession();
+            console.log('📊 Sessão iniciada para:', this.currentUser.nome);
+        }
+        
         // Esconder login, mostrar app
         this.showMainApp();
         
@@ -1041,6 +1338,12 @@ class UserManagementSystem {
      * Logout
      */
     logout() {
+        // 📊 Finalizar rastreamento de sessão
+        if (this.sessionTracker) {
+            this.sessionTracker.endSession('user_logout');
+            console.log('📊 Sessão finalizada');
+        }
+        
         this.currentUser = null;
         sessionStorage.removeItem('guardiao_current_user');
         

@@ -13,6 +13,7 @@ class GuardianGame {
         
         // Sistemas
         this.userManagement = null; // 👥 Sistema de Usuários
+        this.sessionTracker = null; // 📊 Sistema de Rastreamento de Sessões
         this.audioSystem = null;
         this.binauralBeats = null;
         this.phaseTransition = null;
@@ -48,6 +49,14 @@ class GuardianGame {
         if (typeof UserManagementSystem !== 'undefined') {
             this.userManagement = new UserManagementSystem();
             console.log('👥 Sistema de Usuários inicializado');
+            
+            // 📊 Inicializar Sistema de Rastreamento de Sessões
+            if (typeof SessionTracker !== 'undefined') {
+                this.sessionTracker = new SessionTracker(this.userManagement);
+                // Passar referência do sessionTracker para o userManagement
+                this.userManagement.sessionTracker = this.sessionTracker;
+                console.log('📊 Sistema de Rastreamento de Sessões inicializado');
+            }
         }
         
         // Obter elementos UI
