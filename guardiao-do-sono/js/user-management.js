@@ -18,6 +18,7 @@ class UserManagementSystem {
         this.currentUser = null;
         this.users = {};
         this.masterCode = null;
+        this.sessionTracker = null; // 📊 Será definido pelo main.js
         
         this.loadUsers();
         this.initializeUI();
@@ -50,6 +51,20 @@ class UserManagementSystem {
         if (currentUserId && this.users[currentUserId]) {
             this.currentUser = this.users[currentUserId];
             console.log('👤 Usuário já logado:', this.currentUser.nome);
+            
+            // 📊 Marcar que precisa iniciar sessão quando sessionTracker estiver disponível
+            this.needsSessionStart = true;
+        }
+    }
+    
+    /**
+     * 📊 Inicializa sessão para usuário já logado (chamado pelo main.js)
+     */
+    startSessionIfNeeded() {
+        if (this.needsSessionStart && this.currentUser && this.sessionTracker) {
+            this.sessionTracker.startSession();
+            this.needsSessionStart = false;
+            console.log('📊 Sessão retomada para usuário já logado');
         }
     }
     

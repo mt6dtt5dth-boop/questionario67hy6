@@ -56,6 +56,9 @@ class GuardianGame {
                 // Passar referência do sessionTracker para o userManagement
                 this.userManagement.sessionTracker = this.sessionTracker;
                 console.log('📊 Sistema de Rastreamento de Sessões inicializado');
+                
+                // 📊 Se usuário já estava logado, iniciar sessão agora
+                this.userManagement.startSessionIfNeeded();
             }
         }
         
@@ -207,6 +210,12 @@ class GuardianGame {
         // Fase 1 → Fase 2
         this.phase1.onComplete = async () => {
             console.log('Fase 1 completa, transitando para Fase 2...');
+            
+            // 📊 Registrar conclusão da Fase 1
+            if (this.sessionTracker) {
+                this.sessionTracker.phaseCompleted(1, 120); // ~2 minutos
+            }
+            
             this.currentPhaseIndex = 1;
             await this.phaseTransition.startTransition(
                 this.phase1,
@@ -215,11 +224,22 @@ class GuardianGame {
                 this.binauralBeats
             );
             this.currentPhase = this.phase2;
+            
+            // 📊 Registrar início da Fase 2
+            if (this.sessionTracker) {
+                this.sessionTracker.phaseStarted(2);
+            }
         };
         
         // Fase 2 → Fase 3
         this.phase2.onComplete = async () => {
             console.log('Fase 2 completa, transitando para Fase 3...');
+            
+            // 📊 Registrar conclusão da Fase 2
+            if (this.sessionTracker) {
+                this.sessionTracker.phaseCompleted(2, 240); // ~4 minutos
+            }
+            
             this.currentPhaseIndex = 2;
             await this.phaseTransition.startTransition(
                 this.phase2,
@@ -228,11 +248,22 @@ class GuardianGame {
                 this.binauralBeats
             );
             this.currentPhase = this.phase3;
+            
+            // 📊 Registrar início da Fase 3
+            if (this.sessionTracker) {
+                this.sessionTracker.phaseStarted(3);
+            }
         };
         
         // Fase 3 → Fim
         this.phase3.onComplete = () => {
             console.log('Fase 3 completa, finalizando experiência...');
+            
+            // 📊 Registrar conclusão da Fase 3
+            if (this.sessionTracker) {
+                this.sessionTracker.phaseCompleted(3, 240); // ~4 minutos
+            }
+            
             this.endExperience();
         };
     }
@@ -285,6 +316,11 @@ class GuardianGame {
             this.binauralBeats
         );
         this.currentPhase = this.phase1;
+        
+        // 📊 Registrar início da Fase 1
+        if (this.sessionTracker) {
+            this.sessionTracker.phaseStarted(1);
+        }
         
         // Iniciar respiração guiada
         this.startBreathingIndicator();

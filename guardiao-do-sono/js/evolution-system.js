@@ -235,6 +235,11 @@ class EvolutionSystem {
         const crystalsEarned = 5;
         this.crystals += crystalsEarned;
         this.animateCrystalGain(crystalsEarned);
+        
+        // 📊 Registrar cristais no SessionTracker se disponível
+        if (window.game && window.game.sessionTracker) {
+            window.game.sessionTracker.addCrystals(crystalsEarned, 'Sessão completa');
+        }
 
         // Verifica dias consecutivos
         this.updateConsecutiveDays();
@@ -243,7 +248,12 @@ class EvolutionSystem {
         this.checkAchievements();
 
         // Verifica aumento de nível
-        this.checkLevelUp();
+        const leveledUp = this.checkLevelUp();
+        
+        // 📊 Se subiu de nível, registrar XP ganho
+        if (leveledUp && window.game && window.game.sessionTracker) {
+            window.game.sessionTracker.addXP(100, 'Subiu de nível');
+        }
 
         // Salva progresso
         this.saveProgress();
@@ -331,7 +341,10 @@ class EvolutionSystem {
             this.currentLevel = nextLevel.level;
             console.log(`⬆️ Level UP! Agora você é ${nextLevel.title}`);
             this.showLevelUpNotification(nextLevel);
+            return true; // 📊 Retorna true quando sobe de nível
         }
+        
+        return false; // 📊 Retorna false quando não sobe
     }
 
     /**

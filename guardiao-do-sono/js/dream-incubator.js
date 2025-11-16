@@ -158,6 +158,11 @@ class DreamIncubator {
         // Notificação
         this.showNotification('🌱 Semente plantada! Ela crescerá enquanto você relaxa', 'success');
         
+        // 📊 Registrar uso do Incubador de Sonhos no SessionTracker
+        if (window.game && window.game.sessionTracker) {
+            window.game.sessionTracker.dreamIncubatorUsed(intention, this.activeSeed.id);
+        }
+        
         console.log('🌱 Semente plantada:', this.activeSeed);
     }
     
