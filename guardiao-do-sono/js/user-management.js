@@ -159,17 +159,20 @@ class UserManagementSystem {
      * Inicializa UI
      */
     initializeUI() {
-        // Se não está logado, mostrar tela de login
-        if (!this.currentUser) {
-            this.showLoginScreen();
-        } else {
-            this.showMainApp();
-            
-            // Se é master, adicionar botão de gerenciamento
-            if (this.currentUser.tipo === 'master') {
-                this.addMasterButton();
+        // Aguardar DOM estar completamente carregada
+        setTimeout(() => {
+            // Se não está logado, mostrar tela de login
+            if (!this.currentUser) {
+                this.showLoginScreen();
+            } else {
+                this.showMainApp();
+                
+                // Se é master, adicionar botão de gerenciamento
+                if (this.currentUser.tipo === 'master') {
+                    this.addMasterButton();
+                }
             }
-        }
+        }, 500); // Aguardar 500ms para garantir que DOM está pronta
     }
     
     /**
@@ -177,22 +180,33 @@ class UserManagementSystem {
      */
     showLoginScreen() {
         const welcomeScreen = document.getElementById('welcome-screen');
-        if (!welcomeScreen) return;
+        if (!welcomeScreen) {
+            console.error('❌ welcome-screen não encontrado!');
+            return;
+        }
+        
+        console.log('🔐 Exibindo tela de login...');
         
         // ESCONDER todo o conteúdo da welcome screen
         const welcomeContent = welcomeScreen.querySelector('.welcome-content');
         if (welcomeContent) {
             welcomeContent.style.display = 'none';
+            console.log('✅ Welcome content escondido');
         }
         
-        // Criar ou encontrar área de login
-        let loginArea = document.getElementById('login-area');
-        if (!loginArea) {
-            loginArea = document.createElement('div');
-            loginArea.id = 'login-area';
-            loginArea.className = 'login-container';
-            
-            loginArea.innerHTML = `
+        // REMOVER login area antiga se existir
+        const oldLoginArea = document.getElementById('login-area');
+        if (oldLoginArea) {
+            oldLoginArea.remove();
+            console.log('🗑️ Login area antiga removida');
+        }
+        
+        // Criar área de login NOVA
+        let loginArea = document.createElement('div');
+        loginArea.id = 'login-area';
+        loginArea.className = 'login-container';
+        
+        loginArea.innerHTML = `
                 <div class="login-main-card">
                     <h1 class="login-title">🌙 O Guardião do Sono</h1>
                     <p class="login-subtitle">Selecione seu tipo de acesso</p>
@@ -235,13 +249,15 @@ class UserManagementSystem {
                     
                     <div id="login-error" class="error-message" style="display: none;"></div>
                 </div>
-            `;
-            
-            // Inserir no topo da welcome screen
-            welcomeScreen.insertBefore(loginArea, welcomeScreen.firstChild);
-        }
+        `;
         
+        // Inserir no topo da welcome screen
+        welcomeScreen.insertBefore(loginArea, welcomeScreen.firstChild);
+        
+        // Forçar exibição
         loginArea.style.display = 'flex';
+        
+        console.log('✅ Tela de login criada e exibida');
     }
     
     /**
