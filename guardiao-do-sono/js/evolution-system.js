@@ -63,7 +63,15 @@ class EvolutionSystem {
      * Carrega o progresso salvo do localStorage
      */
     loadProgress() {
-        const saved = localStorage.getItem('guardiao_progress');
+        // 👥 Usar chave isolada por usuário se sistema de usuários estiver disponível
+        let storageKey = 'guardiao_progress';
+        if (window.game && window.game.userManagement && window.game.userManagement.currentUser) {
+            const userId = window.game.userManagement.currentUser.id;
+            storageKey = `user_${userId}_progress`;
+            console.log(`📊 Carregando progresso do usuário: ${userId}`);
+        }
+        
+        const saved = localStorage.getItem(storageKey);
         if (saved) {
             const data = JSON.parse(saved);
             this.sessionCount = data.sessionCount || 0;
@@ -85,6 +93,14 @@ class EvolutionSystem {
      * Salva o progresso no localStorage
      */
     saveProgress() {
+        // 👥 Usar chave isolada por usuário se sistema de usuários estiver disponível
+        let storageKey = 'guardiao_progress';
+        if (window.game && window.game.userManagement && window.game.userManagement.currentUser) {
+            const userId = window.game.userManagement.currentUser.id;
+            storageKey = `user_${userId}_progress`;
+            console.log(`📊 Salvando progresso do usuário: ${userId}`);
+        }
+        
         const data = {
             sessionCount: this.sessionCount,
             crystals: this.crystals,
@@ -93,7 +109,7 @@ class EvolutionSystem {
             lastSessionDate: this.lastSessionDate,
             consecutiveDays: this.consecutiveDays
         };
-        localStorage.setItem('guardiao_progress', JSON.stringify(data));
+        localStorage.setItem(storageKey, JSON.stringify(data));
         console.log('💾 Progresso salvo:', data);
     }
 
@@ -327,6 +343,13 @@ class EvolutionSystem {
         this.crystals += achievement.crystals;
 
         console.log(`🏆 Conquista desbloqueada: ${achievement.name}`);
+        
+        // 📊 Registrar cristais ganhos no SessionTracker
+        if (window.game && window.game.sessionTracker) {
+            window.game.sessionTracker.addCrystals(achievement.crystals, `Conquista: ${achievement.name}`);
+            window.game.sessionTracker.addXP(50, `Conquista: ${achievement.name}`);
+        }
+        
         this.showAchievementNotification(achievement);
         this.saveProgress();
     }

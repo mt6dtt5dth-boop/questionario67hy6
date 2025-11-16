@@ -1337,6 +1337,9 @@ class UserManagementSystem {
             console.log('📊 Sessão iniciada para:', this.currentUser.nome);
         }
         
+        // 🔄 Recarregar sistemas que dependem do usuário logado
+        this.reloadUserSystems();
+        
         // Esconder login, mostrar app
         this.showMainApp();
         
@@ -1364,6 +1367,29 @@ class UserManagementSystem {
         
         // Recarregar página
         window.location.reload();
+    }
+    
+    /**
+     * 🔄 Recarrega sistemas que dependem do usuário logado
+     */
+    reloadUserSystems() {
+        console.log('🔄 Recarregando sistemas para usuário:', this.currentUser.nome);
+        
+        // Recarregar Evolution System
+        if (window.evolutionSystem) {
+            console.log('🔄 Recarregando Evolution System...');
+            window.evolutionSystem.loadProgress();
+            window.evolutionSystem.initializeUI();
+        }
+        
+        // Recarregar Dream Incubator
+        if (window.dreamIncubator) {
+            console.log('🔄 Recarregando Dream Incubator...');
+            window.dreamIncubator.loadHistory();
+            window.dreamIncubator.initializeUI();
+        }
+        
+        console.log('✅ Sistemas recarregados com dados do usuário');
     }
     
     /**

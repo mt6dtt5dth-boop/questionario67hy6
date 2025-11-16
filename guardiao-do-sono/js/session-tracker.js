@@ -44,7 +44,12 @@ class SessionTracker {
             crystalsGained: 0
         };
         
-        console.log(`📊 Nova sessão iniciada: ${this.currentSession.id}`);
+        console.log(`📊 ============================================`);
+        console.log(`📊 NOVA SESSÃO INICIADA`);
+        console.log(`📊 ID: ${this.currentSession.id}`);
+        console.log(`📊 Usuário: ${this.currentSession.userName}`);
+        console.log(`📊 Hora: ${this.sessionStartTime.toLocaleString('pt-BR')}`);
+        console.log(`📊 ============================================`);
         
         // Registrar atividade de login
         this.logActivity('login', 'Usuário fez login no sistema');
@@ -166,8 +171,15 @@ class SessionTracker {
         // Salvar sessão no histórico do usuário
         this.saveSessionToHistory();
         
-        console.log(`📊 Sessão finalizada: ${this.currentSession.id}`);
-        console.log(`⏱️ Duração: ${this.formatDuration(this.currentSession.duration)}`);
+        console.log(`📊 ============================================`);
+        console.log(`📊 SESSÃO FINALIZADA`);
+        console.log(`📊 ID: ${this.currentSession.id}`);
+        console.log(`📊 Usuário: ${this.currentSession.userName}`);
+        console.log(`⏱️  Duração: ${this.formatDuration(this.currentSession.duration)}`);
+        console.log(`🎯 Fases completadas: ${this.currentSession.phasesCompleted.join(', ')}`);
+        console.log(`⭐ XP ganho: ${this.currentSession.xpGained}`);
+        console.log(`💎 Cristais ganhos: ${this.currentSession.crystalsGained}`);
+        console.log(`📊 ============================================`);
         
         const completedSession = this.currentSession;
         this.currentSession = null;

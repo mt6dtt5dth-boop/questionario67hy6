@@ -33,12 +33,22 @@ class DreamIncubator {
      * Carrega histórico do localStorage
      */
     loadHistory() {
-        const saved = localStorage.getItem('dream_history');
+        // 👥 Usar chaves isoladas por usuário
+        let historyKey = 'dream_history';
+        let activeSeedKey = 'active_dream_seed';
+        
+        if (window.game && window.game.userManagement && window.game.userManagement.currentUser) {
+            const userId = window.game.userManagement.currentUser.id;
+            historyKey = `user_${userId}_dream_history`;
+            activeSeedKey = `user_${userId}_active_dream_seed`;
+        }
+        
+        const saved = localStorage.getItem(historyKey);
         if (saved) {
             this.dreamHistory = JSON.parse(saved);
         }
         
-        const activeSaved = localStorage.getItem('active_dream_seed');
+        const activeSaved = localStorage.getItem(activeSeedKey);
         if (activeSaved) {
             this.activeSeed = JSON.parse(activeSaved);
             // Calcular idade da semente
@@ -54,11 +64,21 @@ class DreamIncubator {
      * Salva no localStorage
      */
     saveData() {
-        localStorage.setItem('dream_history', JSON.stringify(this.dreamHistory));
+        // 👥 Usar chaves isoladas por usuário
+        let historyKey = 'dream_history';
+        let activeSeedKey = 'active_dream_seed';
+        
+        if (window.game && window.game.userManagement && window.game.userManagement.currentUser) {
+            const userId = window.game.userManagement.currentUser.id;
+            historyKey = `user_${userId}_dream_history`;
+            activeSeedKey = `user_${userId}_active_dream_seed`;
+        }
+        
+        localStorage.setItem(historyKey, JSON.stringify(this.dreamHistory));
         if (this.activeSeed) {
-            localStorage.setItem('active_dream_seed', JSON.stringify(this.activeSeed));
+            localStorage.setItem(activeSeedKey, JSON.stringify(this.activeSeed));
         } else {
-            localStorage.removeItem('active_dream_seed');
+            localStorage.removeItem(activeSeedKey);
         }
     }
     
