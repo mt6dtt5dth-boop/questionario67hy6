@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login</title>
+</head>
+<body>
+    <h1>Teste de Login Manual</h1>
+    <p>Abra o console (F12) e execute os comandos abaixo:</p>
+    
+    <h2>Passo 1: Preencher código</h2>
+    <pre>
+document.getElementById('terapeuta-code-input').value = 'NEWDRI193117';
+    </pre>
+    
+    <h2>Passo 2: Clicar no botão</h2>
+    <pre>
+document.getElementById('terapeuta-login-btn').click();
+    </pre>
+    
+    <h2>Passo 3: Verificar botão de gerenciar</h2>
+    <pre>
+// Deve existir após login:
+document.getElementById('user-controls');
+document.getElementById('master-panel-btn');
+    </pre>
+    
+    <h2>Passo 4: Abrir painel</h2>
+    <pre>
+document.getElementById('master-panel-btn').click();
+    </pre>
+    
+    <hr>
+    
+    <h2>Debug: Verificar UserManagementSystem</h2>
+    <pre>
+// No console:
+window.game.userManagement.currentUser;
+window.game.userManagement.isMaster();
+    </pre>
+    
+    <button onclick="window.location.href='/'">Voltar ao App</button>
+</body>
+</html>

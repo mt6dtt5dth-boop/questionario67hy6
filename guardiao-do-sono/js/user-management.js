@@ -272,6 +272,9 @@ class UserManagementSystem {
             userName.textContent = `${this.currentUser.nome} ${this.currentUser.sobrenome}`;
         }
         
+        // 🆕 ADICIONAR BOTÕES DE CONTROLE (GERENCIAR + SAIR)
+        this.addMasterButton();
+        
         // Mostrar informações de expiração (se não for master)
         if (this.currentUser.tipo !== 'master' && this.currentUser.expiraEm) {
             this.showExpirationInfo();
@@ -300,8 +303,8 @@ class UserManagementSystem {
      * Adiciona botões de controle (gerenciar + logout)
      */
     addMasterButton() {
-        const hud = document.getElementById('hud');
-        if (!hud || document.getElementById('user-controls')) return;
+        // Verificar se já existe
+        if (document.getElementById('user-controls')) return;
         
         // Container para botões
         const container = document.createElement('div');
